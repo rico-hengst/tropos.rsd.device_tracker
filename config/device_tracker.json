@@ -1,0 +1,340 @@
+{
+    "MS21-A987": {
+        "metadata": {},
+        "history": [],
+        "calibration": []
+    },
+    "MS-80_SNABCD22": {
+        "metadata": {
+            "name": "MS-80_SNABCD22",
+            "classification": {
+                "class": "radiation",
+                "subclass": "pyranometer"
+            },
+            "device_manufacturer": {
+                "name": "EKO",
+                "address": "EKO Instruments Europe B.V. Lulofsstraat 55, Unit 28 2521 AL, Den Haag Netherlands",
+                "contact": ""
+            },
+            "device_model": {
+                "name": "MS-80",
+                "description": "An ISO9060:2018 Class A solar sensor in the top tier \u2018fast-response and \u2018spectrally flat\u2019 sub-categories, with unprecedented low zero-offset behaviour, and a 5-year recalibration interval.",
+                "purchased": "2024-01-21T12:00:00Z",
+                "serial": "SNABCD22"
+            },
+            "owner": {
+                "name": "TROPOS",
+                "address": "",
+                "contact": "x@tropos.de"
+            },
+            "created": "2026-08-10T06:54:58Z"
+        },
+        "history": [
+            {
+                "startdate": "2023-09-24T12:12:12Z",
+                "stopdate": "2023-12-01T00:12:12Z",
+                "created": "2026-08-10T07:03:54Z",
+                "uuid": "a66bd642-9489-11f1-ac24-cc2f71a772c7",
+                "platform": [
+                    "TARO"
+                ],
+                "location": {
+                    "name": "Mindelo",
+                    "country": "Cabo Verde",
+                    "lat": -5,
+                    "lon": -5,
+                    "is_mobile": false
+                }
+            },
+            {
+                "startdate": "2024-01-24T12:12:12Z",
+                "stopdate": "2024-12-01T00:12:12Z",
+                "created": "2026-08-10T07:03:54Z",
+                "uuid": "a66bd6ec-9489-11f1-ac24-cc2f71a772c7",
+                "platform": [
+                    "TARO"
+                ],
+                "location": {
+                    "name": "Melpitz",
+                    "country": "Germany",
+                    "lat": 50,
+                    "lon": 13,
+                    "is_mobile": false
+                }
+            },
+            {
+                "startdate": "2025-01-01T12:12:12Z",
+                "stopdate": "2025-12-01T00:12:12Z",
+                "created": "2026-08-10T07:03:54Z",
+                "uuid": "a66bd7d2-9489-11f1-ac24-cc2f71a772c7",
+                "platform": [
+                    "TARO"
+                ],
+                "location": {
+                    "name": "Mindelo",
+                    "country": "Cabo Verde",
+                    "lat": -5,
+                    "lon": -5,
+                    "is_mobile": false
+                }
+            },
+            {
+                "startdate": "2025-12-15T12:12:12Z",
+                "stopdate": "2026-02-02T00:12:12Z",
+                "created": "2026-08-10T07:03:54Z",
+                "uuid": "a66bd840-9489-11f1-ac24-cc2f71a772c7",
+                "campaign": "PS127",
+                "platform": [
+                    "Polarstern",
+                    "OCEANET"
+                ],
+                "location": {
+                    "name": "POLARSTERN cruise PS152",
+                    "description": "Master tracks in different resolutions of POLARSTERN cruise PS152",
+                    "track_url": "https://doi.pangaea.de/10.1594/PANGAEA.993941?format=textfile",
+                    "track_desc": "",
+                    "is_mobile": true
+                }
+            },
+            {
+                "startdate": "2026-05-01T12:12:12Z",
+                "stopdate": "2026-08-01T00:12:12Z",
+                "created": "2026-08-10T07:03:54Z",
+                "uuid": "a66bd8ae-9489-11f1-ac24-cc2f71a772c7",
+                "campaign": "C3SAR",
+                "location": {
+                    "name": "Falkenberg",
+                    "country": "Germany",
+                    "lat": 53,
+                    "lon": 12,
+                    "is_mobile": false
+                }
+            }
+        ],
+        "calibration": [
+            {
+                "calibration_description": "",
+                "calibration_performed_by": "Ak Hein",
+                "calibration_performed_at": "DWD",
+                "calibration_performed_period": [
+                    "2023-07-03T12:12:12Z",
+                    "2023-07-13T12:12:12Z"
+                ],
+                "calibration_record_created": "2024-08-03T12:12:12Z",
+                "calibration_used_method": "Kletter et al.",
+                "calibration_used_reference": "CPC",
+                "calibration_valid_period": [
+                    "2023-08-03T00:12:12Z",
+                    "2024-08-03T12:12:12Z"
+                ],
+                "calibration_values": [
+                    0.11992,
+                    -22.3,
+                    0.3
+                ]
+            },
+            {
+                "calibration_description": "",
+                "calibration_performed_by": "Dore Hwaptist",
+                "calibration_performed_at": "DWD",
+                "calibration_performed_period": [
+                    "2024-09-03T12:12:12Z",
+                    "2024-09-13T12:12:12Z"
+                ],
+                "calibration_record_created": "2026-08-03T12:12:12Z",
+                "calibration_used_method": "Kletter et al.",
+                "calibration_used_reference": "CPC",
+                "calibration_valid_period": [
+                    "2024-10-03T00:12:12Z",
+                    "2026-10-03T12:12:12Z"
+                ],
+                "calibration_values": [
+                    0.11972,
+                    -22.0,
+                    0.27
+                ]
+            }
+        ]
+    },
+    "MS-21_SN445566A": {
+        "metadata": {
+            "name": "MS-21_SN445566A",
+            "classification": {
+                "class": "radiation",
+                "subclass": "pygeometer"
+            },
+            "device_manufacturer": {
+                "name": "EKO",
+                "address": "EKO Instruments Europe B.V. Lulofsstraat 55, Unit 28 2521 AL, Den Haag Netherlands",
+                "contact": ""
+            },
+            "device_model": {
+                "name": "MS-21",
+                "description": "Research-grade, accurate, and robust, the MS-21 measures longwave downwelling radiation and longwave net radiation in a wide spectral band and delivers superior stability independent of the sensors\u2019 operating temperature.",
+                "purchased": "2022-01-01T12:00:00Z",
+                "serial": "SN445566A"
+            },
+            "owner": {
+                "name": "TROPOS",
+                "address": "",
+                "contact": "x@tropos.de"
+            },
+            "created": "2026-08-10T06:55:35Z"
+        },
+        "history": [
+            {
+                "startdate": "2024-09-24T12:12:12Z",
+                "stopdate": "2024-12-01T00:12:12Z",
+                "created": "2026-08-10T06:57:18Z",
+                "uuid": "ba12b22a-9488-11f1-9bcc-cc2f71a772c7",
+                "platform": [
+                    "TARO"
+                ],
+                "location": {
+                    "name": "Melpitz",
+                    "country": "Germany",
+                    "lat": 50,
+                    "lon": 12,
+                    "is_mobile": false
+                }
+            },
+            {
+                "startdate": "2025-01-24T12:12:12Z",
+                "stopdate": "2025-05-01T00:12:12Z",
+                "created": "2026-08-10T06:57:18Z",
+                "uuid": "ba12b40a-9488-11f1-9bcc-cc2f71a772c7",
+                "campaign": "C3SAR",
+                "location": {
+                    "name": "Falkenberg",
+                    "country": "Germany",
+                    "lat": 50,
+                    "lon": 12,
+                    "is_mobile": false
+                }
+            }
+        ],
+        "calibration": [
+            {
+                "calibration_link": "http://mycalibration.info"
+            }
+        ]
+    },
+    "arielle": {
+        "metadata": {
+            "name": "arielle",
+            "classification": {
+                "class": "lidar",
+                "subclass": "pollyxt"
+            },
+            "device_manufacturer": {
+                "name": "TROPOS",
+                "address": "",
+                "contact": ""
+            },
+            "device_model": {
+                "name": "PollyXT",
+                "description": "multiwavelength Raman polarization lidar",
+                "purchased": "2016-01-21T12:00:00Z",
+                "serial": "JHA399OO",
+                "pid": "https://instrumentdb.out.ocp.fmi.fi/instrument/31c4f71c-f1a7-4e03-a66d-ecdbcaab0253"
+            },
+            "owner": {
+                "name": "TROPOS",
+                "address": "",
+                "contact": "re@t.de"
+            },
+            "created": "2026-08-10T10:39:35Z"
+        },
+        "history": [
+            {
+                "startdate": "2012-10-27T12:12:12Z",
+                "stopdate": "2012-11-26T00:12:12Z",
+                "created": "2026-08-10T10:43:57Z",
+                "uuid": "63985088-94a8-11f1-9c3e-cc2f71a772c7",
+                "platform": [
+                    "Polarstern",
+                    "OCEANET"
+                ],
+                "campaign": "PS81",
+                "location": {
+                    "name": "xyz",
+                    "description": "Master tracks",
+                    "track_url": "https://doi.pangaea.de/10.1594/PANGAEA.841009?format=textfile",
+                    "track_desc": "https://doi.pangaea.de/10.1594/PANGAEA.841009",
+                    "is_mobile": true
+                }
+            },
+            {
+                "startdate": "2018-05-01T12:12:12Z",
+                "stopdate": "2018-06-10T00:12:12Z",
+                "created": "2026-08-10T10:43:57Z",
+                "uuid": "639852c2-94a8-11f1-9c3e-cc2f71a772c7",
+                "platform": [
+                    "Polarstern",
+                    "OCEANET"
+                ],
+                "campaign": "PS113",
+                "location": {
+                    "name": "Punta Arenas - Bremerhaven",
+                    "description": "Master tracks: Punta Arenas - Bremerhaven",
+                    "track_url": "https://doi.pangaea.de/10.1594/PANGAEA.891753?format=textfile",
+                    "track_desc": "https://doi.pangaea.de/10.1594/PANGAEA.891753",
+                    "is_mobile": true
+                }
+            },
+            {
+                "startdate": "2023-01-01T12:12:12Z",
+                "stopdate": "2023-12-01T00:12:12Z",
+                "created": "2026-08-10T10:43:57Z",
+                "uuid": "639853ee-94a8-11f1-9c3e-cc2f71a772c7",
+                "platform": [
+                    "Polarstern",
+                    "OCEANET"
+                ],
+                "campaign": "PS113",
+                "location": {
+                    "name": "Neumayer III",
+                    "lat": -70,
+                    "lon": -8,
+                    "is_mobile": false
+                }
+            },
+            {
+                "startdate": "2024-03-05T12:12:12Z",
+                "stopdate": "2024-10-21T00:12:12Z",
+                "created": "2026-08-10T12:56:56Z",
+                "uuid": "f7c106bc-94ba-11f1-8546-cc2f71a772c7",
+                "location": {
+                    "name": "Leipzig",
+                    "country": "Germany",
+                    "lat": 51,
+                    "lon": 12,
+                    "is_mobile": false
+                }
+            }
+        ],
+        "calibration": [
+            {
+                "calibration_description": "",
+                "calibration_performed_by": "Bonnie Nengeldrenn",
+                "calibration_performed_at": "TROPOS",
+                "calibration_performed_period": [
+                    "2023-07-03T12:12:12Z",
+                    "2023-07-13T12:12:12Z"
+                ],
+                "calibration_record_created": "2024-08-03T12:12:12Z",
+                "calibration_used_method": "Nengeldren et al.",
+                "calibration_used_reference": "ColiDrom",
+                "calibration_valid_period": [
+                    "2023-08-03T00:12:12Z",
+                    "2024-08-03T12:12:12Z"
+                ],
+                "calibration_values": [
+                    2.11992,
+                    22.3,
+                    0.3
+                ]
+            }
+        ]
+    }
+}

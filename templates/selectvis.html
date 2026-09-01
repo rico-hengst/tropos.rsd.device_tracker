@@ -1,0 +1,421 @@
+{% extends 'base.html' %}
+{% block content %}
+    <style>
+        .axis path, .axis line { stroke: #ccc; }
+        .bar { transition: opacity 0.2s; }
+        .bar:hover { opacity: 0.8; cursor: pointer; }
+        
+        /* Label Styling */
+        .label-device {
+          font-size: 10px;
+          font-weight: bold;
+          fill: black;
+          text-anchor: middle;
+          dominant-baseline: middle;
+        }
+        .label-location {
+          font-size: 12px;
+          font-weight: normal;
+          fill: white;
+          stroke: white;
+          stroke-width: 0.4px;
+          text-anchor: middle;
+          dominant-baseline: auto; /* Align relative to the device label */
+          dy: 1.2em; /* Push it down slightly */
+        }
+        
+        .tooltip {
+          position: absolute;
+          background: rgba(0, 0, 0, 0.85);
+          color: #fff;
+          padding: 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.2s;
+          z-index: 10;
+        }
+        .axis text { font-size: 11px; }
+        .chart-container {
+          background: white;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+          overflow-x: auto;
+        }
+    </style>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <div class="container">
+        <div class="row py-3">
+            <div class="col-6  p-3">
+                <h2>Show requested devices</h2>
+               
+            </div>
+            <div class="col-6 px-0 py-4">
+                {% if your_requests %}
+                    <ul class="list-group">
+                        <li class="list-group-item list-group-item-action bg-light">Your filtered request</li>
+                        {% for key, value in your_requests.items() %}
+                            <li class="list-group-item small">{{key}} <b>{{value}}</b></li>
+                        {% endfor %}
+                    </ul>                   
+                {% endif %}
+            </div>
+            
+            <div class="col-12 border rounded p-0">
+                 <div class="chart-container ">
+                    <div id="chart"></div>
+                </div>
+                <div id="tooltip" class="tooltip"></div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+
+{% block javascript %}
+
+<script>
+
+// 1. The Raw Data provided by user
+const rawData = {{devices | safe}};
+
+
+// 2. Flatten and Process Data
+const chartData = [];
+Object.values(rawData).forEach(device => {
+  const deviceName = device.metadata.name;
+  if (device.history) {
+    device.history.forEach(record => {
+      chartData.push({
+        device: deviceName,
+        location: record.location ? record.location.name : "Unknown",
+        country: record.location ? record.location.country : "N/A",
+        start: new Date(record.startdate),
+        stop: new Date(record.stopdate),
+        campaign: record.campaign || "N/A",
+        class: device.metadata.classification ? device.metadata.classification.class : "N/A",
+        subclass: device.metadata.classification ? device.metadata.classification.subclass : "N/A",
+      });
+    });
+  }
+});
+
+// 3. Dynamic Dimensions
+const barHeight = 40;
+const barPadding = 10;
+const numDevices = new Set(chartData.map(d => d.device)).size;
+const margin = { top: 30, right: 30, bottom: 90+5*numDevices, left: 180 }; // Increased bottom margin for better label visibility
+
+const element = document.getElementById("chart");
+
+const totalHeight = (numDevices * (barHeight + barPadding)) + margin.top + margin.bottom;
+const width = element.clientWidth - margin.left - margin.right -20;
+
+const svg = d3.select("#chart")
+  .append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", totalHeight)
+  .append("g")
+  .attr("transform", `translate(${margin.left},${margin.top})`);
+  
+  
+// pattern
+const patternId = "dotted-pattern";
+svg.append("defs")
+  .append("pattern")
+  .attr("id", patternId)
+  .attr("patternUnits", "userSpaceOnUse")
+  .attr("width", 4)
+  .attr("height", 4)
+  .append("circle")
+  .attr("cx", 2)
+  .attr("cy", 2)
+  .attr("r", 1.2)
+  .attr("fill", "rgba(255,255,255,0.25)");
+
+
+// 4. Scales
+const now = new Date();
+
+// Determine min and max dates from the data
+const minDate = d3.min(chartData, d => d.start);
+const maxDate = d3.max(chartData, d => d.stop);
+
+// Limit the x-axis domain to the current date
+// Extend the x-axis domain to the selected min date
+const effectiveMaxDate = maxDate > now ? now : maxDate;
+let effectiveMinDate = minDate;
+
+{% if "date" in your_requests %}
+    {% if your_requests.date|length == 2 %}
+        const first_request_date = new Date("{{your_requests.date[0]}}")
+        
+        effectiveMinDate = first_request_date < minDate ? first_request_date : minDate
+    {% endif %}
+{% endif %}
+    
+
+
+const x = d3.scaleTime()
+  .domain([effectiveMinDate, effectiveMaxDate])
+    //.domain([minDate, effectiveMaxDate])
+  .range([0, width]);
+
+const devices = [...new Set(chartData.map(d => d.device))];
+const y = d3.scaleBand()
+  .domain(devices)
+  .range([0, numDevices * (barHeight + barPadding)])
+  .padding(0.1);
+
+// 5. Axes
+const xAxisFormat = d3.timeFormat("%Y-%m-%d");
+
+// Improved X-axis with better label positioning
+const xAxis = d3.axisBottom(x).ticks(6).tickFormat(xAxisFormat);
+
+svg.append("g")
+  .attr("class", "axis")
+  .attr("transform", `translate(0,${y.bandwidth() * numDevices + barPadding * (numDevices-1)})`)
+  .call(xAxis)
+  .selectAll("text")
+  .style("text-anchor", "end")
+  .attr("dx", "-.8em")
+  .attr("dy", ".15em")
+  .attr("transform", "rotate(-45)");
+
+svg.append("g")
+  .attr("class", "axis")
+  .call(d3.axisLeft(y));
+
+// Axis Labels
+svg.append("text")
+  .attr("text-anchor", "middle")
+  .attr("x", width / 2)
+  .attr("y", y.bandwidth() * numDevices + barPadding * (numDevices-1) + 90) // Adjusted y-position for better spacing
+  .style("font-size", "14px")
+  .style("font-weight", "bold")
+  .text("Timeline (Date & Time)");
+
+svg.append("text")
+  .attr("text-anchor", "middle")
+  .attr("transform", "rotate(-90)")
+  .attr("x", -(y.bandwidth() * numDevices + barPadding * (numDevices-1)) / 2)
+  .attr("y", -160)
+  .style("font-size", "14px")
+  .style("font-weight", "bold")
+  .text("Device");
+
+// Tooltip
+const tooltip = d3.select("#tooltip");
+
+// 6. Draw Bars
+const bars = svg.selectAll(".bar")
+  .data(chartData)
+  .enter()
+  .append("rect")
+  .attr("class", "bar")
+  .attr("x", d => x(d.start))
+  .attr("y", d => y(d.device))
+  .attr("height", y.bandwidth())
+  // Calculate visual width: min(stop, now) - start
+  .attr("width", d => {
+    const effectiveStop = d.stop > now ? now : d.stop;
+    const barWidth = x(effectiveStop) - x(d.start);
+    return Math.max(1, barWidth);
+  })
+  .attr("fill", d => {
+    const hash = d.device.split('').reduce((a,b) => a+b.charCodeAt(0),0);
+    const colors = ["#4c78a8", "#f58518", "#e45756", "#72b7b2", "#54a24b", "#eeca3b", "#b279a2", "#a372b7"];
+    return colors[hash % colors.length];
+  })
+  .on("mouseover", (event, d) => {
+    tooltip.style("opacity", 1)
+      .html(`
+        <strong>${d.device}</strong><br/>
+        <hr>
+        <table>
+            <tbody>
+                <tr>
+                    <td>Location</td>
+                    <td>${d.location}</td>
+                </tr>
+                <tr>
+                    <td>Country</td>
+                    <td>${d.country}</td>
+                </tr>
+                <tr>
+                    <td>Campaign</td>
+                    <td>${d.campaign}</td>
+                </tr>
+                <tr>
+                    <td>Start</td>
+                    <td>${d.start.toISOString()}</td>
+                </tr>
+                <tr>
+                    <td>Stop</td>
+                    <td>${d.stop.toISOString()}</td>
+                </tr>
+                <tr>
+                    <td>Classification</td>
+                    <td>${d.class} / ${d.subclass}</td>
+                </tr>
+            </tbody>
+        </table>
+      `)
+      .style("left", (event.pageX + 10) + "px")
+      .style("top", (event.pageY - 28) + "px");
+  })
+  .on("mousemove", (event) => {
+    tooltip
+      .style("left", (event.pageX + 10) + "px")
+      .style("top", (event.pageY - 28) + "px");
+  })
+  .on("mouseout", () => {
+    tooltip.style("opacity", 0);
+  });
+  
+  const patternOverlays = svg.selectAll(".pattern-overlay")
+  .data(chartData.filter(d => d.campaign !== "N/A" && d.campaign !== "nan"))
+  .enter()
+  .append("rect")
+  .attr("class", "pattern-overlay")
+  .attr("x", d => x(d.start))
+  .attr("y", d => y(d.device))
+  .attr("height", y.bandwidth())
+  .attr("width", d => {
+    const effectiveStop = d.stop > now ? now : d.stop;
+    const barWidth = x(effectiveStop) - x(d.start);
+    return Math.max(1, barWidth);
+  })
+  .attr("fill", `url(#${patternId})`)
+  // Make pattern overlays non-interactive so they don't block mouse events
+  .style("pointer-events", "none");
+
+
+// Check if any device has a stop date in the future
+const hasFutureStop = chartData.some(d => d.stop > now);
+
+if (hasFutureStop) {
+  // Draw vertical line at current date position
+  svg.append("line")
+    .attr("class", "today-line")
+    .attr("x1", x(now))
+    .attr("y1", 0)
+    .attr("x2", x(now))
+    .attr("y2", y.bandwidth() * numDevices + barPadding * (numDevices-1))
+    .attr("stroke", "red")
+    .attr("stroke-width", 2)
+    .attr("stroke-dasharray", "5,5")
+    .style("pointer-events", "none"); // Make non-interactive
+
+  // Add "Today" label
+  svg.append("text")
+    .attr("class", "today-label")
+    .attr("x", x(now)-12)
+    .attr("y", -5)
+    .text("Today")
+    .attr("fill", "red")
+    .style("font-size", "12px")
+    .style("font-weight", "bold")
+    .style("pointer-events", "none");
+}
+
+
+
+
+
+// Add Vertical Lines for Date Array (Simulated with current date)
+// In a real scenario, this would come from a {{key}} == "date" condition
+
+
+{% if "date" in your_requests %}
+    {% if your_requests.date|length > 0 %}
+        const dateArray = []; // This would be your date array from the template
+        {% for mydate in your_requests.date %}
+            dateArray.push("{{your_requests.date[loop.index0]}}")
+        {% endfor %}
+
+        //alert({{your_requests.date | safe}})
+        // Draw vertical lines for each date in the array
+        dateArray.forEach((date, index) => {
+          const dateObj = new Date(date);
+          
+          // Only draw if the date is within the chart's x-axis range
+          //if (dateObj >= minDate && dateObj <= effectiveMaxDate) {
+          if (dateObj <= effectiveMaxDate) {
+            // Draw vertical line
+            svg.append("line")
+              .attr("class", "date-line")
+              .attr("x1", x(dateObj))
+              .attr("y1", 0)
+              .attr("x2", x(dateObj))
+              .attr("y2", y.bandwidth() * numDevices + barPadding * (numDevices-1))
+              .attr("stroke", index === 0 ? "gray" : "gray") // Different colors for different dates
+              .attr("stroke-width", 2)
+              .attr("stroke-dasharray", "5,5")
+              .style("pointer-events", "none"); // Make non-interactive
+
+            // Add date label
+            svg.append("text")
+              .attr("class", "date-label")
+              .attr("x", x(dateObj) + 5)
+              .attr("y", -2) // Offset labels vertically
+              .text(d3.timeFormat("%Y-%m-%d")(dateObj))
+              .attr("fill", index === 0 ? "gray" : "gray")
+              .style("font-size", "12px")
+              .style("font-weight", "bold")
+              .style("pointer-events", "none");
+          }
+        });
+    {% endif %}
+{% endif %}
+
+  
+
+// 7. Add Labels (Device Name + Location Name)
+// We create a group for each bar to hold both text elements
+const labels = svg.selectAll(".label-group")
+  .data(chartData)
+  .enter()
+  .append("g")
+  .attr("class", "label-group")
+  .attr("transform", d => {
+    const effectiveStop = d.stop > now ? now : d.stop;
+    const xPos = x(d.start) + (x(effectiveStop) - x(d.start)) / 2;
+    const yPos = y(d.device) + y.bandwidth() / 2;
+    return `translate(${xPos},${yPos})`;
+  });
+
+// Device Name Label (Top line)
+labels.append("text")
+  .attr("class", "label-device")
+  .attr("dy", "-0.7em") // Move slightly up
+  .text(d => d.device)
+  .attr("display", d => {
+    const effectiveStop = d.stop > now ? now : d.stop;
+    const barWidth = x(effectiveStop) - x(d.start);
+    const textWidth = d.device.length * 7.5; 
+    return barWidth > textWidth ? "block" : "none";
+  });
+
+// Location Name Label (Bottom line)
+labels.append("text")
+  .attr("class", "label-location")
+  .attr("dy", "1.2em") // Move down relative to the group center
+  .text(d => d.location)
+  .attr("display", d => {
+    const effectiveStop = d.stop > now ? now : d.stop;
+    const barWidth = x(effectiveStop) - x(d.start);
+    const textWidth = d.location.length * 7; 
+    // Require slightly more space for two lines
+    return barWidth > (textWidth + 10) ? "block" : "none";
+  });
+
+</script>
+
+{% endblock %}

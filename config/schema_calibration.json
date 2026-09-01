@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Calibration record",
+  "description": "A calibration record that is either a full detail object or a simple link reference",
+  "type": "object",
+  "oneOf": [
+    {
+      "title": "Full Calibration Record",
+      "description": "Complete calibration details with values and timestamps",
+      "type": "object",
+      "properties": {
+        "calibration_certificate_issuance_date" : { "type": "string", "format": "date-time", "$comment": "When was the document issued?"  },
+        "calibration_description"               : { "type": "string" },
+        "calibration_performed_by"              : { "type": "string", "$comment": "Who did perform the calibration?" },
+        "calibration_performed_at"              : { "type": "string", "$comment": "Where did the calibration take place?"  },
+        "calibration_performed_period"          : {
+            "type": "array",
+            "items": { "type": "string", "format": "date-time" },
+            "minItems": 1,
+            "maxItems": 2,
+            "$comment": "When was the calibration issued (time or period)?"
+        },
+        "calibration_record_created"            : { "type": "string", "format": "date-time", "$comment": "Timestamp of this record"  },
+        "calibration_used_method"                    : { "type": "string" },
+        "calibration_used_reference"                 : { "type": "string" },
+        "calibration_valid_period": {
+            "type": "array",
+            "items": { "type": "string", "format": "date-time" },
+            "minItems": 2,
+            "maxItems": 2,
+            "$comment": "For what period is the calibration valid?"
+        },
+        
+        "calibration_values": {
+            "type": "array",
+            "items": { "type": "number" }
+        }
+      },
+      "required": [ "calibration_values" ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Calibration Link Reference",
+      "description": "A simple reference via URL",
+      "type": "object",
+      "properties": {
+        "calibration_link": { "type": "string" }
+      },
+      "required": [
+        "calibration_link"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

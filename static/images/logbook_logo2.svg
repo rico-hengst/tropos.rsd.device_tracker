@@ -1,0 +1,93 @@
+<svg viewBox="0 0 630 85" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <style>
+  .svg-shadow {
+  box-shadow: 10px 5px 5px red;
+}
+.fontis {fill:rgb(153, 51, 153)}
+.fonti {fill:rgb(28, 99, 183)}
+.filly-bg {fill:none}
+.fonti-shadow {flood-color:green}
+  </style>
+<defs>
+    <!-- Original symbol, not shown -->
+    
+    
+    <filter id="f1">
+      <feDropShadow dx="12" dy="14" stdDeviation="1" flood-opacity="0.7"/>
+    </filter>
+  
+  
+  <filter id="f3" width="15px" height="1555">
+      <feOffset in="SourceAlpha" dx="6px" dy="-6px" />
+      <feGaussianBlur stdDeviation="9" />
+      <feBlend in="SourceGraphic" in2="blurOut" />
+    </filter>
+    
+     
+     <filter id="ds" class="fonti-shadow">
+        <feDropShadow dx="5%" dy="-5%" stdDeviation="5" flood-opacity="0.96"/>
+    </filter>
+    <symbol id="s-rect">
+      <rect class="fonti" filcl="rgb(200,200,200)" filter="url(#f3)" width="13%" height="15%" x="0" y="0" ry="1%" rx="1%"/>
+     </symbol>
+    
+    
+    
+</defs>
+
+<!--
+<rect width="100%" height="100%" fill="rgb(165,165,165)" classd="filly-bg"/>
+-->
+
+
+
+
+<text
+font-size="78px" 
+font-weightu="bold" 
+letter-spacing="2.5"
+alignment-baseline="middle"
+text-anchor="nomiddle"
+font-stretch="extra-expanded"
+font-family="Ozone"
+fsilter="url(#ds)"
+class="fonti"
+>
+<tspan y="98%" x="0.5%">Device tracker</tspan>
+
+</text>
+
+<text 
+text-anchor="start"
+font-size="16.5px" 
+font-weightu="bold" 
+letter-spacing="-0.2"
+alignment-baseline="middle"
+font-stretch="extra-expanded"
+fsilter="url(#ds)"
+font-family="UbunbtuMono"
+class="fonti"
+>
+<!--
+<tspan y="15%" x="99%">Remote Sensing</tspan>
+-->
+<tspan y="15%" x="0.5%">Remote Sensing Department @ TROPOS</tspan>
+</text>
+
+
+
+<!--
+<use href="#star-icon" x="185" y="-20" transform="scale(0.06)" />
+-->
+<!--
+<use href="#circle2" x="2220%" y="1880%" transform="scale(0.0265)" />
+<use href="#circle2" x="2610%" y="1880%" transform="scale(0.0265)" />
+
+<use href="#circle1" x="2220%" y="1880%" transform="scale(0.0265)" />
+<use href="#circle1" x="2610%" y="1880%" transform="scale(0.0265)" />
+-->
+
+
+
+
+</svg>

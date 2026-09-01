@@ -1,0 +1,25 @@
+{
+  "users": {
+    "admin": {
+      "password_hash": "sha256:fb5402aa9a9095d24538a9b5cd171c65d4692010d02abaa0c405060ff541d2dd:dc253eb5bda1e05dd58300f04d284afe8068371121b9aea0f0a367d7e9e71677",
+      "salt": "dc253eb5bda1e05dd58300f04d284afe8068371121b9aea0f0a367d7e9e71677",
+      "class_edit_roles": [
+        "lidar",
+        "radar"
+      ],
+      "access": "readwrite"
+    },
+    "rsd-car": {
+      "password_hash": "sha256:bbfc1ca7f565c341d5e1a1ca046ee1c574879bc6e292c0da28e3b58e569e16a1:61729570d258584d455624b0f8323f1276bb6c038a5b04fd85e5ce996ff7e28c",
+      "salt": "61729570d258584d455624b0f8323f1276bb6c038a5b04fd85e5ce996ff7e28c",
+      "class_edit_roles": [
+        "radiation"
+      ],
+      "access": "readwrite"
+    },
+    "test": {
+      "password_hash": "sha256:076417e55a4393ebf04a14e2475f48eb4d6182bb985783f471b388cc1ce84970:da33f580e1fcbb1b17458ddd993765451d98fc87c078a69d47cc4d2369710e14",
+      "salt": "da33f580e1fcbb1b17458ddd993765451d98fc87c078a69d47cc4d2369710e14"
+    }
+  }
+}

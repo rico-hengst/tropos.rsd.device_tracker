@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <div class="row py-3">
+            <div class="col-5 border rounded p-3">
+                <h2>Info</h2>
+                <h3>Why to improve our famous device tracker</h3>
+                <ul>
+                    <li>addtional sets of metadata required</li>
+                    <li>calibration info required</li>
+                    <li>distinguish of mobile/no-mobile location history</li>
+                    <li>added value in case of graphical presentation of content</li>
+                </ul>
+                
+                <h3>Todo</h3>
+                <ul>
+                    <li>forms: add device, add calibration, add history</li>
+                    <li>python update mechanic behind "forms"</li>
+                    <li>python api to collect and view existing locations, based on ALL history records</li>
+                    <li>re-new json calibration schema: simplification</li>
+                    <li>do we store secret content? - if yes, how to handle</li>
+                </ul>
+                
+                
+                
+                <h3>Spoiler: Secure Login System</h3>
+                <p>This is a protected dashboard area. Your login is secured with:</p>
+                <ul>
+                    <li>SHA256 password hashing</li>
+                    <li>Random salt generation for each user</li>
+                    <li>Session-based authentication</li>
+                    <li>Secure password verification</li>
+                </ul>
+                <p><strong>Security Features:</strong></p>
+                <ul>
+                    <li>Passwords are never stored in plain text</li>
+                    <li>Each user has a unique salt for hashing</li>
+                    <li>Session management prevents unauthorized access</li>
+                    <li>Secure random key generation for session cookies</li>
+                </ul>
+            </div>
+            
+            <div class="col-6 offset-md-1 border rounded p-3">
+                <h2>Welcome to device tracker</h2>
+
+                <p>This is a portal to get info about devices in machine-readable json format!</p>
+
+                <p>Supported keys: (the <samp>|</samp> is used to separate the typical examples from CAR and Lidar Teams)</p>
+
+                <ul>
+                <li>device (substing match), eg: <samp>device=ms-80|arielle</samp> 
+                    {% set url2 = "?device=ms-80" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                <li>class (substing match), eg: <samp>class=radiation|lidar</samp>
+                    {% set url2 = "?class=radiation" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                <li>subclass (substing match), eg: <samp>subclass=pygeometer|pollyxt</samp>
+                    {% set url2 = "?subclass=pyranometer" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                <li>locationname (substing match), eg: <samp>locationname=melpitz</samp>
+                    {% set url2 = "?locationname=melpitz" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                <li>country (substing match), eg: <samp>country=Germany</samp>
+                    {% set url2 = "?country=Germany" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                <li>campaign (substing match), eg: <samp>campaign=C3SAR|PS127</samp>
+                    {% set url2 = "?campaign=C3SAR" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                <li>platform (substing match) provided as list separated by comma eg: <samp>platform=LACROS,TARO|Polarstern,OCEANET</samp>
+                    {% set url2 = "?platform=Polarstern" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                <li>date (exact format 2022-01-01T12:00:00Z), provided as list with one or two elements separated by comma eg:
+                    <ul>
+                        <li>find all history records that include following date: <samp>date=2026-01-01T12:00:00Z</samp>
+                            {% set url2 = "?date=2026-01-01T12:00:00Z" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                        <li>find all history records: ... <samp>date=2022-01-01T12:00:00Z&date=2026-03-11T12:00:00Z</samp>
+                            {% set url2 = "?date=2025-01-01T12:00:00Z&date=2026-01-01T12:00:00Z" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                        <li>combine date timespan and class: ...
+                            {% set url2 = "?date=2023-10-21T14:49:36Z&date=2026-05-01T14:49:36Z&class=radiation"%}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a>
+                        </li>
+                    </ul>
+                </li>
+                </ul>
+
+            </div>
+        </div>
+        
+    </div>
+    
+    
+{% endblock %}

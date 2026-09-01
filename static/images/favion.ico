@@ -1,0 +1,5 @@
+<svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <rect width="90%" height="90%" x="5%" y="5%" rx="2" ry="2" fill="rgb(255,72,165)" />
+  <rect width="70%" height="70%" x="15%" y="15%" rx="2" ry="2" fill="white" />
+  <rect width="50%" height="50%" x="25%" y="25%" rx="2" ry="2" fill="rgb(255,72,165)" /> 
+</svg>

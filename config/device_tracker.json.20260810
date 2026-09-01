@@ -1,0 +1,206 @@
+{
+    "MS21-A987": {
+        "metadata": {},
+        "history": []
+    },
+    "MS-21_SN445566A": {
+        "metadata": {
+            "name": "MS-21_SN445566A",
+            "classification": {
+                "class": "radiation",
+                "subclass": "pygeometer"
+            },
+            "device_manufacturer": {
+                "name": "EKO",
+                "address": "EKO Instruments Europe B.V. Lulofsstraat 55, Unit 28 2521 AL, Den Haag Netherlands",
+                "contact": ""
+            },
+            "device_model": {
+                "name": "MS-21",
+                "description": "Research-grade, accurate, and robust, the MS-21 measures longwave downwelling radiation and longwave net radiation in a wide spectral band and delivers superior stability independent of the sensors\u2019 operating temperature.",
+                "purchased": "2022-01-01T12:00:00Z",
+                "serial": "SN445566A"
+            },
+            "owner": {
+                "name": "TROPOS",
+                "address": "",
+                "contact": "x@tropos.de"
+            },
+            "created": "2026-08-07T10:51:42Z"
+        },
+        "history": [
+            {
+                "startdate": "2024-09-24T12:12:12Z",
+                "stopdate": "2024-12-01T00:12:12Z",
+                "created": "2026-08-07T10:55:08Z",
+                "uuid": "749fad88-924e-11f1-8e1c-cc2f71a772c7",
+                "platform": [
+                    "TARO"
+                ],
+                "location": {
+                    "name": "Melpitz",
+                    "country": "Germany",
+                    "lat": 50,
+                    "lon": 12,
+                    "is_mobile": false
+                },
+                "calibration": {
+                    "calibration_performed_by": "Peter Kloid",
+                    "calibration_performed_at": "DWD",
+                    "calibration_created": "2024-08-03T12:12:12Z",
+                    "calibration_timespan_valid": [
+                        "2024-08-03T12:12:12Z",
+                        "2028-08-03T12:12:12Z"
+                    ],
+                    "calibration_description": "description",
+                    "calibration_method": "cross WMO43/1",
+                    "calibration_reference": "alpha",
+                    "calibration_values": [
+                        122,
+                        3.34e-05
+                    ]
+                }
+            },
+            {
+                "startdate": "2025-01-24T12:12:12Z",
+                "stopdate": "2025-05-01T00:12:12Z",
+                "created": "2026-08-07T10:55:08Z",
+                "uuid": "749faf2c-924e-11f1-8e1c-cc2f71a772c7",
+                "campaign": "C3SAR",
+                "location": {
+                    "name": "Falkenberg",
+                    "country": "Germany",
+                    "lat": 50,
+                    "lon": 12,
+                    "is_mobile": false
+                },
+                "calibration": {
+                    "calibration_link": "http://"
+                }
+            }
+        ]
+    },
+    "MS-80_SNABCD22": {
+        "metadata": {
+            "name": "MS-80_SNABCD22",
+            "classification": {
+                "class": "radiation",
+                "subclass": "pyranometer"
+            },
+            "device_manufacturer": {
+                "name": "EKO",
+                "address": "EKO Instruments Europe B.V. Lulofsstraat 55, Unit 28 2521 AL, Den Haag Netherlands",
+                "contact": ""
+            },
+            "device_model": {
+                "name": "MS-80",
+                "description": "An ISO9060:2018 Class A solar sensor in the top tier \u2018fast-response and \u2018spectrally flat\u2019 sub-categories, with unprecedented low zero-offset behaviour, and a 5-year recalibration interval.",
+                "purchased": "2024-01-21T12:00:00Z",
+                "serial": "SNABCD22"
+            },
+            "owner": {
+                "name": "TROPOS",
+                "address": "",
+                "contact": "x@tropos.de"
+            },
+            "created": "2026-08-07T10:51:42Z"
+        },
+        "history": [
+            {
+                "startdate": "2023-09-24T12:12:12Z",
+                "stopdate": "2023-12-01T00:12:12Z",
+                "created": "2026-08-07T13:46:30Z",
+                "uuid": "64cb5bb0-9266-11f1-a1c5-cc2f71a772c7",
+                "platform": [
+                    "TARO"
+                ],
+                "location": {
+                    "name": "Mindelo",
+                    "country": "Cabo Verde",
+                    "lat": -5,
+                    "lon": -5,
+                    "is_mobile": false
+                },
+                "calibration": {
+                    "calibration_link": "http://"
+                }
+            },
+            {
+                "startdate": "2024-01-24T12:12:12Z",
+                "stopdate": "2024-12-01T00:12:12Z",
+                "created": "2026-08-07T13:46:30Z",
+                "uuid": "64cb5c46-9266-11f1-a1c5-cc2f71a772c7",
+                "platform": [
+                    "TARO"
+                ],
+                "location": {
+                    "name": "Melpitz",
+                    "country": "Germany",
+                    "lat": 50,
+                    "lon": 13,
+                    "is_mobile": false
+                },
+                "calibration": {
+                    "calibration_link": "http://"
+                }
+            },
+            {
+                "startdate": "2025-01-01T12:12:12Z",
+                "stopdate": "2025-12-01T00:12:12Z",
+                "created": "2026-08-07T13:46:30Z",
+                "uuid": "64cb5cbe-9266-11f1-a1c5-cc2f71a772c7",
+                "platform": [
+                    "TARO"
+                ],
+                "location": {
+                    "name": "Mindelo",
+                    "country": "Cabo Verde",
+                    "lat": -5,
+                    "lon": -5,
+                    "is_mobile": false
+                },
+                "calibration": {
+                    "calibration_link": "http://"
+                }
+            },
+            {
+                "startdate": "2025-12-15T12:12:12Z",
+                "stopdate": "2026-02-02T00:12:12Z",
+                "created": "2026-08-07T13:46:30Z",
+                "uuid": "64cb5dae-9266-11f1-a1c5-cc2f71a772c7",
+                "campaign": "PS127",
+                "platform": [
+                    "Polarstern",
+                    "OCEANET"
+                ],
+                "location": {
+                    "name": "POLARSTERN cruise PS152",
+                    "description": "Master tracks in different resolutions of POLARSTERN cruise PS152",
+                    "track_url": "https://doi.pangaea.de/10.1594/PANGAEA.993941?format=textfile",
+                    "track_desc": "",
+                    "is_mobile": true
+                },
+                "calibration": {
+                    "calibration_link": "http://"
+                }
+            },
+            {
+                "startdate": "2026-05-01T12:12:12Z",
+                "stopdate": "2026-08-01T00:12:12Z",
+                "created": "2026-08-07T13:47:29Z",
+                "uuid": "88292768-9266-11f1-97c9-cc2f71a772c7",
+                "campaign": "C3SAR",
+                "location": {
+                    "name": "Falkenberg",
+                    "country": "Germany",
+                    "lat": 53,
+                    "lon": 12,
+                    "is_mobile": false
+                },
+                "calibration": {
+                    "calibration_link": "http://"
+                }
+            }
+        ]
+    }
+}

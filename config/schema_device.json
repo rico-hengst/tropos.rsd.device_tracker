@@ -1,0 +1,64 @@
+{
+    "title": "Device record",
+    "description": "Device record",
+    "type": "object",
+    "properties": {
+        "metadata"      : { "$ref": "#/$defs/metadata" },
+        "history"       : { "type": "array"  },
+        "calibration"   : { "type": "array" }
+    },
+    "required" : ["metadata"],
+    "additionalProperties": false,
+    "$defs": { 
+        "metadata": {     
+            "type": "object",      
+            "properties": {       
+                "name"                      : { "type": "string" },  
+                "description"               : { "type": "string" },  
+                "created"                   : { "type": "string","format": "date-time" },
+                "class"                     : { "type": "array" },
+                "device_manufacturer"       : { "$ref": "#/$defs/device_manufacturer"  },
+                "device_model"              : { "$ref": "#/$defs/device_model" },
+                "owner"                     : { "$ref": "#/$defs/owner" }
+            },      
+            "required": ["name", "classification", "created"],
+            "additionalProperties": false
+        },
+        "device_manufacturer": {     
+            "type": "object",      
+            "properties": {       
+                "name"                      : { "type": "string" },  
+                "address"                   : { "type": "string" },  
+                "contact"                   : { "type": "string" }
+            },      
+            "required": ["name"],
+            "additionalProperties": false
+        },
+        "device_model": {      
+            "type": "object",      
+            "properties": {        
+                "name"                      : { "type": "string" },  
+                "description"               : { "type": "string" },  
+                "parameters"                : { "type": "array"  },
+                "serial"                    : { "type": "object" },
+                "purchased"                 : { "type": "string","format": "date-time" },
+                "pid"                       : { "type": "string" }
+            },      
+            "required": ["name"],
+            "additionalProperties": false
+        },
+        "owner": {      
+            "type": "object",      
+            "properties": {        
+                "name"                      : { "type": "string" },  
+                "address"                   : { "type": "string" },  
+                "contact"                   : { "type": "string" },
+                "pid"                       : { "type": "string" },
+                "inv"                       : { "type": "object" }
+            },      
+            "required": ["name"],
+            "additionalProperties": false
+        }
+        
+    }
+}

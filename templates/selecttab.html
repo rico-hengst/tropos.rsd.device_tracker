@@ -61,11 +61,11 @@
                 </div>
                 
                 
-                <table class="table table-sm table-striped" id="device_tracker_table_id">
+                <table class="table table-sm table-striped small" id="device_tracker_table_id">
                     <thead class="table-dark">
                         <tr>
                             <th scope="col">Device</th>
-                            <th scope="col">Class/Subclass</th>
+                            <th scope="col">Class (hierarchical)</th>
                             <th scope="col">Calibration</th>
                             <th scope="col">History</th>
 
@@ -76,10 +76,42 @@
                         {% set length_history = device_dict.history|length %}
                             <tr>
                                 <th>{{ devicename }}</th>
-                                <td>{{ device_dict.metadata.classification.class }}/{{ device_dict.metadata.classification.subclass }}</td>
+                                <td>
+                                    {% for class in device_dict.metadata.class %} {{ class }} 
+                                        {% if not loop.last %} 
+                                            &rarr;
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
                                 <td>
                                     {% for calibration in device_dict.calibration %}
-                                        <span class="badge rounded-pill text-bg-info">{{ loop.index}}</span> valid period: {{ calibration.calibration_valid_period }}, <br> values: {{ calibration.calibration_values }}, method: {{ calibration.calibration_used_method }}, reference: {{ calibration.calibration_used_reference }}<br/>
+                                        <div class="card border-dark small ">
+                                            <div class="card-header">
+                                                Calibration <span class="badge rounded-pill text-bg-info">{{ loop.index}}</span>
+                                            </div>
+                                          <div class="card-body">
+                                            <table class="table table-sm small">
+                                                <tr>
+                                                    <td>valid period</td>
+                                                    <td>
+                                                        {% for my_date in calibration.calibration_valid_period %}
+                                                            {{my_date[0:10]}}
+                                                            {% if not loop.last %} &rarr; {% endif %}
+                                                        {%endfor%}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>values</td>
+                                                    <td>{{ calibration.calibration_values }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>method/reference</td>
+                                                    <td>{{ calibration.calibration_used_method }} / {{ calibration.calibration_used_reference }}</td>
+                                                </tr>
+
+                                            </table>
+                                          </div>
+                                        </div>
                                     {% endfor %}
                                 </td>
                                 <td>
@@ -89,20 +121,21 @@
                                             <div class="divTableRow">
                                                 <div class="divTableCell"  style="width:40%">{{ history.startdate[0:10]}} &rarr; {{ history.stopdate[0:10]}}</div>
                                                 <div class="divTableCell"  style="width:29%">
+                                                    
                                                     {% if history.location.is_mobile is defined %} 
-                                                        {% if history.location.is_mobile %} 
-                                                            <button type="button" class="btn btn-sm btn-secondary position-relative">is mobile
-                                                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light"><i class="material-icons text-success">done</i></span>
-                                                            </button>
-                                                            <br/>
-                                                        {% else %}
-                                                            <button type="button" class="btn btn-sm btn-secondary position-relative">is mobile
-                                                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light"><i class="material-icons text-danger">clear</i></span>
-                                                            </button>
-                                                            <br/>
-                                                        {% endif %}
+                                                        
+                                                        <abbr title="is mobile?">{{ history.location.name}}
+                                                            {% if history.location.is_mobile %} 
+                                                                <i class="material-icons text-success">done</i>
+                                                            {% else %}
+                                                                <i class="material-icons text-danger">clear</i>
+                                                            {% endif %}
+                                                        </abbr>
+                                                    {% else %}
+                                                        {{ history.location.name}}  
                                                     {% endif %}
-                                                    {{ history.location.name}} <sup><span class="badge rounded-pill text-bg-secondary">{{ history.location.country}}</span></sup> 
+                                                    <sup><span class="badge rounded-pill text-bg-secondary">{{ history.location.country}}</span></sup>
+                                                    
                                                 </div>
                                                 <div class="divTableCell"  style="width:29%">{{ history.campaign}}</div>
                                             </div>

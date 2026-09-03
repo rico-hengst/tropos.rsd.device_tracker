@@ -46,7 +46,7 @@ def select():
     your_requests = request.args.to_dict()
     
     if ("date" in your_requests):
-        print(type(request.args.getlist('date')))
+        #print(type(request.args.getlist('date')))
         your_requests["date"] = request.args.getlist('date')
     
 
@@ -60,7 +60,7 @@ def selectvis():
     your_requests = request.args.to_dict()
     
     if ("date" in your_requests):
-        print(type(request.args.getlist('date')))
+        #print(type(request.args.getlist('date')))
         your_requests["date"] = request.args.getlist('date')
     
     devices=selector.select_history( your_requests ).replace([np.nan], [None], regex=False).to_json()
@@ -72,7 +72,7 @@ def selectvis():
     if 'username' in session:
         username = session['username']
     
-    return render_template("selectvis.html",devices=devices, your_requests=your_requests, username=username, userroles=fhelper.get_roles(username))
+    return render_template("selectvis.html",devices=devices, your_requests=your_requests, user=fhelper.get_signed_user(username))
 
 
 # DT API TAB
@@ -81,7 +81,7 @@ def selecttab():
     your_requests = request.args.to_dict()
     
     if ("date" in your_requests):
-        print(type(request.args.getlist('date')))
+        #print(type(request.args.getlist('date')))
         your_requests["date"] = request.args.getlist('date')
     
     devices=selector.select_history( your_requests ).replace([np.nan], [None], regex=False).to_dict()
@@ -92,7 +92,7 @@ def selecttab():
         username = session['username']
         
 
-    return render_template("selecttab.html",devices=devices,your_requests=your_requests, username=username, userroles=fhelper.get_roles(username))
+    return render_template("selecttab.html",devices=devices,your_requests=your_requests, user=fhelper.get_signed_user(username))
     
 
 
@@ -112,7 +112,7 @@ def add_device():
             flash('Sorry, this page is admin only restricted', 'info')
             return redirect(url_for(referrer))
         else:
-            return render_template("add_device.html",devicccces=devices,your_requests=your_requests, username=username, userroles=fhelper.get_roles(username))
+            return render_template("add_device.html",classes0=selector.get_lookup_content("classes0"), user=fhelper.get_signed_user(username))
         
     
 
@@ -146,7 +146,7 @@ def handle_login():
             flash('Login successful!', 'info')
             
             username = session['username']
-            return render_template('index.html', username=username, userroles=fhelper.get_roles(username))
+            return render_template('index.html', user=fhelper.get_signed_user(username))
         else:
             # Failed authentication
             error = 'Invalid username or password'
@@ -159,11 +159,10 @@ def handle_login():
 def index():
     if 'username' in session:
         username = session['username']
-        return render_template('index.html', username=username, userroles=fhelper.get_roles(username))
+        return render_template('index.html', user=fhelper.get_signed_user(username))
     else:
         #flash('Please login first', 'error')
         #return redirect(url_for('login'))
-        print("22")
         return render_template('index.html')
 
 # Logout route

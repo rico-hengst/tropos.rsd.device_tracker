@@ -48,19 +48,19 @@
                 <p>Supported keys: (the <samp>|</samp> is used to separate the typical examples from CAR and Lidar Teams)</p>
 
                 <ul>
-                <li>device (substing match), eg: <samp>device=ms-80|arielle</samp> 
+                <li>device (substring match), eg: <samp>device=ms-80|arielle</samp> 
                     {% set url2 = "?device=ms-80" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
-                <li>class (substing match), eg: <samp>class=radiation|lidar</samp>
-                    {% set url2 = "?class=radiation" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
-                <li>subclass (substing match), eg: <samp>subclass=pygeometer|pollyxt</samp>
-                    {% set url2 = "?subclass=pyranometer" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
-                <li>locationname (substing match), eg: <samp>locationname=melpitz</samp>
+                <li>class (substring match), eg: <samp>class=radiation|lidar|polly|pygeometer (all class keyword of any level)</samp>
+                    {% set url2 = "?class=poll" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                <li>class0 (substring match), eg: <samp>class0=lidar|radar|radiation</samp>
+                    {% set url2 = "?class0=radiation" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                <li>locationname (substring match), eg: <samp>locationname=melpitz</samp>
                     {% set url2 = "?locationname=melpitz" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
-                <li>country (substing match), eg: <samp>country=Germany</samp>
+                <li>country (substring match), eg: <samp>country=Germany</samp>
                     {% set url2 = "?country=Germany" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
-                <li>campaign (substing match), eg: <samp>campaign=C3SAR|PS127</samp>
+                <li>campaign (substring match), eg: <samp>campaign=C3SAR|PS127</samp>
                     {% set url2 = "?campaign=C3SAR" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
-                <li>platform (substing match) provided as list separated by comma eg: <samp>platform=LACROS,TARO|Polarstern,OCEANET</samp>
+                <li>platform (substring match) provided as list separated by comma eg: <samp>platform=LACROS,TARO|Polarstern,OCEANET</samp>
                     {% set url2 = "?platform=Polarstern" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
                 <li>date (exact format 2022-01-01T12:00:00Z), provided as list with one or two elements separated by comma eg:
                     <ul>

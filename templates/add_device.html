@@ -1,0 +1,293 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+/* Override Bootstrap's placeholder styles */
+.form-control::placeholder,
+.form-select::placeholder,
+textarea::placeholder,
+input::placeholder {
+  font-family: "Liberation Mono", monospace !important;
+  color: blue !important;
+  opacity: 0.6 !important;
+}
+</style>
+    <div class="container">
+        <div class="row py-3">
+            <div class="col-12 border rounded p-3">
+                <h2>Add device</h2>
+<pre><code>
+"metadata": {
+      "class": [
+        "radiation",
+        "pyranometer"
+      ],
+      "created": "2026-08-10T06:54:58Z",
+      "device_manufacturer": {
+        "address": "EKO Instruments Europe B.V. Lulofsstraat 55, Unit 28 2521 AL, Den Haag Netherlands",
+        "contact": "",
+        "name": "EKO"
+      },
+      "device_model": {
+        "description": "An ISO9060:2018 Class A solar sensor in the top tier \u2018fast-response and \u2018spectrally flat\u2019 sub-categories, with unprecedented low zero-offset behaviour, and a 5-year recalibration interval.",
+        "name": "MS-80",
+        "purchased": "2024-01-21T12:00:00Z",
+        "serial": {
+            "serial1": "SNABCD22"
+        },
+      "name": "MS-80_SNABCD22",
+      "owner": {
+        "address": "",
+        "contact": "x@tropos.de",
+        "name": "TROPOS",
+        "inv": {
+             "TROPOSID":"2022-03-00ABC",
+             "ID_2": "HJK88999"
+         }
+      }
+</code></pre>
+
+            </div>
+            
+            <div class="col-12 border rounded p-3">
+                <form method="post"     enctype = "multipart/form-data" action="{{ url_for('index') }}">
+                    
+                    
+                <div class="row">
+                    <div class="col-3 p-1">
+                        <div class="card">
+                            <div class="card-header">
+                                <b>General info</b>
+                            </div>
+                            <div class="card-body">
+                                <div focus="exampleFormControlInput1"></div>
+                        
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput1" class="form-label">Device name @ device tracker</label>
+                                    <input name="metadata.name" class="form-control form-control-sm" id="exampleFormControlInput1" placeholder="e.g: hatpro_g123 | ms80_123" 
+                                        pattern="[a-zA-Z\d_\-]*" title="Only [a-zA-Z\d_\-] are accepted" type="text" required>
+                                </div>
+                                
+                                
+                                <label class="form-label">Device class @ device tracker</label>
+                                <select name="metadata.class0" class="form-select form-select-sm" aria-label="Small select example" required>
+                                    <option value=""></option>
+                                    {% for class0 in classes0 %}
+                                        {% if class0 in user.class_edit_roles %}
+                                            <option value="" disabled>{{class0}} (not access rights)</option>
+                                        {% else %}
+                                            <option value="{{class0}}">{{class0}}</option>
+                                        {% endif %}
+                                    {% endfor%}
+                                </select>
+                                
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput2" class="form-label">Device subclass @ device tracker</label>
+                                    <input name="metadata.class1" class="form-control form-control-sm" id="exampleFormControlInput2" placeholder="e.g: hatpro | pyranometer" 
+                                        pattern="[a-zA-Z\d_\-]*" title="Only [a-zA-Z\d_\-] are accepted" type="text" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-3 p-1">
+                        <div class="card">
+                            <div class="card-header">
+                                <b>Device manufacturer</b>
+                            </div>
+                            <div class="card-body">
+                        
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput3" class="form-label">Device manufacturer name</label>
+                                    <input name="metadata.device_manufacturer.name" class="form-control form-control-sm" id="exampleFormControlInput3" placeholder="e.g: Radiometer Physics | EKO" 
+                                         type="text" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput4" class="form-label">Device manufacturer address</label>
+                                    <input name="metadata.device_manufacturer.address" class="form-control form-control-sm" id="exampleFormControlInput4" placeholder="e.g: " 
+                                         type="text" >
+                                </div>
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput5" class="form-label">Device manufacturer contact</label>
+                                    <input name="metadata.device_manufacturer.contact" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: email, telefon, url" 
+                                         type="text" >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3 p-1">
+                        <div class="card">
+                            <div class="card-header">
+                                <b>Device model</b>
+                            </div>
+                            <div class="card-body">
+                        
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput6" class="form-label">Device model name</label>
+                                    <input name="metadata.device_model.name" class="form-control form-control-sm" id="exampleFormControlInput6" placeholder="e.g: HATPRO-G5 | MS-80" 
+                                         type="text" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput7" class="form-label">Device model description</label>
+                                    <input name="metadata.device_model.description" class="form-control form-control-sm" id="exampleFormControlInput7" placeholder="e.g: " 
+                                         type="text" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput8" class="form-label">Device model purchase date</label>
+                                    <input name="metadata.device_model.purchased" class="form-control form-control-sm" id="exampleFormControlInput8" placeholder="e.g: 2020-09-18" 
+                                         type="text" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInpudddt8" class="form-label">Device model serial number</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control form-control-sm" placeholder="Description" aria-label="Username">
+                                        <span class="input-group-text" style="padding:0">@</span>
+                                        <input type="text" class="form-control form-control-sm" placeholder="Serial" aria-label="Server">
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3 p-1">
+                        <div class="card">
+                            <div class="card-header">
+                                <b>Device owner</b>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput9" class="form-label">Device owner name</label>
+                                    <input name="metadata.owner.name" class="form-control form-control-sm" id="exampleFormControlInput10" placeholder="e.g: TROPOS" 
+                                         type="text" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput11" class="form-label">Device owner address</label>
+                                    <input name="metadata.owner.address" class="form-control form-control-sm" id="exampleFormControlInput11" placeholder="e.g: Country, postal code, city etc" 
+                                         type="text" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput13" class="form-label">Device owner contact</label>
+                                    <input name="metadata.owner.contact" class="form-control form-control-sm" id="exampleFormControlInput13" placeholder="e.g: email, telefon number etc." 
+                                         type="text" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput14" class="form-label">Device model serial number</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control form-control-sm" placeholder="Description" aria-label="Username" id="exampleFormControlInput14">
+                                        <span class="input-group-text" style="padding:0">@</span>
+                                        <input type="text" class="form-control form-control-sm" placeholder="Serial" aria-label="Server">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                    <div class="col-12 p-1 text-end">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                    
+                </div>
+                </form>
+                
+
+            </div>
+        </div>
+        
+    </div>
+    
+    
+{% endblock %}
+
+{% block javascript %}
+<script>
+    // append info to all form labels, if form elements are required
+    // important: form elements must have an id:: id="exampleFormControlInput11"
+    // important: label must have an for to the related form element id: for="exampleFormControlInput11"
+    function addRequiredIconToRequiredLabels(formSelector) {
+      // Determine the scope: specific form if selector provided, or entire document
+      const scope = formSelector ? document.querySelector(formSelector) : document;
+      
+      if (!scope) return;
+
+      // Select all required form controls: inputs, selects, textareas
+      const requiredControls = scope.querySelectorAll('input[required], select[required], textarea[required]');
+
+      requiredControls.forEach(control => {
+        let label = null;
+
+        // 1. If the control has an 'id', look for a label with matching 'for' attribute
+        if (control.id) {
+          label = scope.querySelector(`label[for="${control.id}"]`);
+        } 
+        // 2. For checkboxes/radios without an ID, look for a label that wraps the element
+        else if ((control.type === 'checkbox' || control.type === 'radio')) {
+          const closestLabel = control.closest('label');
+          if (closestLabel) label = closestLabel;
+        }
+
+        // Proceed only if a label is found and it doesn't already contain the specific icon
+        if (label && !label.querySelector('abbr')) {
+          // Create the <abbr> element
+          const abbr = document.createElement('abbr');
+          abbr.title = 'Required form field!';
+          abbr.textContent = ''; // No text content inside abbr, just the icon
+
+          // Create the <i> element for the icon
+          const icon = document.createElement('i');
+          icon.className = 'material-icons';
+          icon.textContent = 'sports_volleyball';
+
+          // Append a space and the abbreviation to the label
+          label.appendChild(document.createTextNode(' '));
+          label.appendChild(abbr);
+          abbr.appendChild(icon);
+        }
+      });
+    }
+
+    // Execute when the DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      // Option A: Run for the entire page
+      addRequiredIconToRequiredLabels();
+
+      // Option B: Run only for a specific form
+      // addRequiredIconToRequiredLabels('#mySpecificForm');
+    });
+    
+    
+    
+    function setupAutoCopy(inputId, focosId) {
+      const input = document.getElementById(inputId);
+
+      if (!input) {
+        console.warn(`No input found with id="${inputId}"`);
+        return false;
+      }
+
+      // Function to perform the copy
+      function copyContent() {
+        const target = document.querySelector(`[focus="${focusId}"]`);
+        if (target) {
+          target.textContent = input.value;
+        }
+      }
+
+      // Attach event listener for real-time updates
+      input.addEventListener('input', copyContent);
+      
+      // Optional: Run once on setup to handle any pre-existing value
+      copyContent();
+      
+      return true;
+    }
+</script>
+{% endblock %}
+

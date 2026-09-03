@@ -139,12 +139,13 @@
                                     {% endif %}
                             </ul>
                             
-                            {% if userroles %}
-                                {% if userroles[username] %}
+                            {% if user %}
+                      
                                 <div class="">
                                     
                                     <div class="input-group">
-                                        {% if username == "admin" %}
+                                        {% if user.username == "admin" %}
+                                            <a class="btn btn-secondary text-white" href="{{ url_for('add_device') }}" role="button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Add new device"><i class="material-icons">add_box</i></a>
                                             <a class="btn btn-secondary text-white" href="{{ url_for('register') }}" role="button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Register new user"><i class="material-icons">plus_one</i></a>
                                         {% endif %}
                                         <div class="btn btn-outline-secondary text-white" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Username"><i class="material-icons">account_box</i> {{username}}</div>
@@ -153,7 +154,7 @@
                                     </div>
 
                                 </div>
-                                {% endif %}
+                            
                             {% else %}
                                 <div>
                                     <a class="btn btn-secondary text-white" href="{{ url_for('login') }}" role="button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Login"><i class="material-icons">login</i></a>

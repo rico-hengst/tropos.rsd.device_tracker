@@ -98,8 +98,7 @@ Object.values(rawData).forEach(device => {
         start: new Date(record.startdate),
         stop: new Date(record.stopdate),
         campaign: record.campaign || "N/A",
-        class: device.metadata.classification ? device.metadata.classification.class : "N/A",
-        subclass: device.metadata.classification ? device.metadata.classification.subclass : "N/A",
+        class: device.metadata.class ? device.metadata.class.join("&rarr;") : "N/A",
       });
     });
   }
@@ -261,8 +260,8 @@ const bars = svg.selectAll(".bar")
                     <td>${d.stop.toISOString()}</td>
                 </tr>
                 <tr>
-                    <td>Classification</td>
-                    <td>${d.class} / ${d.subclass}</td>
+                    <td>Class</td>
+                    <td>${d.class}</td>
                 </tr>
             </tbody>
         </table>

@@ -176,11 +176,12 @@ def get_roles(username):
         return None
     else:
         return ({ 
-            username : {
-                "class_edit_roles" : user["class_edit_roles"] if "class_edit_roles" in user else [] , 
-                "access" : user["access"] if "access" in user else None
-            }
+            "username"          : username,
+            "class_edit_roles"  : user["class_edit_roles"] if "class_edit_roles" in user else [] , 
+            "access"            : user["access"] if "access" in user else None
         })
-    print(find_user(username))
-
-        
+    
+# get_signed_user
+def get_signed_user(username):
+    
+    return get_roles(username)

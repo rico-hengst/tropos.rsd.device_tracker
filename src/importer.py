@@ -73,7 +73,7 @@ def main():
                 file.seek(0)
                 json.dump(device_tracker, file, indent=4)
             else:
-                logging.info("Skip device reord: " + device + ", record already exists")
+                logging.warning("Skip device record: " + device + ", record already exists")
 
     return Jresponse
     
@@ -117,6 +117,35 @@ def get_device_history(history_schema, history):
         # replace nan
         history_record["campaign"]  = re.sub(r"^nan$", "", history_record["campaign"] )
         
+        # set elevation
+        elevations = {
+            "Cabau":-1,
+            "Hyytiala":150,
+            "Jülich":111,
+            "Leipzig":126,
+            "Lindenberg":104,
+            "Melpitz":86,
+            "Mindelo":13,
+            "Neumayer III":43,
+            "Warsaw":111,
+            "Davos":1630,
+            "Eriswil":921,
+            "Evora":293,
+            "Falkenberg":73,
+            "Finokalia":297,
+            "Invercargill":5,
+            "Punta Arenas":9,
+            "Antikythera":193,
+            "Athens":212,
+            "Dushanbe":864,
+            "Hohenpeissenberg":974,
+            "Manaus":109,
+            "Nicosia":180,
+            "Tel_Aviv":5,
+            "Thessaloniki":50,
+            "Limassol":10
+        }
+        
         new_history_record = {
             "uuid":         history_record["uuid"],
             "startdate":    history_record["startdate"] + "T00:00:01Z",
@@ -131,6 +160,12 @@ def get_device_history(history_schema, history):
             
         }
         
+        # add elevation
+        if city:
+            if city in elevations:
+                new_history_record["location"]["elevation"] = elevations[city]
+                
+        # add country
         if country in enum_countries:
             new_history_record["location"]["country"] = country
         else:
@@ -196,26 +231,35 @@ def get_device_history(history_schema, history):
     
     
 def get_device_record(device_schema, device_dict):
+    
+    # distinguish between device and platform
+    is_platform = False
+    if re.match("taro_", device_dict["device"] , re.IGNORECASE) or re.match("mordor_", device_dict["device"] , re.IGNORECASE):
+        is_platform = True
+        
     # create new record
     new_device_record = {
         "metadata": {
             "name"                      : device_dict["device"],  
             "description"               : "",  
+            "is_platform"               : is_platform,
             "created"                   : datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "classification"            : {
-                "class"     :   device_dict["class"],
-                "subclass"  :   device_dict["type"],
-            },
+            "class"                     : [ device_dict["class"],  device_dict["type"] ],
             "device_manufacturer"       : { "name" : "" },
             "device_model"              : { 
                 "name"  : "",
-                "pid"   : device_dict["pid"]
+                "pid"   : device_dict["pid"],
+                "serial": {}
              },
-            "owner"                     : { "name" : "" }
+            "owner"                     : { 
+                "name" : "",
+                "inv"  : {}
+            }
         },
         "history": [],
         "calibration" : []
     }
+    #print(new_device_record)
     
     # validation
     

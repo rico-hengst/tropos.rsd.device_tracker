@@ -15,13 +15,14 @@
             "properties": {       
                 "name"                      : { "type": "string" },  
                 "description"               : { "type": "string" },  
+                "is_platform"               : { "type": "boolean"},
                 "created"                   : { "type": "string","format": "date-time" },
                 "class"                     : { "type": "array" },
                 "device_manufacturer"       : { "$ref": "#/$defs/device_manufacturer"  },
                 "device_model"              : { "$ref": "#/$defs/device_model" },
                 "owner"                     : { "$ref": "#/$defs/owner" }
             },      
-            "required": ["name", "classification", "created"],
+            "required": ["name", "class", "created", "is_platform"],
             "additionalProperties": false
         },
         "device_manufacturer": {     

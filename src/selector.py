@@ -122,19 +122,23 @@ def filter_created(data,my_filter):
             else:
                 logging.info("#### Non match device pattern: " + device_column_name, " -- delete device column")
                 data.drop(device_column_name, axis=1, inplace=True)
-                
+    # search full array of class
     if("class" in my_filter):
         for device_column_name in list(data.columns):
-            if ( keys_exists(data[device_column_name].to_dict(),"metadata","classification","class") and re.match(my_filter["class"], data[device_column_name]["metadata"]["classification"]["class"], flags=re.IGNORECASE) ):
+
+
+            if ( keys_exists(data[device_column_name].to_dict(),"metadata","class") and re.search( my_filter["class"], " ".join( data[device_column_name]["metadata"]["class"] ), flags=re.IGNORECASE) ):
                 logging.info("#### Match class pattern: " + device_column_name, "matches the class pattern")
             else:
-                logging.info("#### Non match class pattern: " + device_column_name, " -- delete device column")
+                logging.info("#### Non match class pattern: " + device_column_name + " -- delete device column")
                 data.drop(device_column_name, axis=1, inplace=True)
+            
+            
 
                 
-    if("subclass" in my_filter):
+    if("class0" in my_filter):
         for device_column_name in list(data.columns):
-            if (  keys_exists(data[device_column_name].to_dict(),"metadata","classification","subclass") and re.match(my_filter["subclass"], data[device_column_name]["metadata"]["classification"]["subclass"], flags=re.IGNORECASE) ):
+            if (  keys_exists(data[device_column_name].to_dict(),"metadata","class") and re.match(my_filter["class0"], data[device_column_name]["metadata"]["class"][0], flags=re.IGNORECASE) ):
                 logging.info("#### Match subclass pattern: " + device_column_name)
             else:
                 logging.info("#### Non match subclass pattern: " + device_column_name, " -- delete device column")
@@ -280,10 +284,11 @@ def filter_created(data,my_filter):
 
 def select_history(my_filter):
     # read json file
-    pp.pprint(my_filter)
+    
     json_file= "../config/device_tracker.json"
     json_file= "../config/device_tracker_imported.json"
     logging.info("## Start query from json_file: " + json_file)
+    logging.info(" requested filter: " + str(my_filter))
     
     with open(json_file, "r+") as file:
         device_tracker = json.load(file)
@@ -326,6 +331,69 @@ def select_history(my_filter):
     return filtered_data
     
 
+# get unique list of
+# * locations (nested dict) -> scan of all history records
+# * class(es) level0 -> scan of all metadata records
+def get_lookup_content(keyword):
+    json_file= "../config/device_tracker_imported.json"
+    logging.info("## Start get_lookup_content of " + keyword + ": " + json_file)
+    
+    with open(json_file, "r+") as file:
+        device_tracker = json.load(file)
+    file.close()
+
+    data = pd.DataFrame.from_dict(device_tracker)
+    logging.info("fefe" + str(sorted(list(data.columns))))
+    
+    
+    if keyword == "locations":
+        # store location in nested dict
+        locations = {}
+        
+        for device_column_name in list(data.columns):
+            for history_record in data[device_column_name]["history"]:
+                
+                # create tmp new history record: keep only name,country,lat,lon
+                new_history_record = {
+                    "name":history_record["location"]["name"],
+                }
+                for key in ["country","lat","lon"]:
+                    if key in history_record["location"]:
+                        new_history_record[key] = history_record["location"][key]
+                        
+                # check if location name exist
+                if new_history_record["name"] in locations:
+                    logging.info("location already exists: " + new_history_record["name"])
+                    
+                    # compare locations record and current history location record, stringify records and remove white space etc
+                    condensed_location = re.sub(r"[\n\t\s]*", "", str(locations[new_history_record["name"]]) )
+                    condensed_history_location = re.sub(r"[\n\t\s]*", "", str(new_history_record) )
+                    if not condensed_location == condensed_history_location:
+                        logging.warning("location can be different: " + new_history_record["name"])
+                        logging.warning(condensed_location)
+                        logging.warning(condensed_history_location)
+                    else:
+                        logging.info("... but it seem the records are equal")
+                else:
+                    locations[new_history_record["name"]] = new_history_record
+                    logging.info("add location: " + new_history_record["name"])
+        
+        return sorted(locations)
+    elif keyword == "classes0":
+        
+        # store classes0 in nested dict
+        classes0 = []
+        for device_column_name in list(data.columns):
+            class0 = data[device_column_name]["metadata"]["class"][0]
+            
+            if not class0 in classes0 and len(class0) > 0:
+                classes0.append(class0)
+                logging.info("add class: " + class0)
+        classes0.sort()
+                
+        return classes0
+        
+    logging.info("## Stop get_lookup_content of " + keyword + ": " + json_file)
 
 
 my_filter = {

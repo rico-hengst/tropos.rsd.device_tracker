@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+/* Override Bootstrap's placeholder styles */
+.form-control::placeholder,
+.form-select::placeholder,
+textarea::placeholder,
+input::placeholder {
+  font-family: "Liberation Mono", monospace !important;
+  font-size: 0.9em;
+  color: blue !important;
+  opacity: 0.4 !important;
+}
+</style>
+    <div class="container">
+        <div class="row py-3">
+
+            <div class="col-12">
+                Handle add device
+            </div>
+        </div>
+        
+    </div>
+    
+    
+{% endblock %}
+
+

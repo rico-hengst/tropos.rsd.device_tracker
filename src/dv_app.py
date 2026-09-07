@@ -20,6 +20,7 @@ import secrets
 
 
 import fhelper
+import update_device_tracker
 
 
 
@@ -115,7 +116,67 @@ def add_device():
             return render_template("add_device.html",classes0=selector.get_lookup_content("classes0"), user=fhelper.get_signed_user(username))
         
     
+# Handle add device, authorized admin only
+@app.route("/handle/add/device", methods=["GET"])
+def handle_add_device():
+    username = None
+    userroles = None
+    if not 'username' in session:
+        flash('Sorry, this page is admin only restricted, please login first', 'info')
+        return redirect(url_for("login"))
+    else:
+        username = session['username']
+        if not username == "admin":
+            referrer_url = request.referrer
+            print(request.headers.get("Referer"))
+            flash('Sorry, this page is admin only restricted', 'info')
+            return redirect(url_for(referrer))
+        else:
+            user=fhelper.get_signed_user(username)
+            
+            # requests
+            your_requests = request.args.to_dict()
+            # trim and delete empty form requests
+            #your_requests = fhelper.purify_dict(your_requests)
+            
+            # check requests step by step
+            if(your_requests["metadata.name"] in selector.get_lookup_content("devices")):
+                flash('Sorry, name of instrument already exists: ' + your_requests["metadata.name"], 'info')
+                exit()
+            if not (your_requests["metadata.class0"] in user["class_edit_roles"]):
+                flash('Sorry, you are not allowed to add devices with class: ' + your_requests["metadata.class0"], 'info')
+                exit()
+                
+            
+            update_device_tracker.add_device(your_requests)
 
+            
+            return render_template("handle_add_device.html",classes0=selector.get_lookup_content("classes0"), user=user)
+            
+
+# Add history, authorized admin only
+@app.route("/add/history", methods=["GET"])
+def add_history():
+    username = None
+    userroles = None
+    if not 'username' in session:
+        flash('Sorry, this page is admin only restricted, please login first', 'info')
+        return redirect(url_for("login"))
+    else:
+        username = session['username']
+        if not username == "admin":
+            referrer_url = request.referrer
+            print(request.headers.get("Referer"))
+            flash('Sorry, this page is admin only restricted', 'info')
+            return redirect(url_for(referrer))
+        else:
+            return render_template("add_history.html",classes0=selector.get_lookup_content("classes0"), user=fhelper.get_signed_user(username))
+            
+
+# Handle add device, authorized admin only
+@app.route("/handle/add/history", methods=["GET"])
+def handle_add_history():
+    print(2)
     
 ###################################### LOGIN STUFF
 # Route for the login page (GET only)

@@ -6,6 +6,8 @@ import secrets
 # Echoing password and masked with hashtag(#)
 import maskpass  # importing maskpass library
 
+import selector
+
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 USER_CREDENTIALS = BASE_DIR + "/config/users.json"
 
@@ -178,6 +180,7 @@ def get_roles(username):
         return ({ 
             "username"          : username,
             "class_edit_roles"  : user["class_edit_roles"] if "class_edit_roles" in user else [] , 
+            "devices"           :
             "access"            : user["access"] if "access" in user else None
         })
     
@@ -185,3 +188,31 @@ def get_roles(username):
 def get_signed_user(username):
     
     return get_roles(username)
+    
+    
+############
+#### input: dict (with values (list))
+#### return dict, delete list elements with "", delete key if list will be empty
+############
+def purify_dict(my_dict):
+    my_dict2={}
+    for my_key in my_dict:
+        i=-1
+        elements2pop = []
+        for list_element in my_dict[my_key]:
+            i=i+1
+            #print("key/element: " + my_key + "..." + list_element)
+            if(list_element.isspace() or list_element=="" ):
+                print("Remove list element: " + my_key)
+            else:
+                
+                if my_key in my_dict2:
+                    my_dict2[my_key].append(list_element)
+                    #print("my_dict2 key exists:" + my_key)
+                else:
+                    my_dict2[my_key] = [list_element]
+                    #print("my_dict2 key not exists:" + my_key)
+
+    return my_dict2
+
+############

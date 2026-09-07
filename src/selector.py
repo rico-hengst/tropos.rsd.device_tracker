@@ -392,6 +392,15 @@ def get_lookup_content(keyword):
         classes0.sort()
                 
         return classes0
+    elif keyword == "devices":
+        devices = []
+        for device_column_name in list(data.columns):
+            if not device_column_name in devices:
+                devices.append(device_column_name)
+                logging.info("add device: " + device_column_name)
+        devices.sort()
+        
+        return devices
         
     logging.info("## Stop get_lookup_content of " + keyword + ": " + json_file)
 

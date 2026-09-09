@@ -6,6 +6,7 @@ import uuid
 import datetime
 import os
 import re
+import numpy as np
 
 
 import pandas as pd
@@ -17,7 +18,7 @@ import selector
 
 
 def json_file():
-    json_file= "../config/device_tracker.json"
+    json_file= "../config/device_tracker_imported.json"
     if not os.path.isfile(json_file):
         logging.error("JSON not exists: " + json_file)
         json_file = None
@@ -112,11 +113,11 @@ def prepare_add_history(myrequests):
         # transform datetime objects
         if key_name == "history.startdate":
             date_object = datetime.datetime.strptime(myrequests["history.startdate"], '%Y-%m-%d %H:%M')
-            myrequests["history.startdate"] = date_object
+            myrequests["history.startdate"] = date_object.strftime("%Y-%m-%dT%H:%M:%SZ")
         
         if key_name == "history.stopdate":
             date_object = datetime.datetime.strptime(myrequests["history.stopdate"], '%Y-%m-%d %H:%M')
-            myrequests["history.stopdate"] = date_object
+            myrequests["history.stopdate"] = date_object.strftime("%Y-%m-%dT%H:%M:%SZ")
         
         # split to a list
         if key_name == "history.platform":
@@ -134,7 +135,9 @@ def prepare_add_history(myrequests):
                 myrequests[key_name] = []
             else:
                 cfs = myrequests[key_name].split(",")
-                myrequests[key_name] = [list(map(str.strip, l)) for l in myrequests[key_name]]
+                print(cfs)
+                print(2222)
+                myrequests[key_name] = [l.strip() for l in cfs]
 
                 
         # update location
@@ -148,6 +151,9 @@ def prepare_add_history(myrequests):
                     my_location["name"] = myrequests[key_name]
                     my_location["lat"] = locations[ myrequests[key_name] ][ "lat" ]
                     my_location["lon"] = locations[ myrequests[key_name] ][ "lon" ]
+                    
+                    if "elevation" in locations[ myrequests[key_name] ]:
+                        my_location["elevation"] = locations[ myrequests[key_name] ]["elevation"]
 
         else:
             print("mobile")
@@ -176,12 +182,25 @@ def prepare_add_history(myrequests):
         
     
     # check if dates are overlapped with further history records
+    devices=selector.select_history( {"device":myrequests["device"]} ).replace([np.nan], [None], regex=False).to_dict()
+    print(devices)
+    if "history" in devices[myrequests["device"]]:
+        for history in devices[myrequests["device"]]["history"]:
+            if myrequests["history.stopdate"] > history["startdate"] and myrequests["history.startdate"] < history["stopdate"]:
+                message = "On or multiple history record perios did intersect with start/stoptime of your record" + str(history) + " versus " + myrequests["history.startdate"] + " " + myrequests["history.stopdate"]
+                logging.warning(message)
+                return { 
+                    "message"           : {
+                        "type": "warning",
+                        "message": message
+                    } 
+                }
             
         
     
     my_history_new = {
-        "startdate"     : myrequests["history.startdate"].strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "stopdate"      : myrequests["history.stopdate"].strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "startdate"     : myrequests["history.startdate"],
+        "stopdate"      : myrequests["history.stopdate"],
         "created"       : datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "uuid"          : str(uuid.uuid1()),
         "campaign"      : myrequests["history.campaign"],
@@ -595,11 +614,11 @@ def add_history(myrequests):
         logging.debug(history_record_ready["return_ok"])
         
         
-        json_file= "../config/device_tracker.json"
-        with open(json_file, "r+") as file:
+        my_json_file = json_file()
+        with open(my_json_file, "r+") as file:
             device_tracker = json.load(file)
             
-            logging.info("Update json_file: " + json_file )
+            logging.info("Update json_file: " + my_json_file )
             
             if device in device_tracker.keys():
                 if "history" in device_tracker[device].keys():

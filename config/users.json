@@ -19,7 +19,8 @@
     },
     "test": {
       "password_hash": "sha256:076417e55a4393ebf04a14e2475f48eb4d6182bb985783f471b388cc1ce84970:da33f580e1fcbb1b17458ddd993765451d98fc87c078a69d47cc4d2369710e14",
-      "salt": "da33f580e1fcbb1b17458ddd993765451d98fc87c078a69d47cc4d2369710e14"
+      "salt": "da33f580e1fcbb1b17458ddd993765451d98fc87c078a69d47cc4d2369710e14",
+      "access" : "readwrite"
     }
   }
 }

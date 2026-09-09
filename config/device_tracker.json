@@ -1,224 +1,4 @@
 {
-    "MS21-A987": {
-        "metadata": {},
-        "history": [],
-        "calibration": []
-    },
-    "MS-80_SNABCD22": {
-        "metadata": {
-            "name": "MS-80_SNABCD22",
-            "classification": {
-                "class": "radiation",
-                "subclass": "pyranometer"
-            },
-            "device_manufacturer": {
-                "name": "EKO",
-                "address": "EKO Instruments Europe B.V. Lulofsstraat 55, Unit 28 2521 AL, Den Haag Netherlands",
-                "contact": ""
-            },
-            "device_model": {
-                "name": "MS-80",
-                "description": "An ISO9060:2018 Class A solar sensor in the top tier \u2018fast-response and \u2018spectrally flat\u2019 sub-categories, with unprecedented low zero-offset behaviour, and a 5-year recalibration interval.",
-                "purchased": "2024-01-21T12:00:00Z",
-                "serial": "SNABCD22"
-            },
-            "owner": {
-                "name": "TROPOS",
-                "address": "",
-                "contact": "x@tropos.de"
-            },
-            "created": "2026-08-10T06:54:58Z"
-        },
-        "history": [
-            {
-                "startdate": "2023-09-24T12:12:12Z",
-                "stopdate": "2023-12-01T00:12:12Z",
-                "created": "2026-08-10T07:03:54Z",
-                "uuid": "a66bd642-9489-11f1-ac24-cc2f71a772c7",
-                "platform": [
-                    "TARO"
-                ],
-                "location": {
-                    "name": "Mindelo",
-                    "country": "Cabo Verde",
-                    "lat": -5,
-                    "lon": -5,
-                    "is_mobile": false
-                }
-            },
-            {
-                "startdate": "2024-01-24T12:12:12Z",
-                "stopdate": "2024-12-01T00:12:12Z",
-                "created": "2026-08-10T07:03:54Z",
-                "uuid": "a66bd6ec-9489-11f1-ac24-cc2f71a772c7",
-                "platform": [
-                    "TARO"
-                ],
-                "location": {
-                    "name": "Melpitz",
-                    "country": "Germany",
-                    "lat": 50,
-                    "lon": 13,
-                    "is_mobile": false
-                }
-            },
-            {
-                "startdate": "2025-01-01T12:12:12Z",
-                "stopdate": "2025-12-01T00:12:12Z",
-                "created": "2026-08-10T07:03:54Z",
-                "uuid": "a66bd7d2-9489-11f1-ac24-cc2f71a772c7",
-                "platform": [
-                    "TARO"
-                ],
-                "location": {
-                    "name": "Mindelo",
-                    "country": "Cabo Verde",
-                    "lat": -5,
-                    "lon": -5,
-                    "is_mobile": false
-                }
-            },
-            {
-                "startdate": "2025-12-15T12:12:12Z",
-                "stopdate": "2026-02-02T00:12:12Z",
-                "created": "2026-08-10T07:03:54Z",
-                "uuid": "a66bd840-9489-11f1-ac24-cc2f71a772c7",
-                "campaign": "PS127",
-                "platform": [
-                    "Polarstern",
-                    "OCEANET"
-                ],
-                "location": {
-                    "name": "POLARSTERN cruise PS152",
-                    "description": "Master tracks in different resolutions of POLARSTERN cruise PS152",
-                    "track_url": "https://doi.pangaea.de/10.1594/PANGAEA.993941?format=textfile",
-                    "track_desc": "",
-                    "is_mobile": true
-                }
-            },
-            {
-                "startdate": "2026-05-01T12:12:12Z",
-                "stopdate": "2026-08-01T00:12:12Z",
-                "created": "2026-08-10T07:03:54Z",
-                "uuid": "a66bd8ae-9489-11f1-ac24-cc2f71a772c7",
-                "campaign": "C3SAR",
-                "location": {
-                    "name": "Falkenberg",
-                    "country": "Germany",
-                    "lat": 53,
-                    "lon": 12,
-                    "is_mobile": false
-                }
-            }
-        ],
-        "calibration": [
-            {
-                "calibration_description": "",
-                "calibration_performed_by": "Ak Hein",
-                "calibration_performed_at": "DWD",
-                "calibration_performed_period": [
-                    "2023-07-03T12:12:12Z",
-                    "2023-07-13T12:12:12Z"
-                ],
-                "calibration_record_created": "2024-08-03T12:12:12Z",
-                "calibration_used_method": "Kletter et al.",
-                "calibration_used_reference": "CPC",
-                "calibration_valid_period": [
-                    "2023-08-03T00:12:12Z",
-                    "2024-08-03T12:12:12Z"
-                ],
-                "calibration_values": [
-                    0.11992,
-                    -22.3,
-                    0.3
-                ]
-            },
-            {
-                "calibration_description": "",
-                "calibration_performed_by": "Dore Hwaptist",
-                "calibration_performed_at": "DWD",
-                "calibration_performed_period": [
-                    "2024-09-03T12:12:12Z",
-                    "2024-09-13T12:12:12Z"
-                ],
-                "calibration_record_created": "2026-08-03T12:12:12Z",
-                "calibration_used_method": "Kletter et al.",
-                "calibration_used_reference": "CPC",
-                "calibration_valid_period": [
-                    "2024-10-03T00:12:12Z",
-                    "2026-10-03T12:12:12Z"
-                ],
-                "calibration_values": [
-                    0.11972,
-                    -22.0,
-                    0.27
-                ]
-            }
-        ]
-    },
-    "MS-21_SN445566A": {
-        "metadata": {
-            "name": "MS-21_SN445566A",
-            "classification": {
-                "class": "radiation",
-                "subclass": "pygeometer"
-            },
-            "device_manufacturer": {
-                "name": "EKO",
-                "address": "EKO Instruments Europe B.V. Lulofsstraat 55, Unit 28 2521 AL, Den Haag Netherlands",
-                "contact": ""
-            },
-            "device_model": {
-                "name": "MS-21",
-                "description": "Research-grade, accurate, and robust, the MS-21 measures longwave downwelling radiation and longwave net radiation in a wide spectral band and delivers superior stability independent of the sensors\u2019 operating temperature.",
-                "purchased": "2022-01-01T12:00:00Z",
-                "serial": "SN445566A"
-            },
-            "owner": {
-                "name": "TROPOS",
-                "address": "",
-                "contact": "x@tropos.de"
-            },
-            "created": "2026-08-10T06:55:35Z"
-        },
-        "history": [
-            {
-                "startdate": "2024-09-24T12:12:12Z",
-                "stopdate": "2024-12-01T00:12:12Z",
-                "created": "2026-08-10T06:57:18Z",
-                "uuid": "ba12b22a-9488-11f1-9bcc-cc2f71a772c7",
-                "platform": [
-                    "TARO"
-                ],
-                "location": {
-                    "name": "Melpitz",
-                    "country": "Germany",
-                    "lat": 50,
-                    "lon": 12,
-                    "is_mobile": false
-                }
-            },
-            {
-                "startdate": "2025-01-24T12:12:12Z",
-                "stopdate": "2025-05-01T00:12:12Z",
-                "created": "2026-08-10T06:57:18Z",
-                "uuid": "ba12b40a-9488-11f1-9bcc-cc2f71a772c7",
-                "campaign": "C3SAR",
-                "location": {
-                    "name": "Falkenberg",
-                    "country": "Germany",
-                    "lat": 50,
-                    "lon": 12,
-                    "is_mobile": false
-                }
-            }
-        ],
-        "calibration": [
-            {
-                "calibration_link": "http://mycalibration.info"
-            }
-        ]
-    },
     "arielle": {
         "metadata": {
             "name": "arielle",
@@ -336,5 +116,43 @@
                 ]
             }
         ]
+    },
+    "fwefwef": {
+        "calibration": [],
+        "history": [],
+        "metadata": {
+            "name": "fwefwef",
+            "description": "",
+            "is_platform": false,
+            "created": "2026-09-07T13:40:18Z",
+            "class": [
+                "lidar",
+                "fefeffe"
+            ],
+            "device_manufacturer": {
+                "name": "efff",
+                "address": "",
+                "contact": ""
+            },
+            "device_model": {
+                "name": "effef",
+                "description": "efe",
+                "purchased": "",
+                "pid": "",
+                "serial": {
+                    "eee#1#": "tzirti8696",
+                    "eee#2#": "63"
+                }
+            },
+            "owner": {
+                "name": "efef",
+                "address": "",
+                "contact": "efefe",
+                "inv": {
+                    "78787#1#": "78778",
+                    "5665#2#": "89797"
+                }
+            }
+        }
     }
 }

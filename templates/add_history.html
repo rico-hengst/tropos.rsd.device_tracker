@@ -30,159 +30,149 @@ input::placeholder {
                                 <b>General info</b>
                             </div>
                             <div class="card-body">
-                                <div focus="exampleFormControlInput1"></div>
+                                
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput5" class="form-label">Device</label>
+                                    <select name="device" class="form-select form-select-sm" aria-label="Small select example" required>
+                                        <option value=""></option>
+                                        {% for device in devices %}
+                                            <option value="{{device}}">{{device}}</option>
+                                        {% endfor %}
+                                    </select>                                            
+                                </div>
                         
                                 <div class="mb-3">
-                                    <label for="exampleFormControlInput1" class="form-label">Device name @ device tracker</label>
-                                    <input name="metadata.name" class="form-control form-control-sm" id="exampleFormControlInput1" placeholder="e.g: hatpro_g123 | ms80_123" 
-                                        pattern="[a-zA-Z\d_\-]*" title="Only [a-zA-Z\d_\-] are accepted" type="text" required>
+                                    <label for="datetimepicker1" class="form-label">Start date</label>
+                                    <input name="history.startdate" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" 
+                                        id="datetimepicker1" type="text" required>
                                 </div>
                                 
-                                
-                                <label class="form-label">Device class @ device tracker</label>
-                                <select name="metadata.class0" class="form-select form-select-sm" aria-label="Small select example" required>
-                                    <option value=""></option>
-                                    {% for class0 in classes0 %}
-                                        {% if not class0 in user.class_edit_roles %}
-                                            <option value="" disabled>{{class0}} (no access right)</option>
-                                        {% else %}
-                                            <option value="{{class0}}">{{class0}}</option>
-                                        {% endif %}
-                                    {% endfor%}
-                                </select>
                                 
                                 <div class="mb-3">
-                                    <label for="exampleFormControlInput2" class="form-label">Device subclass @ device tracker</label>
-                                    <input name="metadata.class1" class="form-control form-control-sm" id="exampleFormControlInput2" placeholder="e.g: hatpro | pyranometer" 
-                                        pattern="[a-zA-Z\d_\-]*" title="Only [a-zA-Z\d_\-] are accepted" type="text" required>
+                                    <label for="datetimepicker2" class="form-label">Stop date</label>
+                                    <input name="history.stopdate" class="form-control form-control-sm" id="datetimepicker2" placeholder="e.g: 2099-12-31 23:59" 
+                                        id="datetimepicker2" type="text" required>
                                 </div>
                                 
-                                <div class="mb3">
-                                    <label class="form-label" for="switchCheckDefault">Device is a platform (default=false)</label>
-                                    <div class="form-check form-switch">
-                                        <input name="metadata.is_platform" class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput3" class="form-label">Campaign acronym</label>
+                                    <input name="history.campaign" class="form-control form-control-sm" id="exampleFormControlInput3" placeholder="e.g: PS127 | C3SAR" 
+                                        type="text">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput4" class="form-label">Platform (hierarchical list, comma separated)</label>
+                                    <input name="history.platform" class="form-control form-control-sm" id="exampleFormControlInput4" placeholder="e.g: Polarstern,OCEANET | TARO" 
+                                        type="text">
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-6 p-1">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between">
+                                    <div class=""><b>Location</b></div>
+                                    <div class="form-check form-switch" id="my_switch">
+                                        <label class="form-check-label" for="switchCheckDefault">is mobile</label>
+                                        <input name="history.location.is_mobile" class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                            <div class="card-body">
+                                
+                                
+                                
+                                <div class="row">
+                                    <div class="col-5 p-1 mx-2" id="my_static_location">
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput5" class="form-label">Location name</label>
+                                            <select name="history.location.name" class="form-select form-select-sm" aria-label="Small select example" required>
+                                                <option value=""></option>
+                                                {% for location in locations %}
+                                                    <option value="{{location}}">{{location}} ({{ locations[location]["country"] }}, {{ locations[location]["lat"] }}, {{ locations[location]["lon"] }})</option>
+                                                {% endfor %}
+                                            </select>                                            
+                                        </div>
+                                        
+<!--
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput6" class="form-label">Location description</label>
+                                            <input name="history.location.description" class="form-control form-control-sm" id="exampleFormControlInput6" placeholder="e.g: Grerald et. al" 
+                                                 type="text" >
+                                        </div>
+-->
                                     </div>
                                     
+                                    <div class="col-6  p-1 ms-4" id="my_mobile_location">
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput5" class="form-label">Mobile location name or label</label>
+                                            <input name="history.location.name" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: Polarstern track PS127" 
+                                                 type="text" required>
+                                        </div>
+                                        
+<!--
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput6" class="form-label">Mobile location description</label>
+                                            <input name="history.location.description" class="form-control form-control-sm" id="exampleFormControlInput6" placeholder="e.g: Grerald et. al" 
+                                                 type="text" required>
+                                        </div>
+-->
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput7" class="form-label">Track url</label>
+                                            <input name="history.location.track_url" class="form-control form-control-sm" id="exampleFormControlInput7" placeholder="e.g: " 
+                                                 type="text" >
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput5" class="form-label">Track description</label>
+                                            <input name="history.location.track_desc" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: email, telefon, url" 
+                                                 type="text" >
+                                        </div>
+                                    </div>
                                     
-                                  
                                 </div>
                                 
+                                
+                                
                             </div>
-                        </div>
-                        
+                        </div>                        
                     </div>
+                    
                     <div class="col-3 p-1">
                         <div class="card">
                             <div class="card-header">
-                                <b>Device manufacturer</b>
+                                <b>Pylarda</b>
                             </div>
                             <div class="card-body">
-                        
                                 <div class="mb-3">
-                                    <label for="exampleFormControlInput3" class="form-label">Device manufacturer name</label>
-                                    <input name="metadata.device_manufacturer.name" class="form-control form-control-sm" id="exampleFormControlInput3" placeholder="e.g: Radiometer Physics | EKO" 
-                                         type="text" required>
+                                    <label for="exampleFormControlInput26" class="form-label">Camp</label>
+                                    <input name="history.pylarda.camp" class="form-control form-control-sm" id="exampleFormControlInput26" placeholder="e.g: cv_oscm" 
+                                                 type="text" >
                                 </div>
+                                
                                 <div class="mb-3">
-                                    <label for="exampleFormControlInput4" class="form-label">Device manufacturer address</label>
-                                    <input name="metadata.device_manufacturer.address" class="form-control form-control-sm" id="exampleFormControlInput4" placeholder="e.g: " 
-                                         type="text" >
+                                    <label for="exampleFormControlInput27" class="form-label">System</label>
+                                    <input name="history.pylarda.system" class="form-control form-control-sm" id="exampleFormControlInput27" placeholder="e.g: ?" 
+                                                 type="text" >
                                 </div>
+                                
                                 <div class="mb-3">
-                                    <label for="exampleFormControlInput5" class="form-label">Device manufacturer contact</label>
-                                    <input name="metadata.device_manufacturer.contact" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: email, telefon, url" 
-                                         type="text" >
+                                    <label for="exampleFormControlInput28" class="form-label">Connector file (comma separated)</label>
+                                    <input name="history.pylarda.connectorfile" class="form-control form-control-sm" id="exampleFormControlInput28" placeholder="e.g: file1.json,file2.json" 
+                                                 type="text" >
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-3 p-1">
-                        <div class="card">
-                            <div class="card-header">
-                                <b>Device model</b>
-                            </div>
-                            <div class="card-body">
-                        
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput6" class="form-label">Device model name</label>
-                                    <input name="metadata.device_model.name" class="form-control form-control-sm" id="exampleFormControlInput6" placeholder="e.g: HATPRO-G5 | MS-80" 
-                                         type="text" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput7" class="form-label">Device model description</label>
-                                    <input name="metadata.device_model.description" class="form-control form-control-sm" id="exampleFormControlInput7" placeholder="e.g: " 
-                                         type="text" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput8" class="form-label">Device model purchase date</label>
-                                    <input name="metadata.device_model.purchased" class="form-control form-control-sm" id="exampleFormControlInput8" placeholder="e.g: 2020-09-18" 
-                                         type="text" >
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput9" class="form-label">Device pid (identifier to external reference)</label>
-                                    <input name="metadata.device_model.pid" class="form-control form-control-sm" id="exampleFormControlInput9" placeholder="e.g: https://registry.o2a-data.de/items/4438" 
-                                         type="text" >
-                                </div>
-                                
-                                <div class="">
-                                    <label for="" class="form-label">Device serial number(s)</label>
-                                </div>
-                                <!-- Container where inputs will be added -->
-                                <!-- Button to trigger the append -->
-                                <div id="container_serial">
-                                </div>
-                                <button  type="button" class="btn btn-sm btn-outline-dark mt-2"id="btn1"><i class="material-icons">add_box</i> Add serial number</button>
-                                
-                                
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3 p-1">
-                        <div class="card">
-                            <div class="card-header">
-                                <b>Device owner</b>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput10" class="form-label">Device owner name</label>
-                                    <input name="metadata.owner.name" class="form-control form-control-sm" id="exampleFormControlInput10" placeholder="e.g: TROPOS" 
-                                         type="text" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput11" class="form-label">Device owner address</label>
-                                    <input name="metadata.owner.address" class="form-control form-control-sm" id="exampleFormControlInput11" placeholder="e.g: Country, postal code, city etc" 
-                                         type="text">
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput13" class="form-label">Device owner contact</label>
-                                    <input name="metadata.owner.contact" class="form-control form-control-sm" id="exampleFormControlInput13" placeholder="e.g: email, telefon number etc." 
-                                         type="text" required>
-                                </div>
-                               
-                                
-                                <div class="">
-                                    <label for="" class="form-label">Device owner inventory number(s)</label>
-                                </div>
-                                <!-- Container where inputs will be added -->
-                                <!-- Button to trigger the append -->
-                                <div id="container_inventory">
-                                </div>
-                                <button type="button" class="btn btn-sm btn-outline-dark mt-2"id="btn2"> <i class="material-icons">add_box</i> Add inventory number</button>
-                                
-    
-                                
-
-                            </div>
-                            
-                        </div>
-                        
-                    </div>
+                    
                     <div class="col-12 p-1 text-end">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
@@ -192,6 +182,8 @@ input::placeholder {
                 
 
             </div>
+            
+        
         </div>
         
     </div>
@@ -200,7 +192,32 @@ input::placeholder {
 {% endblock %}
 
 {% block javascript %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='lib/datetimepicker-master/jquery.datetimepicker.css') }}" />
+<script src="{{ url_for('static', filename='lib/jquery-ui-1.14.2.custom/jquery-ui.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/datetimepicker-master/build/jquery.datetimepicker.full.min.js') }}"></script>
+
 <script>
+    
+    $(document).ready(function() {
+        $.datetimepicker.setLocale('en');
+        $('#datetimepicker1').datetimepicker({
+            format:'Y-m-d H:i',
+            lang:'en'
+        }
+        );
+    });
+    $(document).ready(function() {
+        $.datetimepicker.setLocale('en');
+        $('#datetimepicker2').datetimepicker({
+            format:'Y-m-d H:i',
+            lang:'en'
+        }
+        );
+    });
+    
+   
+
     // append info to all form labels, if form elements are required
     // important: form elements must have an id:: id="exampleFormControlInput11"
     // important: label must have an for to the related form element id: for="exampleFormControlInput11"
@@ -256,90 +273,71 @@ input::placeholder {
     });
     
 
-    // generate addition input forms, if button is clicked
-    function createUniqueInputAppender(containerId, buttonId, inputType = 'text', nameBase = 'dynamicInput', nameBase2 = 'dynamicInput') {
-      const container = document.getElementById(containerId);
+    
+    
+    /**
+     * Initializes the form toggler logic.
+     * Accepts numeric IDs and handles CSS escaping automatically.
+     */
+    function initFormToggler(idDiv1, idDiv2, idDiv3) {
+      // Get container elements
+      const div1 = document.getElementById(idDiv1);
+      const div2 = document.getElementById(idDiv2);
 
-      if (!container) {
-        console.error(`Container with id "${containerId}" not found.`);
+      if (!div1 || !div2) {
+        console.error(`Error: Could not find divs with IDs "${idDiv1}" or "${idDiv2}"`);
         return;
       }
 
-      let count = 0;
+      // Helper to get all interactive form controls
+      const getFormControls = (container) => {
+        return container.querySelectorAll('input, select, textarea, button');
+      };
 
-      function addInput() {
-        count++;
-        const uniqueSuffix = count;
+      // The core logic function
+      const toggleMode = (isChecked) => {
+        const controls1 = getFormControls(div1);
+        const controls2 = getFormControls(div2);
 
-        // Wrapper div
-        const wrapper = document.createElement('div');
-        wrapper.classList.add('input-group');
-        wrapper.classList.add('pt-1');
-
-        // First input
-        const input = document.createElement('input');
-        input.type = inputType;
-        input.name = `${nameBase}_${uniqueSuffix}`;
-        input.id = `${nameBase}_${uniqueSuffix}`;
-        input.classList.add('form-control');
-        input.classList.add('form-control-sm');
-        input.placeholder = `Key#${uniqueSuffix}?`;
-        //input.style.marginBottom = '5px';
-
-        // Second input
-        const input2 = document.createElement('input');
-        input2.type = inputType;
-        input2.name = `${nameBase2}_${uniqueSuffix}`;
-        input2.id = `${nameBase2}_${uniqueSuffix}`;
-        input2.classList.add('form-control');
-        input2.classList.add('form-control-sm');
-        input2.placeholder = `ID#${uniqueSuffix}?`;
-        input2.style.marginBottom = '1px';
-
-        // Span
-        const span = document.createElement('span');
-        span.classList.add('input-group-text');
-        span.style.padding = '0';
-        span.textContent = '@';
-
-        // Remove button
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.classList.add('btn');
-        removeBtn.classList.add('btn-sm');
-        removeBtn.classList.add('btn-danger');
-        removeBtn.textContent = 'Remove';
-        removeBtn.style.marginLeft = '5px';
-
-        removeBtn.addEventListener('click', () => {
-          wrapper.remove();
-        });
-
-        // Append into wrapper
-        wrapper.appendChild(input);
-        wrapper.appendChild(span);
-        wrapper.appendChild(input2);
-        wrapper.appendChild(removeBtn);
-
-        // Append wrapper to container
-        container.appendChild(wrapper);
-      }
-
-      if (buttonId) {
-        const button = document.getElementById(buttonId);
-        if (!button) {
-          console.error(`Button with id "${buttonId}" not found.`);
-          return;
+        if (isChecked) {
+          // Checkbox is Checked: Disable Form 1, Enable Form 2
+          controls1.forEach(el => el.disabled = true);
+          controls2.forEach(el => el.disabled = false);
+        } else {
+          // Checkbox is Unchecked: Enable Form 1, Disable Form 2
+          controls1.forEach(el => el.disabled = false);
+          controls2.forEach(el => el.disabled = true);
         }
-        button.addEventListener('click', addInput);
+      };
+
+      // --- CSS ESCAPE FOR NUMERIC ID "3" ---
+      // '3' in hex is '33'. Selector becomes "#\33 "
+      const escapedId = idDiv3.replace(/^([0-9a-fA-F])/, (match) => {
+          return '\\' + match.charCodeAt(0).toString(16) + ' ';
+      });
+      
+      const selector = `#${escapedId} input[type="checkbox"]`;
+      const checkbox = document.querySelector(selector);
+
+      if (!checkbox) {
+        console.warn(`Warning: No checkbox found for selector "${selector}"`);
+        return;
       }
 
-      return addInput;
+      // Attach event listener
+      checkbox.addEventListener('change', (event) => {
+        toggleMode(event.target.checked);
+      });
+
+      // Set initial state immediately based on current checkbox state
+      toggleMode(checkbox.checked);
     }
 
-    createUniqueInputAppender('container_serial', 'btn1', 'text', 'serial_key', 'serial_value');
-
-    createUniqueInputAppender('container_inventory', 'btn2', 'text', 'inventory_key', 'inventory_value');
+    // Initialize when the page is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      // Pass your specific IDs: "1", "2", "3"
+      initFormToggler('my_static_location', 'my_mobile_location', 'my_switch');
+    });
 </script>
 {% endblock %}
 

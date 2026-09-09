@@ -244,6 +244,11 @@ main {
   font-size: 90%;
 }
 
+.form-label {
+    margin-bottom:0.03rem;
+    font-size:0.85em
+}
+
 
 
 /*

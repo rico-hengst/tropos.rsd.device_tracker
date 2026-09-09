@@ -21,6 +21,7 @@ import secrets
 
 import fhelper
 import update_device_tracker
+import selector
 
 
 
@@ -160,23 +161,42 @@ def add_history():
     username = None
     userroles = None
     if not 'username' in session:
-        flash('Sorry, this page is admin only restricted, please login first', 'info')
+        flash('Sorry, this page is session restricted, please login first', 'info')
         return redirect(url_for("login"))
     else:
         username = session['username']
-        if not username == "admin":
+        user=fhelper.get_signed_user(username)
+        if not user["access"] == "readwrite":
             referrer_url = request.referrer
             print(request.headers.get("Referer"))
-            flash('Sorry, this page is admin only restricted', 'info')
+            flash('Sorry, this page is user access readwrite only restricted', 'info')
             return redirect(url_for(referrer))
         else:
-            return render_template("add_history.html",classes0=selector.get_lookup_content("classes0"), user=fhelper.get_signed_user(username))
+            return render_template("add_history.html",locations=selector.get_lookup_content("locations"),devices=selector.get_lookup_content("devices"), user=user)
             
 
 # Handle add device, authorized admin only
 @app.route("/handle/add/history", methods=["GET"])
 def handle_add_history():
-    print(2)
+    username = None
+    userroles = None
+    if not 'username' in session:
+        flash('Sorry, this page is session restricted, please login first', 'info')
+        return redirect(url_for("login"))
+    else:
+        username = session['username']
+        user=fhelper.get_signed_user(username)
+        
+        your_requests = request.args.to_dict()
+        
+        xxx=update_device_tracker.add_history(your_requests)
+        
+        if "message" in xxx:
+            if "message" in xxx["message"]:
+                flash(xxx["message"]["message"],xxx["message"]["type"])
+
+            
+        return render_template("handle_add_history.html",classes0=selector.get_lookup_content("classes0"), user=user)
     
 ###################################### LOGIN STUFF
 # Route for the login page (GET only)

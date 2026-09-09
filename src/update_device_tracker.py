@@ -7,9 +7,13 @@ import datetime
 import os
 import re
 
+
 import pandas as pd
 import logging
 logging.basicConfig(level=logging.WARNING)
+
+
+import selector
 
 
 def json_file():
@@ -21,6 +25,7 @@ def json_file():
     return json_file
 
 
+# push the user input into the expected format
 def prepare_add_device(mydict):
 
     devive_is_platform = True if "metadata.is_platform" in mydict else False
@@ -91,6 +96,110 @@ def prepare_add_device(mydict):
     }
     
     return my_dict_new
+    
+    
+# push the user input into the expected format
+def prepare_add_history(myrequests):
+
+    my_location = {
+        "is_mobile": True if "history.location.is_mobile" in myrequests else False
+    }
+    
+  
+    for key_name in myrequests:
+        print(key_name)
+        
+        # transform datetime objects
+        if key_name == "history.startdate":
+            date_object = datetime.datetime.strptime(myrequests["history.startdate"], '%Y-%m-%d %H:%M')
+            myrequests["history.startdate"] = date_object
+        
+        if key_name == "history.stopdate":
+            date_object = datetime.datetime.strptime(myrequests["history.stopdate"], '%Y-%m-%d %H:%M')
+            myrequests["history.stopdate"] = date_object
+        
+        # split to a list
+        if key_name == "history.platform":
+            platforms = myrequests["history.platform"].strip()
+            if len(platforms)==0:
+                myrequests["history.platform"] = []
+            else:
+                platforms = myrequests["history.platform"].split(",")
+                myrequests["history.platform"] = [platform.strip() for platform in platforms]
+                
+        # split to a list
+        if key_name == "history.pylarda.connectorfile":
+            cfs = myrequests[key_name].strip()
+            if len(cfs)==0:
+                myrequests[key_name] = []
+            else:
+                cfs = myrequests[key_name].split(",")
+                myrequests[key_name] = [list(map(str.strip, l)) for l in myrequests[key_name]]
+
+                
+        # update location
+        if not my_location["is_mobile"]:
+            print("not mobile")
+            if key_name == "history.location.name":
+                locations = selector.get_lookup_content("locations")
+                
+                # take al location info from database
+                if myrequests[key_name] in locations:
+                    my_location["name"] = myrequests[key_name]
+                    my_location["lat"] = locations[ myrequests[key_name] ][ "lat" ]
+                    my_location["lon"] = locations[ myrequests[key_name] ][ "lon" ]
+
+        else:
+            print("mobile")
+            if key_name == "history.location.name":
+                my_location["name"] = myrequests[key_name]
+                print("set: wdeqwqwdrqw" + key_name)
+            elif key_name == "history.location.track_url":
+                my_location["track_url"] = myrequests[key_name]
+                print("set: " + key_name)
+            elif key_name == "history.location.track_desc":
+                my_location["track_desc"] = myrequests[key_name]
+                print("set: " + key_name)
+                    
+                
+    # check if start => stop
+    if myrequests["history.startdate"] > myrequests["history.stopdate"]:
+        logging.warning("Start > Stop, exit")
+        
+        return { 
+            "returned_record"   : 1,
+            "message"           : {
+                "type": "warning",
+                "message": "Start > Stop, exit"
+            } 
+        }
+        
+    
+    # check if dates are overlapped with further history records
+            
+        
+    
+    my_history_new = {
+        "startdate"     : myrequests["history.startdate"].strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "stopdate"      : myrequests["history.stopdate"].strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "created"       : datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "uuid"          : str(uuid.uuid1()),
+        "campaign"      : myrequests["history.campaign"],
+        "platform"      : myrequests["history.platform"] if len(myrequests["history.platform"]) > 0 else [],
+        "location"      : my_location,
+        "pylarda"       : {
+            "camp"          : myrequests["history.pylarda.camp"],
+            "system"        : myrequests["history.pylarda.system"],
+            "connectorfile" : myrequests["history.pylarda.connectorfile"]
+        }
+
+    }
+    
+
+    
+    return {
+        "return_ok"   : my_history_new
+    }
     
 
 
@@ -439,7 +548,23 @@ def add_calibration(device, calibration_record):
 
 
 
-def add_history(device, history_record):
+def add_history(myrequests):
+    
+    logging.info("Start: Add history record")
+    history_record_ready = prepare_add_history(myrequests)
+    
+    
+    device=myrequests["device"]
+    
+    my_rr = {}
+    
+    if "message" in history_record_ready:
+        my_rr["message"]= history_record_ready["message"]
+
+
+    if not "return_ok" in history_record_ready:
+        return my_rr
+    
     # load schema
     with open("../config/schema_history.json", "r+") as file:
         try:
@@ -451,10 +576,10 @@ def add_history(device, history_record):
         
     
     # old valiadation without format checker
-    validate(
-        instance=history_record,
-        schema=history_schema,
-    )
+    # validate(
+        # instance=history_record_ready["return_ok"],
+        # schema=history_schema,
+    # )
 
 
 
@@ -463,52 +588,55 @@ def add_history(device, history_record):
             history_schema,
             format_checker=FormatChecker()
     )
-    errors = list(validator.iter_errors(history_record))
+    errors = list(validator.iter_errors(history_record_ready["return_ok"]))
     
     if not errors:
-        print("✓ Validation Successful: The JSON instance is valid.")
-        print(history_record)
+        logging.info("✓ Validation Successful: The JSON instance is valid.")
+        logging.debug(history_record_ready["return_ok"])
         
         
         json_file= "../config/device_tracker.json"
         with open(json_file, "r+") as file:
             device_tracker = json.load(file)
             
-            print("Update json_file: " + json_file )
+            logging.info("Update json_file: " + json_file )
             
             if device in device_tracker.keys():
                 if "history" in device_tracker[device].keys():
-                    device_tracker[device]["history"].append(history_record)
+                    device_tracker[device]["history"].append(history_record_ready["return_ok"])
                    # print(device_tracker)
                     file.seek(0)
                     json.dump(device_tracker, file, indent=4)
                     
-                    
-                    
+                    message = "Updated history at device: " + device
+                    logging.info(message)
+                    return {"message": {"type":"info","message":message}}
                     
                 else:
-                    print("no key2")
+                    message = "No history key at device detected: " + device
+                    logging.warning(message)
+                    return {"message": {"type":"warning","message":message}}
             else:
-                print("-- no device in json file detected: " + device + ", no validation")
-                # device_tracker.update({"MS21-A987": { "name" : "xyz", "history":[]}})
-                # print(device_tracker)
-                # file.seek(0)
-                # json.dump(device_tracker, file, indent=4)
-                
-            #data = pd.DataFrame.from_dict(device_tracker)
-            #print(data)
-            #print(data["MS21-A123"]["history"][0])
-            #sorted_nested_dict = dict(sorted(data["MS21-A123"]["history"], key=lambda x: (x[1]['created'])))
+                message = "-- no device in json file detected: " + str(device) + ", no validation"
+                logging.warning(message)
+                return {"message": {"type":"warning","message":message}}
+
         
     else:
-        print("✗ Validation Failed: The JSON instance is invalid.")
-        print(history_record)
+        message = "✗ Validation Failed: The JSON instance is invalid." + str(history_record_ready["return_ok"])
+        logging.warning(message)
+        logging.debug(history_record_ready["return_ok"])
 
         for error in errors:
             # error.message usually contains the specific reason
             print(f"  - Error: {error.message}")
             print(f"    Path: {list(error.path)}")
             print(f"    Validator: {error.validator}")
+            
+        return {"message": {"type":"warning","message":message}}
+            
+            
+    logging.info("End: Add history record")
             
             
             
@@ -519,7 +647,7 @@ def add_device(device_record):
     
     logging.info("Start: Add device record")
     device_record_ready = prepare_add_device(device_record)
-    print(device_record_ready)
+    
 
     # load schema
     with open("../config/schema_device.json", "r+") as file:
@@ -562,7 +690,6 @@ def add_device(device_record):
             logging.info("Add device record")
             file.seek(0)
             json.dump(device_tracker, file, indent=4)
-            print(device_record_ready)
 
 
     logging.info("End: Add device record")

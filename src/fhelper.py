@@ -177,10 +177,11 @@ def get_roles(username):
     if not user:
         return None
     else:
+        
+        devices = selector.get_lookup_content("devices")
         return ({ 
             "username"          : username,
             "class_edit_roles"  : user["class_edit_roles"] if "class_edit_roles" in user else [] , 
-            "devices"           :
             "access"            : user["access"] if "access" in user else None
         })
     

@@ -350,8 +350,20 @@ def get_lookup_content(keyword):
         # store location in nested dict
         locations = {}
         
+        
+        
         for device_column_name in list(data.columns):
             for history_record in data[device_column_name]["history"]:
+                
+                if not keys_exists(history_record, "location","country"):
+                    logging.info("Skip history part, no country")
+                    continue
+                if not keys_exists(history_record, "location","lat"):
+                    logging.info("Skip history part, no lat")
+                    continue
+                if not keys_exists(history_record, "location","lon"):
+                    logging.info("Skip history part, no lon")
+                    continue
                 
                 # create tmp new history record: keep only name,country,lat,lon
                 new_history_record = {
@@ -378,7 +390,10 @@ def get_lookup_content(keyword):
                     locations[new_history_record["name"]] = new_history_record
                     logging.info("add location: " + new_history_record["name"])
         
-        return sorted(locations)
+        return dict( sorted(locations.items()) )
+       # print(type(locations))
+        #print(locations)
+        #return dict(sorted( new_history_record.items() ))
     elif keyword == "classes0":
         
         # store classes0 in nested dict

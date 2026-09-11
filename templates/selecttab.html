@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% from "_macro.html" import get_icon_is_mobile with context %}
 
 <style>
 /* DivTable.com */
@@ -62,30 +63,58 @@
                 
                 
                 <table class="table table-sm table-striped small" id="device_tracker_table_id">
+<!--
                     <thead class="table-dark">
                         <tr>
-                            <th scope="col">Device</th>
-                            <th scope="col">Class (hierarchical)</th>
+                            <th scope="col">Device & class</th>
                             <th scope="col">Calibration</th>
                             <th scope="col">History</th>
 
                         </tr>
                     </thead>
+-->
                     <tbody>
                         {% for devicename, device_dict in devices.items() | sort(attribute='0')%}
                         {% set length_history = device_dict.history|length %}
                             <tr>
-                                <th>{{ devicename }}</th>
                                 <td>
-                                    {% for class in device_dict.metadata.class %} {{ class }} 
-                                        {% if not loop.last %} 
-                                            &rarr;
-                                        {% endif %}
-                                    {% endfor %}
+                                    <div class="card border-dark">
+                                        <div class="card-header d-flex justify-content-between {{ "bg-info" if device_dict["metadata"]["is_platform"] else "" }}">
+                                            <div class="bd-highlight">{{ "Platform" if device_dict["metadata"]["is_platform"] else "Device" }}</div>
+                                            <div class="bd-highlight"><span class="badge text-bg-secondary">{{devicename}}</span></div>
+                                        </div>
+                                        <div class="card-body">
+                                            <table class="table table-sm small">
+                                                <tr>
+                                                    <td>Class</td>
+                                                    <td>
+                                                    {% for class in device_dict.metadata.class %} {{ class }} 
+                                                        {% if not loop.last %} 
+                                                            &rarr;
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </td>
+                                                </tr>
+                                                {% if device_dict.metadata.device_manufacturer.name|length > 0 %}
+                                                <tr>
+                                                    <td>Manufacturer</td>
+                                                    <td>{{device_dict.metadata.device_manufacturer.name}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                {% if device_dict.metadata.owner.name|length > 0 %}
+                                                <tr>
+                                                    <td>Owner</td>
+                                                    <td>{{device_dict.metadata.owner.name}}</td>
+                                                </tr>
+                                                {% endif %}
+                                            </table
+                                        </div>
+                                    </div>
                                 </td>
+
                                 <td>
                                     {% for calibration in device_dict.calibration %}
-                                        <div class="card border-dark small ">
+                                        <div class="card border-dark">
                                             <div class="card-header">
                                                 Calibration <span class="badge rounded-pill text-bg-info">{{ loop.index}}</span>
                                             </div>
@@ -115,32 +144,38 @@
                                     {% endfor %}
                                 </td>
                                 <td>
-                                    <div class="divTable small">
-                                        <div class="divTableBody">
-                                        {% for history in device_dict.history %}
-                                            <div class="divTableRow">
-                                                <div class="divTableCell"  style="width:40%">{{ history.startdate[0:10]}} &rarr; {{ history.stopdate[0:10]}}</div>
-                                                <div class="divTableCell"  style="width:29%">
-                                                    
-                                                    {% if history.location.is_mobile is defined %} 
-                                                        
-                                                        <abbr title="is mobile?">{{ history.location.name}}
-                                                            {% if history.location.is_mobile %} 
-                                                                <i class="material-icons text-success">done</i>
-                                                            {% else %}
-                                                                <i class="material-icons text-danger">clear</i>
-                                                            {% endif %}
-                                                        </abbr>
-                                                    {% else %}
-                                                        {{ history.location.name}}  
-                                                    {% endif %}
-                                                    <sup><span class="badge rounded-pill text-bg-secondary">{{ history.location.country}}</span></sup>
-                                                    
-                                                </div>
-                                                <div class="divTableCell"  style="width:29%">{{ history.campaign}}</div>
-                                            </div>
-                                        {% endfor %}
+                                    <div class="card border-dark">
+                                        <div class="card-header">
+                                            History
                                         </div>
+                                        <div class="card-body">
+                                    
+                                        <div class="divTable small">
+                                            <div class="divTableBody">
+                                            {% for history in device_dict.history| sort(attribute='startdate') %}
+                                                <div class="divTableRow">
+                                                    <div class="divTableCell"  style="width:8%">
+                                                        {% if device_dict.metadata.class[0] in user.class_edit_roles %}
+                                                            <a href="{{url_for('add_history', uuid=history.uuid, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>
+                                                        {%endif%}
+                                                    </div>
+                                                    <div class="divTableCell"  style="width:6%">
+                                                        {% if history.location.is_mobile is defined %} 
+                                                            {{ get_icon_is_mobile(history.location.is_mobile) }} 
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="divTableCell"  style="width:37%">{{ history.startdate[0:10]}} &rarr; {{ history.stopdate[0:10]}}</div>
+                                                    <div class="divTableCell"  style="width:27%">
+                                                        {{ history.location.name}}  
+                                                        <sup><span class="badge rounded-pill text-bg-secondary">{{ history.location.country}}</span></sup>
+                                                    </div>
+                                                    <div class="divTableCell"  style="width:29%">{{ history.campaign}}</div>
+                                                </div>
+                                            {% endfor %}
+                                            </div>
+                                        
+                                        </div>
+                                        
                                     </div>
                                 </td>
                             </tr>

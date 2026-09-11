@@ -101,6 +101,18 @@ def prepare_add_device(mydict):
     
 # push the user input into the expected format
 def prepare_add_history(myrequests):
+    
+    # check if request_mode is edit/add
+    if myrequests["requested_mode"] != "add" and myrequests["requested_mode"] != "edit":
+        logging.warning("Form request_mode add/edit expected!")
+        
+        return { 
+            "returned_record"   : 1,
+            "message"           : {
+                "type": "warning",
+                "message": "Form request_mode add/edit expected!"
+            } 
+        }
 
     my_location = {
         "is_mobile": True if "history.location.is_mobile" in myrequests else False
@@ -135,8 +147,7 @@ def prepare_add_history(myrequests):
                 myrequests[key_name] = []
             else:
                 cfs = myrequests[key_name].split(",")
-                print(cfs)
-                print(2222)
+
                 myrequests[key_name] = [l.strip() for l in cfs]
 
                 
@@ -181,20 +192,25 @@ def prepare_add_history(myrequests):
         }
         
     
-    # check if dates are overlapped with further history records
+    # check if dates are overlapped with further history records 
+    #### exception if "edit" node and if both uuid are identical
     devices=selector.select_history( {"device":myrequests["device"]} ).replace([np.nan], [None], regex=False).to_dict()
-    print(devices)
+
     if "history" in devices[myrequests["device"]]:
         for history in devices[myrequests["device"]]["history"]:
             if myrequests["history.stopdate"] > history["startdate"] and myrequests["history.startdate"] < history["stopdate"]:
-                message = "On or multiple history record perios did intersect with start/stoptime of your record" + str(history) + " versus " + myrequests["history.startdate"] + " " + myrequests["history.stopdate"]
-                logging.warning(message)
-                return { 
-                    "message"           : {
-                        "type": "warning",
-                        "message": message
-                    } 
-                }
+                if "requested_mode" in myrequests and myrequests["requested_mode"] == "edit" and myrequests["history.uuid"] == history["uuid"]:
+                    logging.info("Edit mode, overlapping history record between provided and the identical uuid record")
+                
+                else:
+                    message = "On or multiple history record perios did intersect with start/stoptime of your record" + str(history) + " versus " + myrequests["history.startdate"] + " " + myrequests["history.stopdate"]
+                    logging.warning(message)
+                    return { 
+                        "message"           : {
+                            "type": "warning",
+                            "message": message
+                        } 
+                    }
             
         
     
@@ -202,7 +218,7 @@ def prepare_add_history(myrequests):
         "startdate"     : myrequests["history.startdate"],
         "stopdate"      : myrequests["history.stopdate"],
         "created"       : datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "uuid"          : str(uuid.uuid1()),
+        "uuid"          : myrequests["history.uuid"] if "history.uuid" in myrequests else str(uuid.uuid1()),
         "campaign"      : myrequests["history.campaign"],
         "platform"      : myrequests["history.platform"] if len(myrequests["history.platform"]) > 0 else [],
         "location"      : my_location,
@@ -622,7 +638,19 @@ def add_history(myrequests):
             
             if device in device_tracker.keys():
                 if "history" in device_tracker[device].keys():
-                    device_tracker[device]["history"].append(history_record_ready["return_ok"])
+                    if "history.uuid" in myrequests and myrequests["requested_mode"] == "edit":
+                        for index in range(len(device_tracker[device]["history"])):
+                            if device_tracker[device]["history"][index]["uuid"] == history_record_ready["return_ok"]["uuid"]:
+                                device_tracker[device]["history"][index] = history_record_ready["return_ok"]
+                                logging.info("Edit history record: " + str(history_record_ready))
+                                break
+                    elif myrequests["requested_mode"] == "add":
+                        logging.info("Add history record: " + str(history_record_ready))
+                        device_tracker[device]["history"].append(history_record_ready["return_ok"])
+                    else:
+                        message = "Something is wrong in update mechanism: " + str(history_record_ready) + ", my requests " +str(myrequests)
+                        logging.warning(message)
+                        return {"message": {"type":"warning","message":message}}
                    # print(device_tracker)
                     file.seek(0)
                     json.dump(device_tracker, file, indent=4)

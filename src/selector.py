@@ -235,7 +235,12 @@ def filter_created(data,my_filter):
                         nonmatched_requests.append({"platform":my_filter["platform"]})
                 else:
                     nonmatched_requests.append({"platform":""})
-                    
+            
+            if("uuid" in my_filter):
+                if my_filter["uuid"] == history_record["uuid"]:
+                    matched_requests.append({"uuid":my_filter["uuid"]})
+                else:
+                    nonmatched_requests.append({"uuid":""})
                     
             logging.info("     matched history records:    " + str(len(matched_requests)) + " returns, filter: " + str(matched_requests))
             logging.info("     nonmatched history records: " + str(len(nonmatched_requests)) + " returns, filter: " + str(nonmatched_requests))
@@ -295,20 +300,7 @@ def select_history(my_filter):
     file.close()
     # device_tracker = dict( sorted(device_tracker.items()) )
     
-    # sorted_data_keys = json.dumps({k: device_tracker[k] for k in sorted(device_tracker)})
-    # print(sorted_data_keys)
-    # print(888)
 
-    # for k in sorted(device_tracker):
-        # print(k)
-        
-    # d= dict(sorted(device_tracker.items()))
-    # for k in sorted(d):
-        # print(k)
-        
-    # d = dict(sorted(device_tracker.items(), reverse=True, key=lambda item: item[0]))
-    # for k in d:
-        # print(k + "ddDW")
     # create dataframe
     data = pd.DataFrame.from_dict(device_tracker)
     logging.info("fef" + str(sorted(list(data.columns))))
@@ -408,35 +400,24 @@ def get_lookup_content(keyword):
                 
         return classes0
     elif keyword == "devices":
-        devices = []
-        for device_column_name in list(data.columns):
-            if not device_column_name in devices:
-                devices.append(device_column_name)
-                logging.info("add device: " + device_column_name)
-        devices.sort()
+        # devices = []
+        # for device_column_name in list(data.columns):
+            # if not device_column_name in devices:
+                # devices.append(device_column_name)
+                # logging.info("add device: " + device_column_name)
+        # devices.sort()
+        
+        # remove some content
+        for device in device_tracker:
+            device_tracker[device].pop("history")
+            device_tracker[device].pop("calibration")
+        
+        devices = dict(sorted( device_tracker.items() ))
         
         return devices
         
     logging.info("## Stop get_lookup_content of " + keyword + ": " + json_file)
 
 
-my_filter = {
-"#device":"MS21-",
-"#date":["2023-08-30T12:12:12Z","2019-08-30T12:12:12Z"],
-"#date":["2019-08-30T12:12:12Z"],
-"#class":"radiation",
-"#subclass":"Pygeometer",
-"#locationname":"Mel",
-"#country":"ger",
-"campaign":"C3SAR",
-"#platform":"taro"}
 
-
-#select_history(my_filter)
-
-#select_history({})
-
-# sort_continuous_history(["MS21-A123", "MS21-A987"]) # positv
-# sort_continuous_history(["MS21-A"]) # negativ, exit without save a new file
-#sort_continuous_history() # positiv
 

@@ -180,19 +180,24 @@
         },
         "history": [
             {
-                "startdate": "2024-09-24T12:12:12Z",
-                "stopdate": "2024-12-01T00:12:12Z",
-                "created": "2026-08-10T06:57:18Z",
+                "startdate": "2025-09-25T12:12:00Z",
+                "stopdate": "2025-12-21T00:12:00Z",
+                "created": "2026-09-11T08:40:31Z",
                 "uuid": "ba12b22a-9488-11f1-9bcc-cc2f71a772c7",
+                "campaign": "",
                 "platform": [
-                    "TARO"
+                    "TAROB\u00f6selager"
                 ],
                 "location": {
-                    "name": "Melpitz",
-                    "country": "Germany",
-                    "lat": 51.525507,
-                    "lon": 12.927753,
-                    "is_mobile": false
+                    "is_mobile": true,
+                    "name": "Melpitzewgwrgwgw",
+                    "track_url": "",
+                    "track_desc": ""
+                },
+                "pylarda": {
+                    "camp": "",
+                    "system": "",
+                    "connectorfile": []
                 }
             },
             {

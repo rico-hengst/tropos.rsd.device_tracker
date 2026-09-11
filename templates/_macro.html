@@ -1,0 +1,8 @@
+
+{% macro get_icon_is_mobile(is_mobile) %} 
+    {% if is_mobile == true %}
+        <abbr title="measurements on a mobile platform"><i class="material-icons">directions_boat</i></abbr>
+    {% elif is_mobile == false %}
+         <abbr title="measurements on a fixed location"><i class="material-icons">location_on</i></abbr>
+    {% endif %}
+{% endmacro %}

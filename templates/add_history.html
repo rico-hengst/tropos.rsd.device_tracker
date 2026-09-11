@@ -14,176 +14,222 @@ input::placeholder {
 </style>
     <div class="container">
         <div class="row py-3">
-            <div class="col-12 borders srounded pt-3 mb-4">
-                <h2>Add history</h2>
-
-            </div>
             
-            <div class="col-12 border  rounded p-3">
-                <form method="get"     enctype = "multipart/form-data" action="{{ url_for('handle_add_history') }}">
+            <div class="col-sm-6 borders srounded pt-3 mb-4">
+                {% if uuid_devices %}
+                    <input type="hidden" id="history.uuid" name="" value="{{uuid_devices[uuid_device_key]["history"][0]["uuid"]}}" />
                     
-                    
-                <div class="row">
-                    <div class="col-3 p-1">
-                        <div class="card">
-                            <div class="card-header">
-                                <b>General info</b>
-                            </div>
-                            <div class="card-body">
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput5" class="form-label">Device</label>
-                                    <select name="device" class="form-select form-select-sm" aria-label="Small select example" required>
-                                        <option value=""></option>
-                                        {% for device in devices %}
-                                            <option value="{{device}}">{{device}}</option>
-                                        {% endfor %}
-                                    </select>                                            
-                                </div>
-                        
-                                <div class="mb-3">
-                                    <label for="datetimepicker1" class="form-label">Start date</label>
-                                    <input name="history.startdate" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" 
-                                        id="datetimepicker1" type="text" required>
-                                </div>
-                                
-                                
-                                <div class="mb-3">
-                                    <label for="datetimepicker2" class="form-label">Stop date</label>
-                                    <input name="history.stopdate" class="form-control form-control-sm" id="datetimepicker2" placeholder="e.g: 2099-12-31 23:59" 
-                                        id="datetimepicker2" type="text" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput3" class="form-label">Campaign acronym</label>
-                                    <input name="history.campaign" class="form-control form-control-sm" id="exampleFormControlInput3" placeholder="e.g: PS127 | C3SAR" 
-                                        type="text">
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput4" class="form-label">Platform (hierarchical list, comma separated)</label>
-                                    <input name="history.platform" class="form-control form-control-sm" id="exampleFormControlInput4" placeholder="e.g: Polarstern,OCEANET | TARO" 
-                                        type="text">
-                                </div>
-                                
-                            </div>
-                        </div>
-                        
-                    </div>
-                    <div class="col-6 p-1">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="d-flex justify-content-between">
-                                    <div class=""><b>Location</b></div>
-                                    <div class="form-check form-switch" id="my_switch">
-                                        <label class="form-check-label" for="switchCheckDefault">is mobile</label>
-                                        <input name="history.location.is_mobile" class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
-                                    </div>
-                                </div>
-                                
-                                
-                            </div>
-                            <div class="card-body">
-                                
-                                
-                                
-                                <div class="row">
-                                    <div class="col-5 p-1 mx-2" id="my_static_location">
-                                        
-                                        <div class="mb-3">
-                                            <label for="exampleFormControlInput5" class="form-label">Location name</label>
-                                            <select name="history.location.name" class="form-select form-select-sm" aria-label="Small select example" required>
-                                                <option value=""></option>
-                                                {% for location in locations %}
-                                                    <option value="{{location}}">{{location}} ({{ locations[location]["country"] }}, {{ locations[location]["lat"] }}, {{ locations[location]["lon"] }})</option>
-                                                {% endfor %}
-                                            </select>                                            
-                                        </div>
-                                        
-<!--
-                                        <div class="mb-3">
-                                            <label for="exampleFormControlInput6" class="form-label">Location description</label>
-                                            <input name="history.location.description" class="form-control form-control-sm" id="exampleFormControlInput6" placeholder="e.g: Grerald et. al" 
-                                                 type="text" >
-                                        </div>
--->
-                                    </div>
-                                    
-                                    <div class="col-6  p-1 ms-4" id="my_mobile_location">
-                                        
-                                        <div class="mb-3">
-                                            <label for="exampleFormControlInput5" class="form-label">Mobile location name or label</label>
-                                            <input name="history.location.name" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: Polarstern track PS127" 
-                                                 type="text" required>
-                                        </div>
-                                        
-<!--
-                                        <div class="mb-3">
-                                            <label for="exampleFormControlInput6" class="form-label">Mobile location description</label>
-                                            <input name="history.location.description" class="form-control form-control-sm" id="exampleFormControlInput6" placeholder="e.g: Grerald et. al" 
-                                                 type="text" required>
-                                        </div>
--->
-                                        
-                                        <div class="mb-3">
-                                            <label for="exampleFormControlInput7" class="form-label">Track url</label>
-                                            <input name="history.location.track_url" class="form-control form-control-sm" id="exampleFormControlInput7" placeholder="e.g: " 
-                                                 type="text" >
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="exampleFormControlInput5" class="form-label">Track description</label>
-                                            <input name="history.location.track_desc" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: email, telefon, url" 
-                                                 type="text" >
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                                
-                                
-                                
-                            </div>
-                        </div>                        
-                    </div>
-                    
-                    <div class="col-3 p-1">
-                        <div class="card">
-                            <div class="card-header">
-                                <b>Pylarda</b>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput26" class="form-label">Camp</label>
-                                    <input name="history.pylarda.camp" class="form-control form-control-sm" id="exampleFormControlInput26" placeholder="e.g: cv_oscm" 
-                                                 type="text" >
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput27" class="form-label">System</label>
-                                    <input name="history.pylarda.system" class="form-control form-control-sm" id="exampleFormControlInput27" placeholder="e.g: ?" 
-                                                 type="text" >
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput28" class="form-label">Connector file (comma separated)</label>
-                                    <input name="history.pylarda.connectorfile" class="form-control form-control-sm" id="exampleFormControlInput28" placeholder="e.g: file1.json,file2.json" 
-                                                 type="text" >
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-12 p-1 text-end">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                    
+                    <h2>{% if your_requests["requested_mode"] == "edit" %}Edit current{% elif your_requests["requested_mode"] == "add" %}Add new{% endif %} history record</h2>
+                {% else %}
+                    <h2>Add history</h2>
+                {% endif %}
+            </div>
+            <div class="col-sm-6">
+                <div class="d-flex justify-content-end pt-3 mb-3">
+                    {% if uuid_devices %}
+                        <p><span class="badge rounded-pill text-bg-secondary">{{uuid_devices[uuid_device_key]["history"][0]["uuid"]}}</span> @ <span class="badge rounded-pill text-bg-dark">{{uuid_device_key}}</span></p>
+                    {% endif %}
                 </div>
-                </form>
-                
-
             </div>
-            
-        
+                <form method="get"     enctype = "multipart/form-data" action="{{ url_for('handle_add_history') }}">
+                    <div class="col-6 borders srounded pt-3 mb-4">
+                        {% if uuid_devices %}
+                            <h4>Please select ...</h4>
+                            <input type="hidden" id="id_requested_mode" name="requested_mode" value="{{your_requests["requested_mode"]}}">
+                            <button type="button" name="rrr" class="btn btn-sm {{ 'btn-secondary' if your_requests["requested_mode"] == "edit" else 'btn-outline-secondary'}}" id="editBtn_requested_mode">Edit current history record</button>
+                            <button type="button" name="rrr" class="btn btn-sm {{ 'btn-secondary' if your_requests["requested_mode"] == "add" else 'btn-outline-secondary'}}" id="addBtn_requested_mode">Add new history record, use content as template</button>
+                        {% endif %}
+                    </div>
+                    
+                        <fieldset {% if uuid_devices and "requested_mode" not in your_requests %} disabled{% endif %}>
+                        <div class="col-12 border  rounded p-3">
+                            
+                            <div class="row">
+                                <div class="col-3 p-1">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <b>General info</b>
+                                        </div>
+                                        <div class="card-body">
+                                            
+                                            {% if your_requests["requested_mode"] == "add" or not your_requests %}
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput5" class="form-label">Device</label>
+                                                <select name="device" class="form-select form-select-sm" aria-label="Small select example" required>
+                                                    <option value=""></option>
+                                                    {% for device_key in devices %}
+                                                        {% set class0 =  devices[device_key]["metadata"]["class"].0  %}
+            <!--
+                                                        html option: not able to combine selected and disabled, so priorisation on disabled, also if we loose the selected
+            -->
+                                                        {% if not class0 in user.class_edit_roles %}
+                                                            <option value="{{device_key}}" disabled>{{device_key}} ({{ class0 }}, not authorized!)</option>
+                                                        {% elif (device_key == uuid_device_key) %}
+                                                            <option value="{{device_key}}" selected>{{device_key}} ({{ class0 }})</option>
+                                                        {% else %}
+                                                            <option value="{{device_key}}">{{device_key}} ({{ class0 }})</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>                                            
+                                            </div>
+                                            {% elif your_requests["requested_mode"] == "edit" %}
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput5" class="form-label">Uuid</label>
+                                                <input name="history.uuid" class="form-control form-control-sm" value="{{uuid_devices[uuid_device_key]["history"][0]["uuid"] if uuid_devices[uuid_device_key] else ""}}"
+                                                    id="" type="text" disabled>
+<!--
+                                                Both hidden filed are required, caus disabled form do no sent values and the device is reuired
+-->
+                                                <input type="hidden" name="history.uuid" value="{{uuid_devices[uuid_device_key]["history"][0]["uuid"] if uuid_devices[uuid_device_key] else ""}}">
+                                                <input type="hidden" name="device" value="{{uuid_device_key}}">
+                                            </div>
+                                            {% endif %}
+                                    
+                                            <div class="mb-3">
+                                                <label for="datetimepicker1" class="form-label">Start date</label>
+                                                <input name="history.startdate" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["startdate"]|format_string_datetime }}{% endif %}"
+                                                    id="datetimepicker1" type="text" required>
+                                            </div>
+                                            
+                                            
+                                            <div class="mb-3">
+                                                <label for="datetimepicker2" class="form-label">Stop date</label>
+                                                <input name="history.stopdate" class="form-control form-control-sm" id="datetimepicker2" placeholder="e.g: 2099-12-31 23:59" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["stopdate"]|format_string_datetime}}{% endif %}"
+                                                    id="datetimepicker2" type="text" required>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput3" class="form-label">Campaign acronym</label>
+                                                <input name="history.campaign" class="form-control form-control-sm" id="exampleFormControlInput3" placeholder="e.g: PS127 | C3SAR" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["campaign"]}}{% endif %}"
+                                                    type="text">
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput4" class="form-label">Platform (hierarchical list, comma separated)</label>
+                                                <input name="history.platform" class="form-control form-control-sm" id="exampleFormControlInput4" placeholder="e.g: Polarstern,OCEANET | TARO" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["platform"]|join(',')}}{% endif %}"
+                                                    type="text">
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-6 p-1">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <div class="d-flex justify-content-between">
+                                                <div class=""><b>Location</b></div>
+                                                <div class="form-check form-switch" id="my_switch">
+                                                    <label class="form-check-label" for="switchCheckDefault">is mobile</label>
+                                                    <input name="history.location.is_mobile" class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+                                                </div>
+                                            </div>
+                                            
+                                            
+                                        </div>
+                                        <div class="card-body">
+                                            
+                                            
+                                            
+                                            <div class="row">
+                                                <div class="col-5 p-1 mx-2" id="my_static_location">
+                                                    
+                                                    <div class="mb-3">
+                                                        <label for="exampleFormControlInput5" class="form-label">Location name</label>
+                                                        <select name="history.location.name" class="form-select form-select-sm" aria-label="Small select example" required>
+                                                            <option value=""></option>
+                                                            {% for location in locations %}
+                                                                {% if (uuid_devices) and (locations[location]["name"] == uuid_devices[uuid_device_key]["history"][0]["location"]["name"]) %}
+                                                                    <option value="{{location}}" selected>{{location}} ({{ locations[location]["country"] }}, {{ locations[location]["lat"] }}, {{ locations[location]["lon"] }})</option>
+                                                                {% else %}
+                                                                    <option value="{{location}}">{{location}} ({{ locations[location]["country"] }}, {{ locations[location]["lat"] }}, {{ locations[location]["lon"] }})</option>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </select>                                            
+                                                    </div>
+                                                    
+            <!--
+                                                    <div class="mb-3">
+                                                        <label for="exampleFormControlInput6" class="form-label">Location description</label>
+                                                        <input name="history.location.description" class="form-control form-control-sm" id="exampleFormControlInput6" placeholder="e.g: Grerald et. al" 
+                                                             type="text" >
+                                                    </div>
+            -->
+                                                </div>
+                                                
+                                                <div class="col-6  p-1 ms-4" id="my_mobile_location">
+                                                    
+                                                    <div class="mb-3">
+                                                        <label for="exampleFormControlInput5" class="form-label">Mobile location name or label</label>
+                                                        <input name="history.location.name" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: Polarstern track PS127" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["location"]["name"]}}{% endif %}"
+                                                             type="text" required>
+                                                    </div>
+                                                    
+            <!--
+                                                    <div class="mb-3">
+                                                        <label for="exampleFormControlInput6" class="form-label">Mobile location description</label>
+                                                        <input name="history.location.description" class="form-control form-control-sm" id="exampleFormControlInput6" placeholder="e.g: Grerald et. al" 
+                                                             type="text" required>
+                                                    </div>
+            -->
+                                                    
+                                                    <div class="mb-3">
+                                                        <label for="exampleFormControlInput7" class="form-label">Track url</label>
+                                                        <input name="history.location.track_url" class="form-control form-control-sm" id="exampleFormControlInput7" placeholder="e.g: https://rsd2.tropos.de/device-tracking/static/link-to-mastertrack.tab.js" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["location"]["track_url"]}}{% endif %}"
+                                                             type="text" >
+                                                    </div>
+                                                    
+                                                    <div class="mb-3">
+                                                        <label for="exampleFormControlInput5" class="form-label">Track description or citation</label>
+                                                        <input name="history.location.track_desc" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: Hehemann, Laura (2022): Master tracks at PANGAEA, https://doi.org/10.1594/PANGAEA.942569" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["location"]["track_desc"]}}{% endif %}"
+                                                             type="text" >
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            
+                                            
+                                            
+                                        </div>
+                                    </div>                        
+                                </div>
+                                
+                                <div class="col-3 p-1">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <b>Pylarda</b>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput26" class="form-label">Camp</label>
+                                                <input name="history.pylarda.camp" class="form-control form-control-sm" id="exampleFormControlInput26" placeholder="e.g: cv_oscm" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["pylarda"]["camp"] if uuid_devices[uuid_device_key]["history"][0]["pylarda"] else ""}}{% endif %}"
+                                                             type="text" >
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput27" class="form-label">System</label>
+                                                <input name="history.pylarda.system" class="form-control form-control-sm" id="exampleFormControlInput27" placeholder="e.g: POLLYNET_arielle" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["pylarda"]["system"] if uuid_devices[uuid_device_key]["history"][0]["pylarda"] else ""}}{% endif %}"
+                                                             type="text" >
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput28" class="form-label">Connector file (comma separated)</label>
+                                                <input name="history.pylarda.connectorfile" class="form-control form-control-sm" id="exampleFormControlInput28" placeholder="e.g: file1.json,file2.json" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["pylarda"]["connectorfile"]|join(",") if uuid_devices[uuid_device_key]["history"][0]["pylarda"] else ""}}{% endif %}"
+                                                             type="text" >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 p-1 text-end">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                </fieldset>
+            </form>
         </div>
         
     </div>
@@ -337,6 +383,37 @@ input::placeholder {
     document.addEventListener('DOMContentLoaded', () => {
       // Pass your specific IDs: "1", "2", "3"
       initFormToggler('my_static_location', 'my_mobile_location', 'my_switch');
+    });
+    
+    
+    
+    
+    // Button click, add searchparams, reload webpae
+    function reloadWithMode(requested_mode) {
+      if (!requested_mode || typeof requested_mode !== 'string' || requested_mode.trim() === '') {
+        console.warn('Invalid requested_mode provided');
+        return;
+      }
+
+      const url = new URL(window.location.href);
+      url.searchParams.set('requested_mode', requested_mode.trim());
+      
+      // set request_mode variable to hidden inut field
+      document.getElementById('id_requested_mode').value = requested_mode.trim();
+
+      
+      window.location.href = url.toString();
+    }
+
+    // Button event listeners
+    document.getElementById('editBtn_requested_mode').addEventListener('click', function() {
+      console.log('Edit button clicked');
+      reloadWithMode('edit');
+    });
+
+    document.getElementById('addBtn_requested_mode').addEventListener('click', function() {
+      console.log('Add button clicked');
+      reloadWithMode('add');
     });
 </script>
 {% endblock %}

@@ -12,7 +12,7 @@ import os
 import sys
 import pandas as pd
 import numpy as np
-import selector as selector
+from jinja2 import Environment
 
 
 import hashlib
@@ -33,6 +33,16 @@ app = Flask(__name__,
             template_folder=os.path.join(BASE_DIR, "templates"),
             static_folder=os.path.join(BASE_DIR, "static"),)
 app.secret_key = secrets.token_hex(32)  # Secure random secret key
+
+# create string_datetime_filter
+env = Environment()
+
+def format_string_datetime(value):
+    # "2022-06-30T13:54:01Z" -> "2022-06-30 13:54"
+    return value[:10] + " " + value[11:16]
+
+# Register the filter with Flask's Jinja2 environment
+app.jinja_env.filters['format_string_datetime'] = format_string_datetime
 
 
 # @app.route("/")
@@ -143,16 +153,15 @@ def handle_add_device():
             # check requests step by step
             if(your_requests["metadata.name"] in selector.get_lookup_content("devices")):
                 flash('Sorry, name of instrument already exists: ' + your_requests["metadata.name"], 'info')
-                exit()
+                return render_template("handle_add_device.html",user=user)
             if not (your_requests["metadata.class0"] in user["class_edit_roles"]):
                 flash('Sorry, you are not allowed to add devices with class: ' + your_requests["metadata.class0"], 'info')
-                exit()
+                return render_template("handle_add_device.html",user=user)
                 
-            
+            # update the database
             update_device_tracker.add_device(your_requests)
 
-            
-            return render_template("handle_add_device.html",classes0=selector.get_lookup_content("classes0"), user=user)
+            return render_template("handle_add_device.html", user=user)
             
 
 # Add history, authorized admin only
@@ -172,10 +181,34 @@ def add_history():
             flash('Sorry, this page is user access readwrite only restricted', 'info')
             return redirect(url_for(referrer))
         else:
-            return render_template("add_history.html",locations=selector.get_lookup_content("locations"),devices=selector.get_lookup_content("devices"), user=user)
+            your_requests = request.args.to_dict()
+            
+            # init device tracker record(s)
+            uuid_devices = None
+            uuid_device_key = None
+            
+            # if uui was provided
+            if "uuid" in your_requests:
+                
+                # look for uuid history device(s)
+                uuid_devices=selector.select_history( {"uuid" : your_requests["uuid"] } ).replace([np.nan], [None], regex=False).to_dict()
+                
+                
+                if uuid_devices:
+                    if (len(uuid_devices)>1):
+                        print("multiple uuids exists")
+                        exit()
+                    uuid_device_key = list(uuid_devices.keys())[0]
+                else:
+                    print("no uuids exists")
+                    flash("No uuid detected: " + your_requests["uuid"] )
+                    
+            
+            devices = selector.get_lookup_content("devices")
+            return render_template("add_history.html",locations=selector.get_lookup_content("locations"),devices=devices, uuid_devices=uuid_devices, uuid_device_key=uuid_device_key ,your_requests=your_requests,user=user)
             
 
-# Handle add device, authorized admin only
+# Handle add history
 @app.route("/handle/add/history", methods=["GET"])
 def handle_add_history():
     username = None

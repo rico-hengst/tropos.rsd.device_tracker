@@ -27,6 +27,11 @@ import selector
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 USER_CREDENTIALS = BASE_DIR + "/config/users.json"
+if os.getenv("USER_CREDENTIALS_FILE"):
+    USER_CREDENTIALS = BASE_DIR + "/" + os.getenv("USER_CREDENTIALS_FILE")
+
+if not os.path.isfile(USER_CREDENTIALS):
+    logging.error("File not exists: " + USER_CREDENTIALS)
 
 # (A2) FLASK INIT
 app = Flask(__name__,
@@ -43,6 +48,18 @@ def format_string_datetime(value):
 
 # Register the filter with Flask's Jinja2 environment
 app.jinja_env.filters['format_string_datetime'] = format_string_datetime
+
+def get_serial_part_of_keyname(string, separator="#",whichpart=0):
+    # "keyname#20220630135404#"
+    my_list = string.split(separator)
+    print(string)
+    if not len(my_list) == 3:
+        return
+    if whichpart == 0:
+        return my_list[0]
+    elif whichpart == 1:
+        return my_list[1].replace(separator,"",2)
+app.jinja_env.filters['get_serial_part_of_keyname'] = get_serial_part_of_keyname
 
 
 # @app.route("/")
@@ -118,13 +135,37 @@ def add_device():
         return redirect(url_for("login"))
     else:
         username = session['username']
-        if not username == "admin":
-            referrer_url = request.referrer
-            print(request.headers.get("Referer"))
-            flash('Sorry, this page is admin only restricted', 'info')
-            return redirect(url_for(referrer))
-        else:
-            return render_template("add_device.html",classes0=selector.get_lookup_content("classes0"), user=fhelper.get_signed_user(username))
+        user = fhelper.get_signed_user(username)
+        
+        # requests
+        your_requests = request.args.to_dict()
+        
+        # init key
+        devices = None
+        device_keyname = None
+        
+        # if device was provided: edit versus add
+        if "device" in your_requests:
+            
+            # look for uuid history device(s)
+            devices=selector.get_lookup_content("devices")
+            
+            
+            if your_requests["device"] in devices:
+                device_keyname = your_requests["device"]
+                flash("Device detected" )
+                
+                # warning if you want to edit a device and user_acces_role doesnt match the device class0
+                class0 = devices[device_keyname]["metadata"]["class"][0]
+                if class0 not in user["class_edit_roles"]:
+                    your_requests = {}
+                    flash("Your class_edit_roles avoids the modification of the current device with the class0: " + class0)
+            else:
+                print("no device exists")
+                flash("No devices detected: " + your_requests["device"] )
+        
+        
+        return render_template("add_device.html",classes0=selector.get_lookup_content("classes0"), devices=devices, device_keyname=device_keyname,your_requests=your_requests,user=user)
         
     
 # Handle add device, authorized admin only
@@ -137,31 +178,25 @@ def handle_add_device():
         return redirect(url_for("login"))
     else:
         username = session['username']
-        if not username == "admin":
-            referrer_url = request.referrer
-            print(request.headers.get("Referer"))
-            flash('Sorry, this page is admin only restricted', 'info')
-            return redirect(url_for(referrer))
-        else:
-            user=fhelper.get_signed_user(username)
+        user=fhelper.get_signed_user(username)
             
-            # requests
-            your_requests = request.args.to_dict()
-            # trim and delete empty form requests
-            #your_requests = fhelper.purify_dict(your_requests)
+        # requests
+        your_requests = request.args.to_dict()
+        # trim and delete empty form requests
+        #your_requests = fhelper.purify_dict(your_requests)
+        
+        # check requests step by step
+        # if(your_requests["metadata.name"] in selector.get_lookup_content("devices")):
+            # flash('Sorry, name of instrument already exists: ' + your_requests["metadata.name"], 'info')
+            # return render_template("handle_add_device.html",user=user)
+        if not (your_requests["metadata.class0"] in user["class_edit_roles"]):
+            flash('Sorry, you are not allowed to add devices with class: ' + your_requests["metadata.class0"], 'info')
+            return render_template("handle_add_device.html",user=user)
             
-            # check requests step by step
-            if(your_requests["metadata.name"] in selector.get_lookup_content("devices")):
-                flash('Sorry, name of instrument already exists: ' + your_requests["metadata.name"], 'info')
-                return render_template("handle_add_device.html",user=user)
-            if not (your_requests["metadata.class0"] in user["class_edit_roles"]):
-                flash('Sorry, you are not allowed to add devices with class: ' + your_requests["metadata.class0"], 'info')
-                return render_template("handle_add_device.html",user=user)
-                
-            # update the database
-            update_device_tracker.add_device(your_requests)
+        # update the database
+        update_device_tracker.add_device(your_requests)
 
-            return render_template("handle_add_device.html", user=user)
+        return render_template("handle_add_device.html", user=user)
             
 
 # Add history, authorized admin only

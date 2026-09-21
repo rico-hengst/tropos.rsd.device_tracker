@@ -9246,7 +9246,27 @@
     },
     "kloi-dwd": {
         "calibration": [],
-        "history": [],
+        "history": [
+            {
+                "startdate": "2026-09-01T16:40:00Z",
+                "stopdate": "2026-09-03T16:40:00Z",
+                "created": "2026-09-21T15:44:50Z",
+                "uuid": "616a718c-b5d3-11f1-ac46-cc2f71a772c7",
+                "campaign": "",
+                "platform": [],
+                "location": {
+                    "is_mobile": false,
+                    "name": "Baengnyeong",
+                    "lat": 37.961249,
+                    "lon": 124.653607
+                },
+                "pylarda": {
+                    "camp": "",
+                    "system": "",
+                    "connectorfile": []
+                }
+            }
+        ],
         "metadata": {
             "name": "Kloi dwd",
             "description": "",
@@ -9281,7 +9301,27 @@
     },
     "kloi-dwd22": {
         "calibration": [],
-        "history": [],
+        "history": [
+            {
+                "startdate": "2026-09-01T16:40:00Z",
+                "stopdate": "2026-09-03T16:40:00Z",
+                "created": "2026-09-21T15:31:29Z",
+                "uuid": "8466aff4-b5d1-11f1-909d-cc2f71a772c7",
+                "campaign": "",
+                "platform": [],
+                "location": {
+                    "is_mobile": false,
+                    "name": "Baengnyeong",
+                    "lat": 37.961249,
+                    "lon": 124.653607
+                },
+                "pylarda": {
+                    "camp": "",
+                    "system": "",
+                    "connectorfile": []
+                }
+            }
+        ],
         "metadata": {
             "name": "kloi-dwd22",
             "description": "",
@@ -9302,8 +9342,10 @@
                 "purchased": "w",
                 "pid": "cqe",
                 "serial": {
-                    "aaa#2026091416085411#": "123",
-                    "bbb#2026091416085413#": "333"
+                    "aaa#2026092116265112#": "123",
+                    "a#2026092116265114#": "wd",
+                    "scaca#2026092116265116#": "dwqwqcq",
+                    "f#2026092116265118#": "f"
                 }
             },
             "owner": {
@@ -9311,8 +9353,8 @@
                 "address": "wqcqc",
                 "contact": "wqf",
                 "inv": {
-                    "dg#1#": "4",
-                    "h#2#": "5747745745"
+                    "d#2026092116265123#": "h",
+                    "hre#2026092116265125#": "gr"
                 }
             }
         }

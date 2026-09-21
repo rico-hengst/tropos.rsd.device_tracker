@@ -18,9 +18,12 @@
       "access": "readwrite"
     },
     "test": {
-      "password_hash": "sha256:076417e55a4393ebf04a14e2475f48eb4d6182bb985783f471b388cc1ce84970:da33f580e1fcbb1b17458ddd993765451d98fc87c078a69d47cc4d2369710e14",
-      "salt": "da33f580e1fcbb1b17458ddd993765451d98fc87c078a69d47cc4d2369710e14",
-      "access" : "readwrite"
+      "password_hash": "sha256:8c9f4cc2b46499c22b51337a4122d5162dde124348bf3b0d781ab1bc93b9dffb:ed19a05f09271c165cb23ea6562cbfc261bea59ab8fd55b8c0ebd28fa94138e1",
+      "salt": "ed19a05f09271c165cb23ea6562cbfc261bea59ab8fd55b8c0ebd28fa94138e1",
+      "class_edit_roles": [
+        "radiation"
+      ],
+      "access": "readwrite"
     }
   }
 }

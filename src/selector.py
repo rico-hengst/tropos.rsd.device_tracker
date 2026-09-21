@@ -408,9 +408,9 @@ def get_lookup_content(keyword):
         # devices.sort()
         
         # remove some content
-        for device in device_tracker:
-            device_tracker[device].pop("history")
-            device_tracker[device].pop("calibration")
+        # for device in device_tracker:
+            # device_tracker[device].pop("history")
+            # device_tracker[device].pop("calibration")
         
         devices = dict(sorted( device_tracker.items() ))
         

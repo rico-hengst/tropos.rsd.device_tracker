@@ -7,7 +7,7 @@ import datetime
 import requests
 import re
 import logging
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 
 
 import pandas as pd
@@ -74,6 +74,8 @@ def main():
                 json.dump(device_tracker, file, indent=4)
             else:
                 logging.warning("Skip device record: " + device + ", record already exists")
+                if device == "arielle":
+                    logging.warning(imported_devices[device]["history"])
 
     return Jresponse
     
@@ -91,34 +93,12 @@ def get_device_history(history_schema, history):
         
         # extract location
         if not history_record["location"]:
-            logging.error("No location provided: " + str(history_record))
+            logging.error("No location provided: " + str(history_record) + "no location")
             exit()
         else:
-            pattern = r"^(.+?)\s*\((.+?)\)\s*,\s*\[(.+?)\]"
-
-
-            match = re.match(pattern, history_record["location"])
-
-            if match:
-                city    = match.group(1).strip()
-                country = match.group(2).strip()
-                koordinaten_str = match.group(3).strip()
-                
-                # Optional: Koordinaten in float umwandeln
-                lat, lon = map(float, [x.strip() for x in koordinaten_str.split(',')])
-                
-                logging.info("Location pattern correct: " + city + " " + country)
-                
-            else:
-                logging.warning("Location pattern not correct: " + str(history_record["location"]))
-                #exit()
-                continue
-                
-        # replace nan
-        history_record["campaign"]  = re.sub(r"^nan$", "", history_record["campaign"] )
-        
-        # set elevation
-        elevations = {
+            
+            # set elevation
+            elevations = {
             "Cabau":-1,
             "Hyytiala":150,
             "Jülich":111,
@@ -144,26 +124,78 @@ def get_device_history(history_schema, history):
             "Tel_Aviv":5,
             "Thessaloniki":50,
             "Limassol":10
-        }
+            }
         
+            
+            # pattern to separate city lat lon country
+            pattern = r"^(.+?)\s*\((.+?)\)\s*,\s*\[(.+?)\]"
+
+            # grab pattern
+            match = re.match(pattern, history_record["location"])
+
+            if match:
+                city    = match.group(1).strip()
+                country = match.group(2).strip()
+                koordinaten_str = match.group(3).strip()
+                
+                # Optional: Koordinaten in float umwandeln
+                lat, lon = map(float, [x.strip() for x in koordinaten_str.split(',')])
+                
+                logging.info("Location pattern correct: " + city + " " + country)
+                
+            else:
+                logging.warning("Location pattern not correct:  " + str(history_record))
+                #import sys
+                #sys.exit(1)
+                
+                print("Enter your name:")
+                name = input()
+
+                continue
+            
+            # decide if record is mobile
+            record_is_mobile = False
+            if len(history_record["track_pub"]) > 0 and len(history_record["track_url"]) > 0:
+                record_is_mobile = True
+            
+            # create tmp location record
+            record_location = {}
+            if record_is_mobile:
+                record_location = {
+                    "name"          : city,
+                    "is_mobile"     : record_is_mobile,
+                    "track_url"     : history_record["track_url"],
+                    "track_desc"    : history_record["track_pub"]
+                }
+            else:
+                
+                record_location = {
+                    "name"          : city,
+                    "is_mobile"     : record_is_mobile,
+                    "lat"           : lat,
+                    "lon"           : lon
+                }
+                
+                # add elevation
+                if city:
+                    if city in elevations:
+                        record_location["elevation"] = elevations[city]
+
+                
+        # replace nan in campain
+        history_record["campaign"]  = re.sub(r"^nan$", "", history_record["campaign"] )
+        
+        # set new record
         new_history_record = {
             "uuid":         history_record["uuid"],
             "startdate":    history_record["startdate"] + "T00:00:01Z",
             "stopdate":     history_record["enddate"] + "T00:00:01Z",
             "created":      datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "campaign":     history_record["campaign"],
-            "location": {
-                "name":     city,
-                "lat":      lat,
-                "lon":      lon
-            }
-            
+            "location":     record_location
         }
         
-        # add elevation
-        if city:
-            if city in elevations:
-                new_history_record["location"]["elevation"] = elevations[city]
+        
                 
         # add country
         if country in enum_countries:
@@ -280,7 +312,7 @@ def get_device_record(device_schema, device_dict):
     
     if not errors:
         logging.info("✓ Validation Device Successful: The JSON instance is valid.")
-        logging.debug(new_device_record)
+        #logging.debug(new_device_record)
         
         return new_device_record
        
@@ -288,6 +320,7 @@ def get_device_record(device_schema, device_dict):
     else:
         logging.warning("✗ Validation Device Failed: The JSON instance is invalid.")
         logging.warning(new_device_record)
+        logging.warning("Validation failed")
 
         for error in errors:
             # error.message usually contains the specific reason

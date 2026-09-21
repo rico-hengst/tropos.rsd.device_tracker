@@ -6,11 +6,20 @@ import secrets
 # Echoing password and masked with hashtag(#)
 import maskpass  # importing maskpass library
 
+import logging
+logging.basicConfig(level=logging.WARNING)
+
 import selector
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-USER_CREDENTIALS = BASE_DIR + "/config/users.json"
 
+USER_CREDENTIALS = BASE_DIR + "/config/users.json"
+if os.getenv("USER_CREDENTIALS_FILE"):
+    USER_CREDENTIALS = BASE_DIR + "/" + os.getenv("USER_CREDENTIALS_FILE")
+
+if not os.path.isfile(USER_CREDENTIALS):
+    logging.error("File not exists: " + USER_CREDENTIALS)
+    
 # Function to generate salt
 def generate_salt(length=64):
     """Generate a random salt for password hashing"""
@@ -41,6 +50,7 @@ def verify_password(password, stored_hash):
         
         return computed_hash == stored_hash_value
     except Exception:
+        logging.warning("Password or login doesnt match!")
         return False
 
 # Function to load users from JSON file
@@ -51,6 +61,7 @@ def load_users():
             data = json.load(file)
             return data.get('users', {})
     except FileNotFoundError:
+        logging.warning("file not found " + USER_CREDENTIALS)
         return {}
     except json.JSONDecodeError:
         return {}
@@ -60,6 +71,8 @@ def find_user(username):
     """Find user by username"""
     users = load_users()
     # Return user if exists, None otherwise
+    logging.warning(username)
+    logging.warning(users)
     return users.get(username)
 
 # Function to check if username exists
@@ -115,9 +128,9 @@ def initialize_users():
                 "salt": salt
             }
         
-        with open('users.json', 'w') as file:
+        with open(USER_CREDENTIALS, 'w') as file:
             json.dump(users_data, file, indent=2)
-        print("Users initialized with secure password hashing")
+        logging.info("Users initialized with secure password hashing")
 
 
 # admin tool to register user or reset password

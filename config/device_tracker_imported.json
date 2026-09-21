@@ -9279,41 +9279,6 @@
             }
         }
     },
-    "kloi-dwd2": {
-        "calibration": [],
-        "history": [],
-        "metadata": {
-            "name": "kloi-dwd2",
-            "description": "",
-            "is_platform": false,
-            "created": "2026-09-14T12:13:00Z",
-            "class": [
-                "radiation",
-                "sfc"
-            ],
-            "device_manufacturer": {
-                "name": "qefqef",
-                "address": "aad",
-                "contact": "wfwf"
-            },
-            "device_model": {
-                "name": "d",
-                "description": "d",
-                "purchased": "w",
-                "pid": "",
-                "serial": {
-                    "mykey#202609141413000#": "1234",
-                    "mykeyyyy#202609141413001#": "34yx"
-                }
-            },
-            "owner": {
-                "name": "ceqc",
-                "address": "",
-                "contact": "xwx",
-                "inv": {}
-            }
-        }
-    },
     "kloi-dwd22": {
         "calibration": [],
         "history": [],

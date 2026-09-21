@@ -54,8 +54,8 @@ input::placeholder {
                                             
                                             {% if your_requests["requested_mode"] == "add" or not your_requests %}
                                             <div class="mb-3">
-                                                <label for="exampleFormControlInput5" class="form-label">Device</label>
-                                                <select name="device" class="form-select form-select-sm" aria-label="Small select example" required>
+                                                <label for="my_device" class="form-label">Device</label>
+                                                <select name="device" class="form-select form-select-sm" id="my_device" aria-label="Small select example" required>
                                                     <option value=""></option>
                                                     {% for device_key in devices %}
                                                         {% set class0 =  devices[device_key]["metadata"]["class"].0  %}

@@ -16,182 +16,255 @@ input::placeholder {
         <div class="row py-3">
             <div class="col-12 borders srounded pt-3 mb-4">
                 <h2>Add device</h2>
-
             </div>
             
-            <div class="col-12 border  rounded p-3">
-                <form method="get"     enctype = "multipart/form-data" action="{{ url_for('handle_add_device') }}">
+            <form method="get"     enctype = "multipart/form-data" action="{{ url_for('handle_add_device') }}">
+                {% if device_keyname %}
+                    <div class="col-12 d-flex justify-content-between bordery rounded pt-3 mcb-4">
+                        <div>
+                            <h4>Please select ...</h4>
+                            <input type="hidden" id="id_requested_mode" name="requested_mode" value="{{your_requests["requested_mode"]}}">
+                            <button type="button" name="rrr" class="btn btn-sm {{ "btn-secondary" if your_requests["requested_mode"] == "edit" else 'btn-outline-secondary'}}" id="editBtn_requested_mode">Edit current device record</button>
+                            <button type="button" name="rrr" class="btn btn-sm {{ "btn-secondary" if your_requests["requested_mode"] == "add" else 'btn-outline-secondary'}}" id="addBtn_requested_mode">Add new device record, use content as template</button>
+                        </div>
+                        <div>
+                            <p class="text-small pt-3">Device key: <span class="badge rounded-pill text-bg-dark mx-1">{{device_keyname}}</span></p>
+                        </div>
+                    </div>
+                {% endif %}
+            <fieldset {% if device_keyname and "requested_mode" not in your_requests %} disabled{% endif %}>
+            
+                <div class="col-12 border  rounded p-3">
                     
-                    
-                <div class="row">
-                    <div class="col-3 p-1">
-                        <div class="card">
-                            <div class="card-header">
-                                <b>General info</b>
-                            </div>
-                            <div class="card-body">
-                                <div focus="exampleFormControlInput1"></div>
                         
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput1" class="form-label">Device name @ device tracker</label>
-                                    <input name="metadata.name" class="form-control form-control-sm" id="exampleFormControlInput1" placeholder="e.g: hatpro_g123 | ms80_123" 
-                                        pattern="[a-zA-Z\d_\-]*" title="Only [a-zA-Z\d_\-] are accepted" type="text" required>
+                    <div class="row">
+                        <div class="col-3 p-1">
+                            <div class="card">
+                                <div class="card-header">
+                                    <b>General info</b>
                                 </div>
-                                
-                                
-                                <label class="form-label">Device class @ device tracker</label>
-                                <select name="metadata.class0" class="form-select form-select-sm" aria-label="Small select example" required>
-                                    <option value=""></option>
-                                    {% for class0 in classes0 %}
-                                        {% if not class0 in user.class_edit_roles %}
-                                            <option value="" disabled>{{class0}} (no access right)</option>
-                                        {% else %}
-                                            <option value="{{class0}}">{{class0}}</option>
-                                        {% endif %}
-                                    {% endfor%}
-                                </select>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput2" class="form-label">Device subclass @ device tracker</label>
-                                    <input name="metadata.class1" class="form-control form-control-sm" id="exampleFormControlInput2" placeholder="e.g: hatpro | pyranometer" 
-                                        pattern="[a-zA-Z\d_\-]*" title="Only [a-zA-Z\d_\-] are accepted" type="text" required>
-                                </div>
-                                
-                                <div class="mb3">
-                                    <label class="form-label" for="switchCheckDefault">Device is a platform (default=false)</label>
-                                    <div class="form-check form-switch">
-                                        <input name="metadata.is_platform" class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+                                <div class="card-body">
+                                    <div focus="exampleFormControlInput1"></div>
+                                    
+                                    {% if "requested_mode" and your_requests["requested_mode"] == "edit"%}
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput0" class="form-label">Device keyname</label>
+                                        <input name="device_keyname" class="form-control form-control-sm" id="exampleFormControlInput0"  
+                                            value="{{device_keyname}}" type="text" disabled>
+                                        <input type="hidden" id="device_keyname" name="device_keyname" value="{{device_keyname}}">
+                                            
+                                    </div>
+                                    {% endif %}
+                            
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput1" class="form-label">Device name @ device tracker</label>
+                                        <input name="metadata.name" class="form-control form-control-sm" id="exampleFormControlInput1" placeholder="e.g: hatpro_g123 | ms80_123" 
+                                            value="{{device_keyname if device_keyname else ""}}"
+                                            pattern="[a-zA-Z\d_\-\s]*" title="Only [a-zA-Z\d_\-\s] are accepted" type="text" required>
                                     </div>
                                     
                                     
-                                  
+                                    <label class="form-label">Device class @ device tracker</label>
+                                    <select name="metadata.class0" class="form-select form-select-sm" aria-label="Small select example" required>
+                                        <option value=""></option>
+                                        {% for class0 in classes0 %}
+                                            {% if not class0 in user.class_edit_roles %}
+                                                <option value="" disabled>{{class0}} (no access right)</option>
+                                            {% else %}
+                                                <option 
+                                                    {% if device_keyname %}
+                                                        {% if devices[device_keyname]["metadata"]["class"][0] == class0 %}
+                                                            selected
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    value="{{class0}}">{{class0}}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor%}
+                                    </select>
+                                    
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput2" class="form-label">Device subclass @ device tracker</label>
+                                        <input name="metadata.class1" class="form-control form-control-sm" id="exampleFormControlInput2" placeholder="e.g: hatpro | pyranometer" 
+                                            value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["class"][1]}}{% endif %}"
+                                            pattern="[a-zA-Z\d_\-]*" title="Only [a-zA-Z\d_\-] are accepted" type="text" required>
+                                    </div>
+                                    
+                                    <div class="mb3">
+                                        <label class="form-label" for="switchCheckDefault">Device is a platform (default=false)</label>
+                                        <div class="form-check form-switch">
+                                            <input name="metadata.is_platform" class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault"
+                                                value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["is_platform"]}}{% endif %}"
+                                            >
+                                        </div>
+                                        
+                                        
+                                      
+                                    </div>
+                                    
                                 </div>
-                                
-                            </div>
-                        </div>
-                        
-                    </div>
-                    <div class="col-3 p-1">
-                        <div class="card">
-                            <div class="card-header">
-                                <b>Device manufacturer</b>
-                            </div>
-                            <div class="card-body">
-                        
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput3" class="form-label">Device manufacturer name</label>
-                                    <input name="metadata.device_manufacturer.name" class="form-control form-control-sm" id="exampleFormControlInput3" placeholder="e.g: Radiometer Physics | EKO" 
-                                         type="text" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput4" class="form-label">Device manufacturer address</label>
-                                    <input name="metadata.device_manufacturer.address" class="form-control form-control-sm" id="exampleFormControlInput4" placeholder="e.g: " 
-                                         type="text" >
-                                </div>
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput5" class="form-label">Device manufacturer contact</label>
-                                    <input name="metadata.device_manufacturer.contact" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: email, telefon, url" 
-                                         type="text" >
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3 p-1">
-                        <div class="card">
-                            <div class="card-header">
-                                <b>Device model</b>
-                            </div>
-                            <div class="card-body">
-                        
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput6" class="form-label">Device model name</label>
-                                    <input name="metadata.device_model.name" class="form-control form-control-sm" id="exampleFormControlInput6" placeholder="e.g: HATPRO-G5 | MS-80" 
-                                         type="text" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput7" class="form-label">Device model description</label>
-                                    <input name="metadata.device_model.description" class="form-control form-control-sm" id="exampleFormControlInput7" placeholder="e.g: " 
-                                         type="text" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput8" class="form-label">Device model purchase date</label>
-                                    <input name="metadata.device_model.purchased" class="form-control form-control-sm" id="exampleFormControlInput8" placeholder="e.g: 2020-09-18" 
-                                         type="text" >
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput9" class="form-label">Device pid (identifier to external reference)</label>
-                                    <input name="metadata.device_model.pid" class="form-control form-control-sm" id="exampleFormControlInput9" placeholder="e.g: https://registry.o2a-data.de/items/4438" 
-                                         type="text" >
-                                </div>
-                                
-                                <div class="">
-                                    <label for="" class="form-label">Device serial number(s)</label>
-                                </div>
-                                <!-- Container where inputs will be added -->
-                                <!-- Button to trigger the append -->
-                                <div id="container_serial">
-                                </div>
-                                <button  type="button" class="btn btn-sm btn-outline-dark mt-2"id="btn1"><i class="material-icons">add_box</i> Add serial number</button>
-                                
-                                
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3 p-1">
-                        <div class="card">
-                            <div class="card-header">
-                                <b>Device owner</b>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput10" class="form-label">Device owner name</label>
-                                    <input name="metadata.owner.name" class="form-control form-control-sm" id="exampleFormControlInput10" placeholder="e.g: TROPOS" 
-                                         type="text" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput11" class="form-label">Device owner address</label>
-                                    <input name="metadata.owner.address" class="form-control form-control-sm" id="exampleFormControlInput11" placeholder="e.g: Country, postal code, city etc" 
-                                         type="text">
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="exampleFormControlInput13" class="form-label">Device owner contact</label>
-                                    <input name="metadata.owner.contact" class="form-control form-control-sm" id="exampleFormControlInput13" placeholder="e.g: email, telefon number etc." 
-                                         type="text" required>
-                                </div>
-                               
-                                
-                                <div class="">
-                                    <label for="" class="form-label">Device owner inventory number(s)</label>
-                                </div>
-                                <!-- Container where inputs will be added -->
-                                <!-- Button to trigger the append -->
-                                <div id="container_inventory">
-                                </div>
-                                <button type="button" class="btn btn-sm btn-outline-dark mt-2"id="btn2"> <i class="material-icons">add_box</i> Add inventory number</button>
-                                
-    
-                                
-
                             </div>
                             
                         </div>
+                        <div class="col-3 p-1">
+                            <div class="card">
+                                <div class="card-header">
+                                    <b>Device manufacturer</b>
+                                </div>
+                                <div class="card-body">
+                            
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput3" class="form-label">Device manufacturer name</label>
+                                        <input name="metadata.device_manufacturer.name" class="form-control form-control-sm" id="exampleFormControlInput3" placeholder="e.g: Radiometer Physics | EKO" 
+                                            value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["device_manufacturer"]["name"]}}{% endif %}"
+                                            type="text" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput4" class="form-label">Device manufacturer address</label>
+                                        <input name="metadata.device_manufacturer.address" class="form-control form-control-sm" id="exampleFormControlInput4" placeholder="e.g: " 
+                                            value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["device_manufacturer"]["address"]}}{% endif %}"
+                                            type="text" >
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput5" class="form-label">Device manufacturer contact</label>
+                                        <input name="metadata.device_manufacturer.contact" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: email, telefon, url" 
+                                            value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["device_manufacturer"]["contact"]}}{% endif %}"
+                                            type="text" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 p-1">
+                            <div class="card">
+                                <div class="card-header">
+                                    <b>Device model</b>
+                                </div>
+                                <div class="card-body">
+                            
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput6" class="form-label">Device model name</label>
+                                        <input name="metadata.device_model.name" class="form-control form-control-sm" id="exampleFormControlInput6" placeholder="e.g: HATPRO-G5 | MS-80" 
+                                            value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["device_model"]["name"]}}{% endif %}"
+                                            type="text" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput7" class="form-label">Device model description</label>
+                                        <input name="metadata.device_model.description" class="form-control form-control-sm" id="exampleFormControlInput7" placeholder="e.g: " 
+                                            value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["device_model"]["description"]}}{% endif %}"
+                                            type="text" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput8" class="form-label">Device model purchase date</label>
+                                        <input name="metadata.device_model.purchased" class="form-control form-control-sm" id="exampleFormControlInput8" placeholder="e.g: 2020-09-18" 
+                                            value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["device_model"]["purchased"]}}{% endif %}"
+                                            type="text" >
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput9" class="form-label">Device pid (identifier to external reference)</label>
+                                        <input name="metadata.device_model.pid" class="form-control form-control-sm" id="exampleFormControlInput9" placeholder="e.g: https://registry.o2a-data.de/items/4438" 
+                                            value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["device_model"]["pid"]}}{% endif %}"
+                                            type="text" >
+                                    </div>
+                                    
+                                    <div class="">
+                                        <label for="" class="form-label">Device serial number(s)</label>
+                                    </div>
+<!--
+                                    Add serials if exists
+-->
+                                    {% if device_keyname and devices[device_keyname]["metadata"]["device_model"]["serial"]|length>0 %}
+                                        {% for my_serial_key in devices[device_keyname]["metadata"]["device_model"]["serial"] %}
+                                        {% set serialkey_part1 = my_serial_key|get_serial_part_of_keyname(separator="#",whichpart=1) %}
+                                            <div class="input-group pt-1" id="{{serialkey_part1}}">
+                                                <input type="text" name="serial_key_{{serialkey_part1}}" id="serial_key_{{my_serial_key|get_serial_part_of_keyname(separator="#",whichpart=1)}}" class="form-control form-control-sm" value="{{my_serial_key|get_serial_part_of_keyname(separator="#",whichpart=0)}}">
+                                                <span class="input-group-text" style="padding: 0px;">@</span>
+                                                <input type="text" name="serial_value_{{serialkey_part1}}" id="serial_value_{{my_serial_key|get_serial_part_of_keyname(separator="#",whichpart=1)}}" class="form-control form-control-sm" value="{{devices[device_keyname]["metadata"]["device_model"]["serial"][my_serial_key]}}" style="margin-bottom: 1px;">
+                                                <button type="button" class="btn btn-sm btn-danger" style="margin-left: 5px;" onclick="clearDiv({{serialkey_part1}})">Remove</button>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                    
+                                    <!-- Container where inputs will be added -->
+                                    <!-- Button to trigger the append -->
+                                    <div id="container_serial">
+                                    </div>
+                                    <button  type="button" class="btn btn-sm btn-outline-dark mt-2" id="btn1"><i class="material-icons">add_box</i> Add serial number</button>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 p-1">
+                            <div class="card">
+                                <div class="card-header">
+                                    <b>Device owner</b>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput10" class="form-label">Device owner name</label>
+                                        <input name="metadata.owner.name" class="form-control form-control-sm" id="exampleFormControlInput10" placeholder="e.g: TROPOS" 
+                                            value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["owner"]["name"]}}{% endif %}"
+                                            type="text" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput11" class="form-label">Device owner address</label>
+                                        <input name="metadata.owner.address" class="form-control form-control-sm" id="exampleFormControlInput11" placeholder="e.g: Country, postal code, city etc" 
+                                            value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["owner"]["address"]}}{% endif %}"
+                                            type="text">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput13" class="form-label">Device owner contact</label>
+                                        <input name="metadata.owner.contact" class="form-control form-control-sm" id="exampleFormControlInput13" placeholder="e.g: email, telefon number etc." 
+                                            value="{% if device_keyname %}{{devices[device_keyname]["metadata"]["owner"]["contact"]}}{% endif %}"
+                                            type="text" required>
+                                    </div>
+                                   
+                                    
+                                    <div class="">
+                                        <label for="" class="form-label">Device owner inventory number(s)</label>
+                                    </div>
+                                    
+                                    <!--
+                                    Add inv if exists
+-->
+                                    {% if device_keyname and devices[device_keyname]["metadata"]["owner"]["inv"]|length>0 %}
+                                        {% for my_inv_key in devices[device_keyname]["metadata"]["owner"]["inv"] %}
+                                        {% set invkey_part1 = my_inv_key|get_serial_part_of_keyname(separator="#",whichpart=1) %}
+                                            <div class="input-group pt-1" id="{{invkey_part1}}">
+                                                <input type="text" name="inventory_key_{{invkey_part1}}" id="inventory_key_{{my_inv_key|get_serial_part_of_keyname(separator="#",whichpart=1)}}" class="form-control form-control-sm" value="{{my_inv_key|get_serial_part_of_keyname(separator="#",whichpart=0)}}">
+                                                <span class="input-group-text" style="padding: 0px;">@</span>
+                                                <input type="text" name="inventory_value_{{invkey_part1}}" id="inventory_value_{{my_inv_key|get_serial_part_of_keyname(separator="#",whichpart=1)}}" class="form-control form-control-sm" value="{{devices[device_keyname]["metadata"]["owner"]["inv"][my_inv_key]}}" style="margin-bottom: 1px;">
+                                                <button type="button" class="btn btn-sm btn-danger" style="margin-left: 5px;" onclick="clearDiv({{invkey_part1}})">Remove</button>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                    <!-- Container where inputs will be added -->
+                                    <!-- Button to trigger the append -->
+                                    
+                                    <div id="container_inventory">
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-dark mt-2" id="btn2"> <i class="material-icons">add_box</i> Add inventory number</button>
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                        <div class="col-12 p-1 text-end">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
                         
                     </div>
-                    <div class="col-12 p-1 text-end">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
                     
-                </div>
-                </form>
-                
+                    
 
-            </div>
+                </div>
+            </fieldset>
+            </form>
         </div>
         
     </div>
@@ -332,7 +405,7 @@ input::placeholder {
           return;
         }
         button.addEventListener('click', addInput);
-      }requested_mode=add
+      }
 
       return addInput;
     }
@@ -340,6 +413,46 @@ input::placeholder {
     createUniqueInputAppender('container_serial', 'btn1', 'text', 'serial_key', 'serial_value');
 
     createUniqueInputAppender('container_inventory', 'btn2', 'text', 'inventory_key', 'inventory_value');
+    
+    
+    
+    
+    // Button click, add searchparams, reload webpae
+    function reloadWithMode(requested_mode) {
+      if (!requested_mode || typeof requested_mode !== 'string' || requested_mode.trim() === '') {
+        console.warn('Invalid requested_mode provided');
+        return;
+      }
+
+      const url = new URL(window.location.href);
+      url.searchParams.set('requested_mode', requested_mode.trim());
+      
+      // set request_mode variable to hidden inut field
+      document.getElementById('id_requested_mode').value = requested_mode.trim();
+
+      
+      window.location.href = url.toString();
+    }
+
+    // Button event listeners
+    document.getElementById('editBtn_requested_mode').addEventListener('click', function() {
+      console.log('Edit button clicked');
+      reloadWithMode('edit');
+    });
+
+    document.getElementById('addBtn_requested_mode').addEventListener('click', function() {
+      console.log('Add button clicked');
+      reloadWithMode('add');
+    });
+    
+    
+    // clear content of a container
+    function clearDiv(id) {
+      const div = document.getElementById(id);
+      if (div) {
+        div.textContent = '';
+      }
+    }
 </script>
 {% endblock %}
 

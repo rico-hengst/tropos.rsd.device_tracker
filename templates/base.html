@@ -52,9 +52,9 @@
                                         API
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="{{ url_for('select', subclass='polly') }}">JSON</a></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('select', class='polly') }}">JSON</a></li>
                                         <li><a class="dropdown-item" href="{{ url_for('selectvis', class='sunphotometer') }}">SVG</a></li>
-                                        <li><a class="dropdown-item" href="{{ url_for('selecttab', subclass='polly') }}">TAB</a></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('selecttab', class='polly') }}">TAB</a></li>
 
                                     </ul>
                                 </li>
@@ -146,9 +146,9 @@
                                     <div class="input-group">
                                         {% if user.username == "admin" %}
                                             <a class="btn btn-secondary text-white" href="{{ url_for('register') }}" role="button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Register new user"><i class="material-icons">plus_one</i></a>
-                                            <a class="btn btn-secondary text-white" href="{{ url_for('add_device') }}" role="button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Add new device"><i class="material-icons">add_box</i> Device</a>
                                         {% endif %}
-                                        <a class="btn btn-secondary text-white" href="{{ url_for('add_history') }}" role="button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Add new history"><i class="material-icons">add_box</i> History</a>
+                                        <a class="btn btn-secondary text-white" href="{{ url_for('add_device') }}" role="button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Add new device"><i class="material-icons">add_box</i> Device</a>
+                                        <a class="btn btn-secondary text-white" href="{{ url_for('add_history',requested_mode='add') }}" role="button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Add new history"><i class="material-icons">add_box</i> History</a>
                                         <div class="btn btn-light " data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Username"><i class="material-icons">account_box</i> {{user.username}}</div>
                                         <a class="btn btn-secondary text-white" href="{{ url_for('logout') }}" role="button" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Logout"><i class="material-icons">logout</i></a>
                                     </div>

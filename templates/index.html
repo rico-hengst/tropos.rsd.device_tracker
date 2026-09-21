@@ -62,6 +62,8 @@
                     {% set url2 = "?campaign=C3SAR" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
                 <li>platform (substring match) provided as list separated by comma eg: <samp>platform=LACROS,TARO|Polarstern,OCEANET</samp>
                     {% set url2 = "?platform=Polarstern" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
+                <li>uuid (exact match), eg: <samp>uuid=6ffa79b0-f43d-44a1-a115-1f7c14e8fb9c</samp>
+                    {% set url2 = "?uuid=6ffa79b0-f43d-44a1-a115-1f7c14e8fb9c" %}<a href="{{ url_for('select')}}{{url2}}">/select{{url2}}</a></li>
                 <li>date (exact format 2022-01-01T12:00:00Z), provided as list with one or two elements separated by comma eg:
                     <ul>
                         <li>find all history records that include following date: <samp>date=2026-01-01T12:00:00Z</samp>

@@ -16,7 +16,7 @@
 	display: table-header-group;
 }
 .divTableCell, .divTableHead {
-	border: 1px solid #999999;
+	border: 1px solid rgba(0,0,0,0.1);
 	display: table-cell;
 	padding: 3px 10px;
 }
@@ -81,7 +81,7 @@
                                     <div class="card border-dark">
                                         <div class="card-header d-flex justify-content-between {{ "bg-info" if device_dict["metadata"]["is_platform"] else "" }}">
                                             <div class="bd-highlight">{{ "Platform" if device_dict["metadata"]["is_platform"] else "Device" }}</div>
-                                            <div class="bd-highlight"><span class="badge text-bg-secondary">{{devicename}}</span></div>
+                                            <div class="bd-highlight"><span class="badge text-bg-secondary fs-6nnn">{{devicename}}</span></div>
                                         </div>
                                         <div class="card-body">
                                             <table class="table table-sm small">
@@ -167,9 +167,9 @@
                                                     <div class="divTableCell"  style="width:37%">{{ history.startdate[0:10]}} &rarr; {{ history.stopdate[0:10]}}</div>
                                                     <div class="divTableCell"  style="width:27%">
                                                         {{ history.location.name}}  
-                                                        <sup><span class="badge rounded-pill text-bg-secondary">{{ history.location.country}}</span></sup>
+                                                        <span class="badge rounded-pill text-bg-secondary">{{ history.location.country}}</span>
                                                     </div>
-                                                    <div class="divTableCell"  style="width:29%">{{ history.campaign}}</div>
+                                                    <div class="divTableCell"  style="width:29%">{{ history.campaign}} <abbr class="text-primary" title="platform(s) hierarchical">{{ history.platform|join('&rarr;')|safe}}</abbr></div>
                                                 </div>
                                             {% endfor %}
                                             </div>

@@ -121,20 +121,87 @@ input::placeholder {
                                                 <div class=""><b>Location</b></div>
                                                 <div class="form-check form-switch" id="my_switch">
                                                     <label class="form-check-label" for="switchCheckDefault">is mobile</label>
-                                                    <input name="history.location.is_mobile" class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+                                                    <input name="history.location.is_mobile" class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault"
+                                                        {% if uuid_devices %}{% if uuid_devices[uuid_device_key]["history"][0]["location"]["is_mobile"] == true %} checked{% endif %}{% endif %}
+                                                    >
                                                 </div>
                                             </div>
                                             
-                                            
+                                        </div>
+                                        <div class="p-2 mx-2">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="small text-secondary"><i class="material-icons">arrow_circle_down</i> keep info about static location</div>
+                                                <div class="small text-secondary">keep info about mobile location <i class="material-icons">arrow_circle_down</i></div>
+                                            </div>
                                         </div>
                                         <div class="card-body">
                                             
-                                            
-                                            
                                             <div class="row">
                                                 <div class="col-5 p-1 mx-2" id="my_static_location">
+<!--
+                                                    Only Admin is able to set new non-mobile location
+-->
+                                                    {% if user.username == "admin"%}
                                                     
-                                                    <div class="mb-3">
+<!--
+                                                        <div class="form-check form-switch pb-3" id="my_switch_add_static_location">
+                                                            <label class="form-check-label small" for="switchCheckDefault">Add new static location</label>
+                                                            <input name="_history.location.is_add_static_location" class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+                                                        </div>
+-->
+                                                        
+                                                        
+                                                        
+                                                        <div class="mb-3" id="checkboxgroup_static_location">
+                                                            <input type="checkbox" id="firstoption" name="checkbox_use_existing_static_location" class="form-check-input">
+                                                            <label for="firstoption" class="form-label">Use existing location</label>
+                                                            <br/>
+                                                            <input type="checkbox" id="secondoption" name="checkbox_add_static_location" class="form-check-input">
+                                                            <label for="secondoption" class="form-label">Add new location</label>
+                                                        </div>
+                                                        
+                                                        
+                                                        <div id="choose_add_static_location">
+                                                            <div class="mb-3">
+                                                                <label for="exampleFormControlInput54" class="form-label">Location name</label>
+                                                                <input name="history.location.name" class="form-control form-control-sm" id="exampleFormControlInput54" placeholder="e.g: Berlin" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["location"]["name"]}}{% endif %}"
+                                                                     type="text" required>
+                                                            </div>
+                                                            
+                                                            <div class="mb-3">
+                                                                <label for="exampleFormControlInput55" class="form-label">Location country</label>
+                                                                <select name="history.location.country" class="form-select form-select-sm" aria-label="Small select example" id="exampleFormControlInput55">
+                                                                    <option value=""></option>
+                                                                    {% for country in countries %}
+                                                                        {% if (uuid_devices) and country == uuid_devices[uuid_device_key]["history"][0]["location"]["country"] %}
+                                                                            <option value="{{country}}" selected>{{country}}</option>
+                                                                        {% else %}
+                                                                            <option value="{{country}}">{{country}}</option>
+                                                                        {% endif %}my_switch_add_static_location
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                            
+                                                            <div class="mb-3">
+                                                                <label for="exampleFormControlInput56" class="form-label">Location latitude</label>
+                                                                <input name="history.location.lat" class="form-control form-control-sm" id="exampleFormControlInput56" placeholder="e.g: 52.52001" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["location"]["lat"]}}{% endif %}"
+                                                                     type="text" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="exampleFormControlInput57" class="form-label">Location longitude</label>
+                                                                <input name="history.location.lon" class="form-control form-control-sm" id="exampleFormControlInput57" placeholder="e.g: 13.40502" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["location"]["lon"]}}{% endif %}"
+                                                                     type="text" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="exampleFormControlInput58" class="form-label">Location elevation</label>
+                                                                <input name="history.location.elevation" class="form-control form-control-sm" id="exampleFormControlInput58" placeholder="e.g: 41" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["location"]["elevation"]}}{% endif %}"
+                                                                     type="text">
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                    
+                                                    
+                                                    <div class="mb-3" id="choose_existing_static_location">
                                                         <label for="exampleFormControlInput5" class="form-label">Location name</label>
                                                         <select name="history.location.name" class="form-select form-select-sm" aria-label="Small select example" required>
                                                             <option value=""></option>
@@ -147,6 +214,8 @@ input::placeholder {
                                                             {% endfor %}
                                                         </select>                                            
                                                     </div>
+
+                                                    
                                                     
             <!--
                                                     <div class="mb-3">
@@ -184,6 +253,7 @@ input::placeholder {
                                                         <input name="history.location.track_desc" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: Hehemann, Laura (2022): Master tracks at PANGAEA, https://doi.org/10.1594/PANGAEA.942569" value="{% if uuid_devices %}{{uuid_devices[uuid_device_key]["history"][0]["location"]["track_desc"]}}{% endif %}"
                                                              type="text" >
                                                     </div>
+                                                    
                                                 </div>
                                                 
                                             </div>
@@ -388,7 +458,8 @@ input::placeholder {
     
     
     
-    // Button click, add searchparams, reload webpae
+    
+    // Button click, add searchparams, reload webpage
     function reloadWithMode(requested_mode) {
       if (!requested_mode || typeof requested_mode !== 'string' || requested_mode.trim() === '') {
         console.warn('Invalid requested_mode provided');
@@ -414,6 +485,85 @@ input::placeholder {
     document.getElementById('addBtn_requested_mode').addEventListener('click', function() {
       console.log('Add button clicked');
       reloadWithMode('add');
+    });
+    
+    
+    
+    
+    /**
+     * Ensures only one checkbox is checked within a container.
+     * Additionally toggles enabled/disabled state of two other divs.
+     *
+     * @param {string} containerId - ID of the div containing the checkboxes.
+     * @param {string} enableOnFirstId - ID of div to ENABLE when 'firstoption' is checked.
+     * @param {string} disableOnFirstId - ID of div to DISABLE when 'firstoption' is checked.
+     */
+    function setupSingleCheckbox(containerId, enableOnFirstId, disableOnFirstId) {
+      const container = document.getElementById(containerId);
+      if (!container) {
+        console.warn("Container '" + containerId + "' not found.");
+        return;
+      }
+
+      // Select ALL form elements inside the target divs once for performance
+      const targetDiv1 = document.getElementById(enableOnFirstId);
+      const targetDiv2 = document.getElementById(disableOnFirstId);
+      
+      const formElements1 = targetDiv1 ? targetDiv1.querySelectorAll('input, select, textarea, button') : [];
+      const formElements2 = targetDiv2 ? targetDiv2.querySelectorAll('input, select, textarea, button') : [];
+
+      const checkboxes = container.querySelectorAll("input[type='checkbox']");
+
+      // Helper to toggle state
+      function setFieldState(elements, isEnabled) {
+        elements.forEach(el => {
+          el.disabled = !isEnabled;
+        });
+        
+        // Toggle visual class on parent container
+        const parentDiv = elements.length > 0 ? elements[0].closest('.container') : null;
+        if (parentDiv) {
+            parentDiv.classList.toggle('disabled-section', !isEnabled);
+        }
+      }
+
+      // Initial State: Both disabled
+      setFieldState(formElements1, false);
+      setFieldState(formElements2, false);
+
+      checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+          
+          // 1. Enforce Single Selection Logic
+          if (checkbox.checked) {
+            checkboxes.forEach(other => {
+              if (other !== checkbox) other.checked = false;
+            });
+          }
+
+          // 2. Determine which option is active
+          const isFirstChecked = document.getElementById("firstoption")?.checked;
+          const isSecondChecked = document.getElementById("secondoption")?.checked;
+
+          // 3. Apply Enable/Disable Logic
+          if (isFirstChecked) {
+            setFieldState(formElements1, true);   // Enable UI
+            setFieldState(formElements2, false);  // Disable UU
+          } else if (isSecondChecked) {
+            setFieldState(formElements1, false);  // Disable UI
+            setFieldState(formElements2, true);   // Enable UU
+          } else {
+            // Neither checked: Reset both to disabled
+            setFieldState(formElements1, false);
+            setFieldState(formElements2, false);
+          }
+        });
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Pass the IDs: Container, Div-to-enable-on-first, Div-to-disable-on-first
+      setupSingleCheckbox("checkboxgroup_static_location", "choose_existing_static_location", "choose_add_static_location");
     });
 </script>
 {% endblock %}

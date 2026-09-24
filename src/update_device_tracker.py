@@ -127,9 +127,6 @@ def prepare_add_device(myrequests):
                 print("error")
                 exit()
                 
-            
-    #print(2222)
-    #print(my_dict_new)
     
     return my_dict_new
     
@@ -153,9 +150,19 @@ def prepare_add_history(myrequests):
         "is_mobile": True if "history.location.is_mobile" in myrequests else False
     }
     
+    my_location_is_add_static_location = None
+    
+    # decision tree about my_location_is_add_static_location
+    if not bool(my_location["is_mobile"]) and "checkbox_use_existing_static_location" in myrequests and bool(myrequests["checkbox_use_existing_static_location"]):
+        my_location_is_add_static_location = False
+    elif bool(my_location["is_mobile"]):
+        my_location_is_add_static_location = False
+    elif not bool(my_location["is_mobile"]) and "checkbox_add_static_location" in myrequests and bool(myrequests["checkbox_add_static_location"]):
+        my_location_is_add_static_location = True
+        
   
     for key_name in myrequests:
-        print(key_name)
+        logging.info(key_name)
         
         # transform datetime objects
         if key_name == "history.startdate":
@@ -187,31 +194,44 @@ def prepare_add_history(myrequests):
 
                 
         # update location
+        # is static
         if not my_location["is_mobile"]:
-            print("not mobile")
+            logging.info("is a non-mobile location")
             if key_name == "history.location.name":
                 locations = selector.get_lookup_content("locations")
                 
                 # take al location info from database
-                if myrequests[key_name] in locations:
-                    my_location["name"] = myrequests[key_name]
-                    my_location["lat"] = locations[ myrequests[key_name] ][ "lat" ]
-                    my_location["lon"] = locations[ myrequests[key_name] ][ "lon" ]
+                if not bool(my_location_is_add_static_location):
+                    logging.warning("is false")
                     
-                    if "elevation" in locations[ myrequests[key_name] ]:
-                        my_location["elevation"] = locations[ myrequests[key_name] ]["elevation"]
-
+                    if myrequests[key_name] in locations:
+                        my_location["name"] = myrequests[key_name]
+                        my_location["country"] = locations[ myrequests[key_name] ][ "country" ] if "country" in locations[ myrequests[key_name] ] else ""
+                        my_location["lat"] = float( locations[ myrequests[key_name] ][ "lat" ] )
+                        my_location["lon"] = float( locations[ myrequests[key_name] ][ "lon" ] )
+                        
+                        if "elevation" in locations[ myrequests[key_name] ]:
+                            my_location["elevation"] = float( locations[ myrequests[key_name] ]["elevation"] )
+                # add all info from web form
+                elif bool(my_location_is_add_static_location):
+                    logging.warning("is true")
+                    
+                    my_location["name"]     = myrequests[key_name]
+                    my_location["country"]  = myrequests["history.location.country" ]
+                    my_location["lat"]      = float( myrequests["history.location.lat" ] )
+                    my_location["lon"]      = float( myrequests["history.location.lon" ] )
+                    if "history.location.elevation" in myrequests and len(myrequests["history.location.elevation"])>0:
+                        my_location["elevation"] = float( myrequests["history.location.elevation" ] )
+                    
+        # is mobile
         else:
-            print("mobile")
+            logging.info("is a mobile location")
             if key_name == "history.location.name":
                 my_location["name"] = myrequests[key_name]
-                print("set: wdeqwqwdrqw" + key_name)
             elif key_name == "history.location.track_url":
                 my_location["track_url"] = myrequests[key_name]
-                print("set: " + key_name)
             elif key_name == "history.location.track_desc":
                 my_location["track_desc"] = myrequests[key_name]
-                print("set: " + key_name)
                     
                 
     # check if start => stop
@@ -367,11 +387,11 @@ def add_history(myrequests):
         
         
     
-    # old valiadation without format checker
-    # validate(
-        # instance=history_record_ready["return_ok"],
-        # schema=history_schema,
-    # )
+    #old valiadation without format checker
+    validate(
+        instance=history_record_ready["return_ok"],
+        schema=history_schema,
+    )
 
 
 
@@ -388,8 +408,17 @@ def add_history(myrequests):
         
         
         my_json_file = json_file()
+        
+        
+        
+        # 1. load file content to variable
+        device_tracker = None
         with open(my_json_file, "r+") as file:
             device_tracker = json.load(file)
+        file.close()
+        
+        # 2 open file to write the updated content to the file
+        with open(my_json_file, "w+") as file:
             
             logging.info("Update json_file: " + my_json_file )
             
@@ -406,7 +435,8 @@ def add_history(myrequests):
                         device_tracker[device]["history"].append(history_record_ready["return_ok"])
 
                    # print(device_tracker)
-                    file.seek(0)
+                    #file.seek(0)
+                    file.truncate()
                     json.dump(device_tracker, file, indent=4)
                     
                     message = "Updated history at device: " + device
@@ -497,11 +527,7 @@ def add_device(myrequests):
         
             # add or update
             device_tracker[ device_keyname  ] = dict( sorted(device_record_ready.items()) )
-            
-            print("RQ")
-            print(myrequests)
-            print("dict")
-            print(dict( sorted(device_record_ready.items()) ))
+
             
             logging.warning("Try to update json_file: " + my_json_file )
             logging.info("Add device record")

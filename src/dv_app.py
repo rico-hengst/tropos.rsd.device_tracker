@@ -238,9 +238,18 @@ def add_history():
                     print("no uuids exists")
                     flash("No uuid detected: " + your_requests["uuid"] )
                     
+            # load schema
+            with open("../config/schema_history.json", "r+") as file:
+                try:
+                    history_schema = json.load(file)
+                except json.JSONDecodeError as e:
+                    logging.error("Invalid JSON syntax at schema history:", e)
+                    
+            countries = history_schema["$defs"]["location"]["oneOf"][0]["properties"]["country"]["enum"]
+                            
             
             devices = selector.get_lookup_content("devices")
-            return render_template("add_history.html",locations=selector.get_lookup_content("locations"),devices=devices, uuid_devices=uuid_devices, uuid_device_key=uuid_device_key ,your_requests=your_requests,user=user)
+            return render_template("add_history.html",countries=countries, locations=selector.get_lookup_content("locations"),devices=devices, uuid_devices=uuid_devices, uuid_device_key=uuid_device_key ,your_requests=your_requests,user=user)
             
 
 # Handle add history

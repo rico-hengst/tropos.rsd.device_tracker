@@ -18,17 +18,15 @@ input::placeholder {
                 <h2>Add device</h2>
             </div>
             
-            <form method="get"     enctype = "multipart/form-data" action="{{ url_for('handle_add_device') }}">
+            <form method="get"  action="{{ url_for('handle_add_device') }}">
                 {% if device_keyname %}
                     <div class="col-12 d-flex justify-content-between bordery rounded pt-3 mcb-4">
                         <div>
                             <h4>Please select ...</h4>
                             <input type="hidden" id="id_requested_mode" name="requested_mode" value="{{your_requests["requested_mode"]}}">
-                            <button type="button" name="rrr" class="btn btn-sm {{ "btn-secondary" if your_requests["requested_mode"] == "edit" else 'btn-outline-secondary'}}" id="editBtn_requested_mode">Edit current device record</button>
+                            <input type="hidden" name="device_keyname" value="{{device_keyname}}">
+                            <button type="button" name="rrr" class="btn btn-sm {{ "btn-secondary" if your_requests["requested_mode"] == "edit" else 'btn-outline-secondary'}}" id="editBtn_requested_mode">Edit current device record <span class="badge rounded-pill text-bg-secondary mx-1">{{device_keyname}}</span></button>
                             <button type="button" name="rrr" class="btn btn-sm {{ "btn-secondary" if your_requests["requested_mode"] == "add" else 'btn-outline-secondary'}}" id="addBtn_requested_mode">Add new device record, use content as template</button>
-                        </div>
-                        <div>
-                            <p class="text-small pt-3">Device key: <span class="badge rounded-pill text-bg-dark mx-1">{{device_keyname}}</span></p>
                         </div>
                     </div>
                 {% endif %}
@@ -45,22 +43,18 @@ input::placeholder {
                                 </div>
                                 <div class="card-body">
                                     <div focus="exampleFormControlInput1"></div>
-                                    
-                                    {% if "requested_mode" and your_requests["requested_mode"] == "edit"%}
-                                    <div class="mb-3">
-                                        <label for="exampleFormControlInput0" class="form-label">Device keyname</label>
-                                        <input name="device_keyname" class="form-control form-control-sm" id="exampleFormControlInput0"  
-                                            value="{{device_keyname}}" type="text" disabled>
-                                        <input type="hidden" id="device_keyname" name="device_keyname" value="{{device_keyname}}">
-                                            
-                                    </div>
-                                    {% endif %}
                             
                                     <div class="mb-3">
                                         <label for="exampleFormControlInput1" class="form-label">Device name @ device tracker</label>
                                         <input name="metadata.name" class="form-control form-control-sm" id="exampleFormControlInput1" placeholder="e.g: hatpro_g123 | ms80_123" 
                                             value="{{device_keyname if device_keyname else ""}}"
-                                            pattern="[a-zA-Z\d_\-\s]*" title="Only [a-zA-Z\d_\-\s] are accepted" type="text" required>
+                                            pattern="[a-zA-Z\d_\-\s]*" title="Only [a-zA-Z\d_\-\s] are accepted" 
+                                            type="text" 
+                                            {% if "requested_mode" and your_requests["requested_mode"] == "edit"%}disabled{% endif %}
+                                            required >
+                                        {% if "requested_mode" and your_requests["requested_mode"] == "edit"%}
+                                            <input type="hidden" name="metadata.name" value="{{device_keyname if device_keyname else ""}}">
+                                        {% endif %}
                                     </div>
                                     
                                     

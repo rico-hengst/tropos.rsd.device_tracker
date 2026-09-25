@@ -52,83 +52,21 @@ input::placeholder {
 
     <div class="container">
         <div class="row py-3">
-            <div class="col-8 border; ;rounded p-3">
-                <h2>Device tracker content</h2>
-            </div>
-            <div class="col-4 border rounded my-2 mx-0 px-0">
-                {% if your_requests %}
-                    <ul class="list-group">
-                        <li class="list-group-item list-group-item-action bg-light">Your filtered request</li>
-                        {% for key, value in your_requests.items() %}
-                            <li class="list-group-item small">{{key}} <b>{{value}}</b></li>
-                        {% endfor %}
-                    </ul>                   
-                {% endif %}
+            <div class="col-12 border; ;rounded p-3">
+                <h2>Show requested devices</h2>
+            </div>    
+            
+            <div class="col-12 border rounded my-2 p-3" style="background-color:rgb(240,240,240)">
+                <form method="get" action="{{ url_for('selecttab') }}" id="id_selector_form">
+                    {%  include '_selectform.html'  %}
+                </form>
             </div>
             
-
-            
-            <form method="get"     enctype = "multipart/form-data" action="{{ url_for('selecttab') }}" id="id_selector_form">
-            <div class="col-12 border rounded my-2 p-3">
-                <div class="row py-3 d-flex align-items-end">
-                    <div class="col-2 mb-1">
-                        <label for="device" class="form-label">Device</label>
-                        <input name="device" class="form-control form-control-sm" placeholder="e.g: polly | ms80_" value="{% if "device" in your_requests %}{{ your_requests["device"]}}{% endif %}" type="text">
-                    </div>
-                    <div class="col-2 mb-1">
-                        <label for="locationname" class="form-label">Location</label>
-                        <input name="locationname" class="form-control form-control-sm" placeholder="e.g: Melpitz" value="{% if "locationname" in your_requests %}{{ your_requests["locationname"]}}{% endif %}" type="text">
-                    </div>
-                    <div class="col-2 mb-1">
-                        <label for="country" class="form-label">Country</label>
-                        <input name="country" class="form-control form-control-sm" placeholder="e.g: Germany" value="{% if "country" in your_requests %}{{ your_requests["country"]}}{% endif %}" type="text">
-                    </div>
-                    <div class="col-2 mb-1">
-                        <label for="campaign" class="form-label">Campaign</label>
-                        <input name="campaign" class="form-control form-control-sm" placeholder="e.g: PS127 | C3SAR" value="{% if "campaign" in your_requests %}{{ your_requests["campaign"]}}{% endif %}" type="text">
-                    </div>
-                    <div class="col-2 mb-1">
-                        <label for="platform" class="form-label">Platform</label>
-                        <input name="platform" class="form-control form-control-sm" placeholder="e.g: Polarstern | LACROS | TARO" value="{% if "platform" in your_requests %}{{ your_requests["platform"]}}{% endif %}" type="text">
-                    </div>
-                    <div class="col-2 mb-1">
-                        <label for="uuid" class="form-label">History uuid (complete string required)</label>
-                        <input name="uuid" class="form-control form-control-sm" placeholder="e.g: 6ffa79b0-f43d-44a1-a115-1f7c14e8fb9c" value="{% if "uuid" in your_requests %}{{ your_requests["uuid"]}}{% endif %}" type="text">
-                    </div>
-                    <div class="col-2 mb-1">
-                        <label for="class0" class="form-label">Device class0 (first level)</label>
-                        <input name="class0" class="form-control form-control-sm" placeholder="e.g: lidar | radiation" value="{% if "class0" in your_requests %}{{ your_requests["class0"]}}{% endif %}" type="text">
-                    </div>
-                    <div class="col-2 mb-1">
-                        <label for="class" class="form-label">Device class (all levels)</label>
-                        <input name="class" class="form-control form-control-sm" placeholder="e.g: lidar | pollyxt" value="{% if "class" in your_requests %}{{ your_requests["class"]}}{% endif %}" type="text">
-                    </div>
-                    <div class="col-2 mb-1">
-                        <label for="datetimepicker1" class="form-label">Date</label>
-                        <input name="date" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if "date" in your_requests %}{{ your_requests["date"][0]|format_string_datetime }}{% endif %}"
-                                id="datetimepicker1" type="text">
-                    </div>
-                    <div class="col-2 mb-1">
-                        <label for="datetimepicker2" class="form-label">Date (if timespan on request)</label>
-                        <input name="date" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if "date" in your_requests and your_requests["date"]|length == 2%}{{ your_requests["date"][1]|format_string_datetime }}{% endif %}"
-                                id="datetimepicker2" type="text">
-                    </div>
-                    <div class="col-2 mb-1">
-                        <button type="button" class="btn btn-outline-dark btn-sm" id="clearBtn">Cancel</button>
-                    </div>
-                    <div class="col-2 mb-1">
-                        <div class="d-flex align-items-end"><div>
-                        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-                        </div></div>
-                    </div>
-                </div>
-            </div>
-            </form>
             
             
             <div class="col-12 border rounded my-2 p-3">
                 
-                <div class="d-flex flex-row-reverse p-3">
+                <div class="d-flex flex-row-reverse p-3 pe-1">
                     <div class="input-group" style="width:300px">
                         <input class="form-control form-control-sm" type="text" id="searchText"placeholder="Search and filter table content ..">
                     </div>
@@ -136,16 +74,7 @@ input::placeholder {
                 
                 
                 <table class="table table-sm table-striped small" id="device_tracker_table_id">
-<!--
-                    <thead class="table-dark">
-                        <tr>
-                            <th scope="col">Device & class</th>
-                            <th scope="col">Calibration</th>
-                            <th scope="col">History</th>
 
-                        </tr>
-                    </thead>
--->
                     <tbody>
                         {% for devicename, device_dict in devices.items() | sort(attribute='0')%}
                         {% set length_history = device_dict.history|length %}
@@ -154,7 +83,12 @@ input::placeholder {
                                     <div class="card border-dark">
                                         <div class="card-header d-flex justify-content-between {{ "bg-info" if device_dict["metadata"]["is_platform"] else "" }}">
                                             <div class="bd-highlight">{{ "Platform" if device_dict["metadata"]["is_platform"] else "Device" }}</div>
-                                            <div class="bd-highlight"><span class="badge text-bg-secondary fs-6nnn">{{devicename}}</span></div>
+                                            <div class="bd-highlight">
+                                                {% if "class" in device_dict.metadata and device_dict.metadata.class[0] in user.class_edit_roles %}
+                                                    <a href="{{url_for('add_device', device=devicename, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>
+                                                {% endif %}
+                                                <span class="badge text-bg-secondary fs-6nnn">{{devicename}}</span>
+                                            </div>
                                         </div>
                                         <div class="card-body">
                                             <table class="table table-sm small">
@@ -242,7 +176,7 @@ input::placeholder {
                                                         {{ history.location.name}}  
                                                         <span class="badge rounded-pill text-bg-secondary">{{ history.location.country}}</span>
                                                     </div>
-                                                    <div class="divTableCell"  style="width:29%">{{ history.campaign}} <abbr class="text-primary" title="platform(s) hierarchical">{{ history.platform|join('&rarr;')|safe}}</abbr></div>
+                                                    <div class="divTableCell"  style="width:29%"><abbr title="campaign">{{ history.campaign}}</abbr> <abbr class="text-primary" title="platform(s) hierarchical">{{ history.platform|join('&rarr;')|safe}}</abbr></div>
                                                 </div>
                                             {% endfor %}
                                             </div>
@@ -263,66 +197,6 @@ input::placeholder {
     </div>
 {% endblock %}
 
-{% block javascript %}    
-    <link rel="stylesheet" href="{{ url_for('static', filename='lib/datetimepicker-master/jquery.datetimepicker.css') }}" />
-    <script src="{{ url_for('static', filename='lib/jquery-ui-1.14.2.custom/jquery-ui.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='lib/datetimepicker-master/build/jquery.datetimepicker.full.min.js') }}"></script>
-    <script>
-        
-        $(document).ready(function() {
-            $.datetimepicker.setLocale('en');
-            $('#datetimepicker1').datetimepicker({
-                format:'Y-m-d H:i',
-                lang:'en'
-            }
-            );
-        });
-        $(document).ready(function() {
-            $.datetimepicker.setLocale('en');
-            $('#datetimepicker2').datetimepicker({
-                format:'Y-m-d H:i',
-                lang:'en'
-            }
-            );
-        });
-        
-        
-        //provide Searcable input field to search at table, source: https://codepen.io/f_taleh/pen/jwWVqW
-        $(document).ready(function(){
-            $("#searchText").keyup(function(){
-                _this = this;
-                  $.each($("#device_tracker_table_id tr"), function() {
-                     if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1){
-                         $(this).hide();
-                       }else{
-                         $(this).show();
-                      }
-                  });
-            });
-        });
-        
-        
-        // delete all form content in container "id_selector_form" in one go: click button id="clearBtn"
-        document.getElementById('clearBtn').addEventListener('click', function () {
-          const container = document.getElementById('id_selector_form');
-
-          // Reset all <input> elements
-          container.querySelectorAll('input').forEach(function (input) {
-            if (input.type === 'checkbox' || input.type === 'radio') {
-              input.checked = false;
-            } else {
-              input.value = '';
-            }
-          });
-
-          // Clear <textarea> and <select>
-          container.querySelectorAll('textarea, select').forEach(function (el) {
-            el.value = '';
-          });
-        });
-    </script>
-
+{% block javascript %} 
+{%  include '_selectform.javascript'  %}
 {% endblock %}
-
-
-

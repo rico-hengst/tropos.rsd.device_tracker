@@ -1,0 +1,67 @@
+<div class="row py-0">
+    <div class="col-12">
+        Filter requested devices
+    </div>
+</div>
+<div class="row py-3 d-flex align-items-end">
+    <div class="col-2 mb-1">
+        <label for="device" class="form-label">Device name (key) <abbr title="case in-sensitive & matches substrings"><i class="material-icons">lens</i></abbr></label>
+        <input name="device" class="form-control form-control-sm" placeholder="polly | ms80_" value="{% if "device" in your_requests %}{{ your_requests["device"]}}{% endif %}" type="text">
+    </div>
+    <div class="col-2 mb-1">
+        <label for="locationname" class="form-label">Device location <abbr title="case in-sensitive & matches substrings"><i class="material-icons">lens</i></abbr></label>
+        <input name="locationname" class="form-control form-control-sm" placeholder="Melpitz" value="{% if "locationname" in your_requests %}{{ your_requests["locationname"]}}{% endif %}" type="text">
+    </div>
+    <div class="col-2 mb-1">
+        <label for="country" class="form-label">Device country</label>
+        <input name="country" class="form-control form-control-sm" placeholder="Germany" value="{% if "country" in your_requests %}{{ your_requests["country"]}}{% endif %}" type="text">
+    </div>
+    <div class="col-2 mb-1">
+        <label for="campaign" class="form-label">Device campaign <abbr title="case in-sensitive & matches substrings"><i class="material-icons">lens</i></abbr></label>
+        <input name="campaign" class="form-control form-control-sm" placeholder="PS127 | C3SAR" value="{% if "campaign" in your_requests %}{{ your_requests["campaign"]}}{% endif %}" type="text">
+    </div>
+    <div class="col-2 mb-1">
+        <label for="platform" class="form-label">Device on platform <abbr title="case in-sensitive & matches substrings"><i class="material-icons">lens</i></abbr></label>
+        <input name="platform" class="form-control form-control-sm" placeholder="Polarstern | LACROS | TARO" value="{% if "platform" in your_requests %}{{ your_requests["platform"]}}{% endif %}" type="text">
+    </div>
+    <div class="col-2 mb-1">
+        <label for="uuid" class="form-label">Device history <abbr title="complete string required">uuid</abbr></label>
+        <input name="uuid" class="form-control form-control-sm" placeholder="6ffa79b0-f43d-44a1-a115-1f7c14e8fb9c" value="{% if "uuid" in your_requests %}{{ your_requests["uuid"]}}{% endif %}" type="text">
+    </div>
+    <div class="col-2 mb-1">
+        <label for="class0" class="form-label">Device class[0] <abbr title="case in-sensitive & matches substrings"><i class="material-icons">lens</i></abbr></label>
+        <select name="class0" class="form-select form-select-sm" aria-label="Small select example">
+            <option></option>
+            {% for class0 in classes0 %}
+                {% if "class0" in your_requests and class0 == your_requests["class0"] %}
+                    <option value="{{class0}}" selected>{{class0}}</option>
+                {% else %}
+                    <option value="{{class0}}">{{class0}}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="col-2 mb-1">
+        <label for="class" class="form-label">Device class (all levels) <abbr title="case in-sensitive & matches substrings"><i class="material-icons">lens</i></abbr></label>
+        <input name="class" class="form-control form-control-sm" placeholder="pollyxt | pyranometer" value="{% if "class" in your_requests %}{{ your_requests["class"]}}{% endif %}" type="text">
+    </div>
+    <div class="col-2 mb-1">
+        <label for="datetimepicker1" class="form-label">Date</label>
+        <input name="date" class="form-control form-control-sm" placeholder="2022-01-28 14:22" value="{% if "date" in your_requests %}{{ your_requests["date"][0]|format_string_datetime }}{% endif %}"
+                id="datetimepicker1" type="text">
+    </div>
+    <div class="col-2 mb-1">
+        <label for="datetimepicker2" class="form-label">Date <abbr title="end date, if timespan requested">2</abbr></label>
+        <input name="date" class="form-control form-control-sm" placeholder="2022-01-28 14:22" value="{% if "date" in your_requests and your_requests["date"]|length == 2%}{{ your_requests["date"][1]|format_string_datetime }}{% endif %}"
+                id="datetimepicker2" type="text">
+    </div>
+    <div class="col-2 offset-2 mb-1">
+        <div class="d-flex justify-content-end align-items-end">
+            <button type="button" class="btn btn-outline-dark btn-sm" id="clearBtn">Clear</button>
+            <button type="submit" class="btn btn-primary btn-sm ms-2">Submit</button>
+        </div>
+    </div>
+</div>
+             
+

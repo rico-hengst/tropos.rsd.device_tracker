@@ -93,7 +93,7 @@ def selectvis():
         your_requests["date"] = request.args.getlist('date')
     
     devices=selector.select_history( your_requests ).replace([np.nan], [None], regex=False).to_json()
-    
+    classes0=selector.get_lookup_content("classes0")
     
     
     username = None
@@ -101,7 +101,7 @@ def selectvis():
     if 'username' in session:
         username = session['username']
     
-    return render_template("selectvis.html",devices=devices, your_requests=your_requests, user=fhelper.get_signed_user(username))
+    return render_template("selectvis.html",devices=devices,classes0=classes0, your_requests=your_requests, user=fhelper.get_signed_user(username))
 
 
 # DT API TAB
@@ -112,8 +112,12 @@ def selecttab():
     if ("date" in your_requests):
         #print(type(request.args.getlist('date')))
         your_requests["date"] = request.args.getlist('date')
-    
+        
+    # remove empty key value sets
+    your_requests=fhelper.purify_dict_v2(your_requests)
+
     devices=selector.select_history( your_requests ).replace([np.nan], [None], regex=False).to_dict()
+    classes0=selector.get_lookup_content("classes0")
     
     username = None
     userroles = None
@@ -121,7 +125,7 @@ def selecttab():
         username = session['username']
         
 
-    return render_template("selecttab.html",devices=devices,your_requests=your_requests, user=fhelper.get_signed_user(username))
+    return render_template("selecttab.html",devices=devices,classes0=classes0,your_requests=your_requests, user=fhelper.get_signed_user(username))
     
 
 
@@ -194,7 +198,11 @@ def handle_add_device():
             return render_template("handle_add_device.html",user=user)
             
         # update the database
-        update_device_tracker.add_device(your_requests)
+        xxx=update_device_tracker.add_device(your_requests)
+        
+        if "message" in xxx:
+            if "message" in xxx["message"]:
+                flash(xxx["message"]["message"],xxx["message"]["type"])
 
         return render_template("handle_add_device.html", user=user)
             

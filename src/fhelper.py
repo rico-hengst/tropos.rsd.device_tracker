@@ -7,7 +7,7 @@ import secrets
 import maskpass  # importing maskpass library
 
 import logging
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 
 import selector
 
@@ -207,25 +207,32 @@ def get_signed_user(username):
 ############
 #### input: dict (with values (list))
 #### return dict, delete list elements with "", delete key if list will be empty
+#### fhelper.purify_dict_v2({"key1":"value1","key2":"","date_a":["","2012-01-02"], "date_b":["","","",""]})
+#### returns: {'key1': 'value1', 'date_a': ['2012-01-02']}
 ############
-def purify_dict(my_dict):
+def purify_dict_v2(my_dict):
     my_dict2={}
     for my_key in my_dict:
         i=-1
         elements2pop = []
-        for list_element in my_dict[my_key]:
-            i=i+1
-            #print("key/element: " + my_key + "..." + list_element)
-            if(list_element.isspace() or list_element=="" ):
-                print("Remove list element: " + my_key)
-            else:
-                
-                if my_key in my_dict2:
-                    my_dict2[my_key].append(list_element)
-                    #print("my_dict2 key exists:" + my_key)
+        
+        if type(my_dict[my_key]) == list:
+            for list_element in my_dict[my_key]:
+                if(list_element.isspace() or list_element=="" ):
+                    logging.info("Remove empty list element at key: " + my_key)
                 else:
-                    my_dict2[my_key] = [list_element]
-                    #print("my_dict2 key not exists:" + my_key)
+                    logging.info("Add/append value to key as list: " + my_key )
+                    if my_key in my_dict2:
+                        my_dict2[my_key].append(list_element)
+                    else:
+                        my_dict2[my_key] = [list_element]
+        else:
+            if my_dict[my_key] != "":
+                my_dict2[my_key] = my_dict[my_key]
+                logging.info("Add string at key: " + my_key)
+            else:
+                logging.info("Remove empty string at key: " + my_key)
+
 
     return my_dict2
 

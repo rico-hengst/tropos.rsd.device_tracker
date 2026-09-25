@@ -11,7 +11,7 @@ import numpy as np
 
 import pandas as pd
 import logging
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 
 
 import selector
@@ -28,6 +28,8 @@ def json_file():
 
 # push the user input into the expected format
 def prepare_add_device(myrequests):
+    logging.info("Start of device record prep")
+    
 
     devive_is_platform = True if "metadata.is_platform" in myrequests else False
 
@@ -65,8 +67,6 @@ def prepare_add_device(myrequests):
             # set
             dict_inventory[key_inventory] = value_inventory
     
-    #print(dict_serial)
-    #print(dict_inventory)
     
     my_dict_new = {
         "metadata": {
@@ -102,31 +102,79 @@ def prepare_add_device(myrequests):
         
     }
     
+    logging.info("Device record created/edited!")
+    
+    devices = selector.get_lookup_content("devices")
+    
+    
     # update some parts if edit mode
-    if "requested_mode" in myrequests:
-       
+    if "requested_mode" not in myrequests:
+        logging.info("No requested mode, so do not touch device content from web form")
+    else:
         
-        if myrequests["requested_mode"] == "edit" and "device_keyname" in myrequests:
+        if myrequests["requested_mode"] == "add":
+            logging.info("Requested mode is add, so do not touch device content from web form")
+            
+            
+            # substitute space by - and transform to lowwer all keynames
+            tmp_device_keyname = re.sub(r"\s+", '-', my_dict_new["metadata"]["name"].lower() )
+            if tmp_device_keyname in devices:
+                message = "Request mode add, but you want to add a device name that already exists: " + tmp_device_keyname
+                logging.warning(message)
+                return { 
+                    "returned_record"   : 0,
+                    "message"           : {
+                        "type": "warning",
+                        "message": message
+                    } 
+                }
+                
+        elif myrequests["requested_mode"] == "edit":
+            
             # load device
             
-            device_keyname = myrequests["device_keyname"]
+            logging.info("Requested mode is edit, so calibration/history record will be collected")
             
-            devices = selector.get_lookup_content("devices")
-            
-            if device_keyname in devices:                
-                
-                # update timestamp
-                my_dict_new["metadata"]["created"] = devices[device_keyname]["metadata"]["created"]
-                
-                # update calibration and history
-                if "calibration" in devices[device_keyname]:
-                    my_dict_new["calibration"] = devices[device_keyname]["calibration"]
-                if "history" in devices[device_keyname]:
-                    my_dict_new["history"] = devices[device_keyname]["history"]
+            if "device_keyname" not in myrequests:
+                message = "Edit mode device, but no device_keyname in get parameters"
+                logging.warning(message)
+                return { 
+                    "returned_record"   : 0,
+                    "message"           : {
+                        "type": "warning",
+                        "message": message
+                    } 
+                }
             else:
-                print("error")
-                exit()
+            
+                device_keyname = myrequests["device_keyname"]
                 
+                
+                
+                if device_keyname in devices:                
+                    
+                    # update timestamp
+                    my_dict_new["metadata"]["created"] = devices[device_keyname]["metadata"]["created"]
+                    
+                    # update calibration and history
+                    if "calibration" in devices[device_keyname]:
+                        my_dict_new["calibration"] = devices[device_keyname]["calibration"]
+                        logging.info("Call calibration records")
+                    if "history" in devices[device_keyname]:
+                        my_dict_new["history"] = devices[device_keyname]["history"]
+                        logging.info("Call history records")
+                else:
+                    message = "Device unknown: " + device_name
+                    logging.warning(message)
+                    return { 
+                        "returned_record"   : 0,
+                        "message"           : {
+                            "type": "warning",
+                            "message": message
+                        } 
+                    }
+                    
+    logging.info("End of device record prep")
     
     return my_dict_new
     
@@ -476,8 +524,12 @@ def add_history(myrequests):
         
 def add_device(myrequests):
     
+    
     logging.info("Start: Add device record")
     device_record_ready = prepare_add_device(myrequests)
+    
+    if not "return_ok" in device_record_ready:
+        return device_record_ready
     
 
     # load schema

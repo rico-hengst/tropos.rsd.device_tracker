@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% from "_macro.html" import get_icon_is_mobile with context %}
+
 {% block content %}
     <style>
         .axis path, .axis line { stroke: #ccc; }
@@ -44,26 +46,31 @@
           box-shadow: 0 2px 10px rgba(0,0,0,0.1);
           overflow-x: auto;
         }
+        /* Override Bootstrap's placeholder styles */
+        .form-control::placeholder,
+        .form-select::placeholder,
+        textarea::placeholder,
+        input::placeholder {
+          font-family: "Liberation Mono", monospace !important;
+          font-size: 0.9em;
+          color: blue !important;
+          opacity: 0.4 !important;
+        }
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <div class="container">
         <div class="row py-3">
-            <div class="col-6  p-3">
+            <div class="col-12  p-3">
                 <h2>Show requested devices</h2>
-               
-            </div>
-            <div class="col-6 px-0 py-4">
-                {% if your_requests %}
-                    <ul class="list-group">
-                        <li class="list-group-item list-group-item-action bg-light">Your filtered request</li>
-                        {% for key, value in your_requests.items() %}
-                            <li class="list-group-item small">{{key}} <b>{{value}}</b></li>
-                        {% endfor %}
-                    </ul>                   
-                {% endif %}
             </div>
             
-            <div class="col-12 border rounded p-0">
+            <div class="col-12 border rounded my-2 p-3" style="background-color:rgb(250,255,255)">
+                <form method="get" action="{{ url_for('selectvis') }}" id="id_selector_form">
+                    {%  include '_selectform.html'  %}
+                </form>
+            </div>
+            
+            <div class="col-12 border rounded py-2 mt-4">
                  <div class="chart-container ">
                     <div id="chart"></div>
                 </div>
@@ -78,6 +85,10 @@
 
 
 {% block javascript %}
+
+<!-- Form related js functions -->
+{%  include '_selectform.javascript'  %}
+
 
 <script>
 
@@ -253,11 +264,11 @@ const bars = svg.selectAll(".bar")
                 </tr>
                 <tr>
                     <td>Start</td>
-                    <td>${d.start.toISOString()}</td>
+                    <td>${d.start.toISOString().substring(0, 19).replace("T"," ")}</td>
                 </tr>
                 <tr>
                     <td>Stop</td>
-                    <td>${d.stop.toISOString()}</td>
+                    <td>${d.stop.toISOString().substring(0, 19).replace("T"," ")}</td>
                 </tr>
                 <tr>
                     <td>Class</td>
@@ -309,14 +320,14 @@ if (hasFutureStop) {
     .attr("y2", y.bandwidth() * numDevices + barPadding * (numDevices-1))
     .attr("stroke", "red")
     .attr("stroke-width", 2)
-    .attr("stroke-dasharray", "5,5")
+    .attr("stroke-dasharray", "2,5")
     .style("pointer-events", "none"); // Make non-interactive
 
   // Add "Today" label
   svg.append("text")
     .attr("class", "today-label")
-    .attr("x", x(now)-12)
-    .attr("y", -5)
+    .attr("x", x(now)-15)
+    .attr("y", -17)
     .text("Today")
     .attr("fill", "red")
     .style("font-size", "12px")
@@ -362,7 +373,7 @@ if (hasFutureStop) {
             // Add date label
             svg.append("text")
               .attr("class", "date-label")
-              .attr("x", x(dateObj) + 5)
+              .attr("x", x(dateObj) - 35)
               .attr("y", -2) // Offset labels vertically
               .text(d3.timeFormat("%Y-%m-%d")(dateObj))
               .attr("fill", index === 0 ? "gray" : "gray")

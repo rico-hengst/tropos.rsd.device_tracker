@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+/* Override Bootstrap's placeholder styles */
+.form-control::placeholder,
+.form-select::placeholder,
+textarea::placeholder,
+input::placeholder {
+  font-family: "Liberation Mono", monospace !important;
+  font-size: 0.9em;
+  color: blue !important;
+  opacity: 0.4 !important;
+}
+</style>
+    <div class="container">
+        <div class="row py-3">
+            
+            <div class="col-sm-6 borders srounded pt-3 mb-4">
+                {% if uuid_calibrations %}
+                    <input type="hidden" id="calibration.uuid" name="" value="{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["uuid"]}}" />
+                    
+                    <h2>{% if your_requests["requested_mode"] == "edit" %}Edit current{% elif your_requests["requested_mode"] == "add" %}Add new{% endif %} calibration record</h2>
+                {% else %}
+                    <h2>Add calibration</h2>
+                {% endif %}
+            </div>
+            <div class="col-sm-6">
+                <div class="d-flex justify-content-end pt-3 mb-3">
+                    {% if uuid_calibrations %}
+                        <p><span class="badge rounded-pill text-bg-secondary">{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["uuid"]}}</span> @ <span class="badge rounded-pill text-bg-dark">{{uuid_calibration_key}}</span></p>
+                    {% endif %}
+                </div>
+            </div>
+                <form method="get"     enctype = "multipart/form-data" action="{{ url_for('handle_add_calibration') }}">
+                    <div class="col-6 borders srounded pt-3 mb-4">
+                        {% if uuid_calibrations %}
+                            <h4>Please select ...</h4>
+                            <input type="hidden" id="id_requested_mode" name="requested_mode" value="{{your_requests["requested_mode"]}}">
+                            <button type="button" name="rrr" class="btn btn-sm {{ 'btn-secondary' if your_requests["requested_mode"] == "edit" else 'btn-outline-secondary'}}" id="editBtn_requested_mode">Edit current calibration record</button>
+                            <button type="button" name="rrr" class="btn btn-sm {{ 'btn-secondary' if your_requests["requested_mode"] == "add" else 'btn-outline-secondary'}}" id="addBtn_requested_mode">Add new calibration record, use content as template</button>
+                        {% endif %}
+                    </div>
+                    
+                        <fieldset {% if uuid_calibrations and "requested_mode" not in your_requests %} disabled{% endif %}>
+                        <div class="col-12 border  rounded p-3">
+                            
+                            <div class="row">
+                                <div class="col-4 p-1">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <b>General info</b>
+                                        </div>
+                                        <div class="card-body">
+                                            
+                                            {% if your_requests["requested_mode"] == "add" or not your_requests %}
+                                            <div class="mb-3">
+                                                <label for="my_device" class="form-label">Device</label>
+                                                <select name="device" class="form-select form-select-sm" id="my_device" aria-label="Small select example" required>
+                                                    <option value=""></option>
+                                                    {% for device_key in devices %}
+                                                        {% set class0 =  devices[device_key]["metadata"]["class"].0  %}
+            <!--
+                                                        html option: not able to combine selected and disabled, so priorisation on disabled, also if we loose the selected
+            -->
+                                                        {% if not class0 in user.class_edit_roles %}
+                                                            <option value="{{device_key}}" disabled>{{device_key}} ({{ class0 }}, not authorized!)</option>
+                                                        {% elif (device_key == uuid_device_key) %}
+                                                            <option value="{{device_key}}" selected>{{device_key}} ({{ class0 }})</option>
+                                                        {% else %}
+                                                            <option value="{{device_key}}">{{device_key}} ({{ class0 }})</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>                                            
+                                            </div>
+                                            {% elif your_requests["requested_mode"] == "edit" %}
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput5" class="form-label">Uuid</label>
+                                                <input name="calibration.uuid" class="form-control form-control-sm" value="{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["uuid"] if uuid_calibrations[uuid_calibration_key] else ""}}"
+                                                    id="" type="text" disabled>
+<!--
+                                                Both hidden filed are required, caus disabled form do no sent values and the device is reuired
+-->
+                                                <input type="hidden" name="calibration.uuid" value="{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["uuid"] if uuid_calibrations[uuid_calibration_key] else ""}}">
+                                                <input type="hidden" name="calibration" value="{{uuid_calibration_key}}">
+                                            </div>
+                                            {% endif %}
+                                    
+                                            
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput3" class="form-label">Calibration description</label>
+                                                <input name="calibration.description" class="form-control form-control-sm" id="exampleFormControlInput3" placeholder="e.g: ??" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["description"]}}{% endif %}"
+                                                    type="text">
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput4" class="form-label">Performed by</label>
+                                                <input name="calibration.performed_by" class="form-control form-control-sm" id="exampleFormControlInput4" placeholder="e.g: Name" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_by"]}}{% endif %}"
+                                                    type="text">
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput5" class="form-label">Performed by</label>
+                                                <input name="calibration.performed_at" class="form-control form-control-sm" id="exampleFormControlInput5" placeholder="e.g: Institution" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_at"]}}{% endif %}"
+                                                    type="text">
+                                            </div>
+                                            
+                                                   <div class="mb-3">
+                                                <label for="datetimepicker1" class="form-label">Start date of calibration</label>
+                                                <input name="calibration.performed_period" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_period"]|format_string_datetime }}{% endif %}"
+                                                    id="datetimepicker1" type="text" required>
+                                            </div>
+                                            
+                                            
+                                            <div class="mb-3">
+                                                <label for="datetimepicker2" class="form-label">Stop date of calibration</label>
+                                                <input name="calibration.performed_period" class="form-control form-control-sm" id="datetimepicker2" placeholder="e.g: 2099-12-31 23:59" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_period"]|format_string_datetime}}{% endif %}"
+                                                    id="datetimepicker2" type="text" required>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="datetimepicker3" class="form-label">Date certificate issuance</label>
+                                                <input name="calibration.certificate_issuance_date" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["certificate_issuance_date"]|format_string_datetime }}{% endif %}"
+                                                    id="datetimepicker3" type="text" required>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-4 p-1">
+                                    <div class="card">
+                                        <div class="card-header">
+                                        1
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput7" class="form-label">Used calibration method</label>
+                                                <input name="calibration.used_method" class="form-control form-control-sm" id="exampleFormControlInput7" placeholder="e.g: ?" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["used_method"]}}{% endif %}"
+                                                    type="text">
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput8" class="form-label">Used calibration reference</label>
+                                                <input name="calibration.used_reference" class="form-control form-control-sm" id="exampleFormControlInput8" placeholder="e.g: ?" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["used_reference"]}}{% endif %}"
+                                                    type="text">
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="exampleFormControlInput9" class="form-label">Resulted calibration values (separated by comma)</label>
+                                                <input name="calibration.values" class="form-control form-control-sm" id="exampleFormControlInput9" placeholder="e.g: 0.003445, 123.1, 0.2" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["values"]|join(",")}}{% endif %}"
+                                                    type="text">
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="datetimepicker4" class="form-label">Start date valid period</label>
+                                                <input name="calibration.valid_period" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["valid_period"][0]|format_string_datetime }}{% endif %}"
+                                                    id="datetimepicker4" type="text" required>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="datetimepicker5" class="form-label">Stop date valid period</label>
+                                                <input name="calibration.valid_period" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["valid_period"][0]|format_string_datetime }}{% endif %}"
+                                                    id="datetimepicker5" type="text" required>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 p-1 text-end">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+                </fieldset>
+            </form>
+        </div>
+        
+    </div>
+    
+    
+{% endblock %}
+
+{% block javascript %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='lib/datetimepicker-master/jquery.datetimepicker.css') }}" />
+<script src="{{ url_for('static', filename='lib/jquery-ui-1.14.2.custom/jquery-ui.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/datetimepicker-master/build/jquery.datetimepicker.full.min.js') }}"></script>
+
+<script>
+    
+    $(document).ready(function() {
+        $.datetimepicker.setLocale('en');
+        $('#datetimepicker1').datetimepicker({
+            format:'Y-m-d H:i',
+            lang:'en'
+        }
+        );
+    });
+    $(document).ready(function() {
+        $.datetimepicker.setLocale('en');
+        $('#datetimepicker2').datetimepicker({
+            format:'Y-m-d H:i',
+            lang:'en'
+        }
+        );
+    });
+    $(document).ready(function() {
+        $.datetimepicker.setLocale('en');
+        $('#datetimepicker3').datetimepicker({
+            format:'Y-m-d H:i',
+            lang:'en'
+        }
+        );
+    });
+    $(document).ready(function() {
+        $.datetimepicker.setLocale('en');
+        $('#datetimepicker4').datetimepicker({
+            format:'Y-m-d H:i',
+            lang:'en'
+        }
+        );
+    });
+    $(document).ready(function() {
+        $.datetimepicker.setLocale('en');
+        $('#datetimepicker5').datetimepicker({
+            format:'Y-m-d H:i',
+            lang:'en'
+        }
+        );
+    });
+    
+   
+</script>
+{% endblock %}
+

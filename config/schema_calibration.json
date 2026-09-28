@@ -9,21 +9,22 @@
       "description": "Complete calibration details with values and timestamps",
       "type": "object",
       "properties": {
-        "calibration_certificate_issuance_date" : { "type": "string", "format": "date-time", "$comment": "When was the document issued?"  },
-        "calibration_description"               : { "type": "string" },
-        "calibration_performed_by"              : { "type": "string", "$comment": "Who did perform the calibration?" },
-        "calibration_performed_at"              : { "type": "string", "$comment": "Where did the calibration take place?"  },
-        "calibration_performed_period"          : {
+        "uuid"                      : { "type": "string", "$comment": "Unique identifier"  },
+        "certificate_issuance_date" : { "type": "string", "format": "date-time", "$comment": "When was the document issued?"  },
+        "description"               : { "type": "string" },
+        "performed_by"              : { "type": "string", "$comment": "Who did perform the calibration?" },
+        "performed_at"              : { "type": "string", "$comment": "Where did the calibration take place?"  },
+        "performed_period"          : {
             "type": "array",
             "items": { "type": "string", "format": "date-time" },
             "minItems": 1,
             "maxItems": 2,
             "$comment": "When was the calibration issued (time or period)?"
         },
-        "calibration_record_created"            : { "type": "string", "format": "date-time", "$comment": "Timestamp of this record"  },
-        "calibration_used_method"                    : { "type": "string" },
-        "calibration_used_reference"                 : { "type": "string" },
-        "calibration_valid_period": {
+        "record_created"            : { "type": "string", "format": "date-time", "$comment": "Timestamp of this record"  },
+        "used_method"               : { "type": "string" },
+        "used_reference"            : { "type": "string" },
+        "valid_period"              : {
             "type": "array",
             "items": { "type": "string", "format": "date-time" },
             "minItems": 2,
@@ -31,12 +32,12 @@
             "$comment": "For what period is the calibration valid?"
         },
         
-        "calibration_values": {
+        "values"                    : {
             "type": "array",
-            "items": { "type": "number" }
+            "items": { "type": "number","minItems": 2, "$comment": "Array of calibration values"}
         }
       },
-      "required": [ "calibration_values" ],
+      "required": [ "uuid","values" ],
       "additionalProperties": false
     },
     {
@@ -44,10 +45,11 @@
       "description": "A simple reference via URL",
       "type": "object",
       "properties": {
-        "calibration_link": { "type": "string" }
+        "uuid"                      : { "type": "string", "$comment": "Unique identifier"  },
+        "calibration_link"          : { "type": "string" }
       },
       "required": [
-        "calibration_link"
+        "uuid","calibration_link"
       ],
       "additionalProperties": false
     }

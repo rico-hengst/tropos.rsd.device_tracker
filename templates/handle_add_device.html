@@ -1,26 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
-<style>
-/* Override Bootstrap's placeholder styles */
-.form-control::placeholder,
-.form-select::placeholder,
-textarea::placeholder,
-input::placeholder {
-  font-family: "Liberation Mono", monospace !important;
-  font-size: 0.9em;
-  color: blue !important;
-  opacity: 0.4 !important;
-}
-</style>
-    <div class="container">
-        <div class="row py-3">
-
-            <div class="col-12">
+<div class="container">
+    <div class="row py-3">
+        <div class="col-12">
+            <div class="alert alert-primary" role="alert">
                 Creation/Update of device with success!
             </div>
+            <p class="p-3">
+                To use the current device, you must first create an initial history record: 
+                <a class="" href="{{ url_for('add_history',requested_mode='add') }}" ><i class="material-icons">add_box</i> Add history record</a>
+                <br/>
+                Otherwise the current device will not be listed via API.
+            </p>
         </div>
-        
     </div>
+</div>
     
     
 {% endblock %}

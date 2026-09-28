@@ -207,7 +207,7 @@ def handle_add_device():
         return render_template("handle_add_device.html", user=user)
             
 
-# Add history, authorized admin only
+# Add history, authorized only
 @app.route("/add/history", methods=["GET"])
 def add_history():
     username = None
@@ -282,7 +282,76 @@ def handle_add_history():
 
             
         return render_template("handle_add_history.html",classes0=selector.get_lookup_content("classes0"), user=user)
-    
+        
+        
+        
+# Add history, authorized only
+@app.route("/add/calibration", methods=["GET"])
+def add_calibration():
+    username = None
+    userroles = None
+    if not 'username' in session:
+        flash('Sorry, this page is session restricted, please login first', 'info')
+        return redirect(url_for("login"))
+    else:
+        username = session['username']
+        user=fhelper.get_signed_user(username)
+        if not user["access"] == "readwrite":
+            referrer_url = request.referrer
+            print(request.headers.get("Referer"))
+            flash('Sorry, this page is user access readwrite only restricted', 'info')
+            return redirect(url_for(referrer))
+        else:
+            your_requests = request.args.to_dict()
+            
+            # init device tracker record(s)
+            uuid_calibrations = None
+            uuid_calibration_key = None
+            
+            # if uui was provided
+            if "uuid" in your_requests:
+                
+                # look for uuid calibration device(s)
+                uuid_calibrations=selector.select_calibrations( {"uuid" : your_requests["uuid"] } ).replace([np.nan], [None], regex=False).to_dict()
+                
+                
+                if uuid_calibrations:
+                    if (len(uuid_calibratioms)>1):
+                        print("multiple uuids exists")
+                        exit()
+                    uuid_calibration_key = list(uuid_calibrations.keys())[0]
+                else:
+                    print("no uuids exists")
+                    flash("No uuid detected: " + your_requests["uuid"] )
+                    
+            # load schema
+            with open("../config/schema_calibration.json", "r+") as file:
+                try:
+                    history_schema = json.load(file)
+                except json.JSONDecodeError as e:
+                    logging.error("Invalid JSON syntax at schema calibration:", e)
+                    
+            devices = selector.get_lookup_content("devices")
+            return render_template("add_calibration.html",devices=devices, uuid_calibrations=uuid_calibrations, uuid_calibration_key=uuid_calibration_key ,your_requests=your_requests,user=user)
+            
+
+# Handle add calibration
+@app.route("/handle/add/calibration", methods=["GET"])
+def handle_add_calibration():
+    username = None
+    userroles = None
+    if not 'username' in session:
+        flash('Sorry, this page is session restricted, please login first', 'info')
+        return redirect(url_for("login"))
+    else:
+        username = session['username']
+        user=fhelper.get_signed_user(username)
+        
+        your_requests = request.args.to_dict()
+        
+        return render_template("handle_calibration.html")
+
+
 ###################################### LOGIN STUFF
 # Route for the login page (GET only)
 @app.route('/login', methods=['GET'])

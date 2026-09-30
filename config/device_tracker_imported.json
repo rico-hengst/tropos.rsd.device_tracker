@@ -109,45 +109,64 @@
         ],
         "calibration": [
             {
-                "calibration_description": "",
-                "calibration_performed_by": "Ak Hein",
-                "calibration_performed_at": "DWD",
-                "calibration_performed_period": [
+                "uuid"                      : "d3r1234214tz4z3z23z5z3zr",
+                "description"               : "",
+                "performed_by"              : "Ak Hein",
+                "performed_at"              : "DWD",
+                "performed_repeats"         :1,
+                "performed_period_dates": [
                     "2023-07-03T12:12:12Z",
                     "2023-07-13T12:12:12Z"
                 ],
-                "calibration_record_created": "2024-08-03T12:12:12Z",
-                "calibration_used_method": "Kletter et al.",
-                "calibration_used_reference": "CPC",
-                "calibration_valid_period": [
+                "certificate_issuance_date" : "2023-07-03T12:12:12Z",
+                "certificate_id"            : "S25000039900-EX25",
+                "record_created_date"       : "2024-08-03T12:12:12Z",
+                "used_method"               : "ISO9846 continuos sun-and-shade method",
+                "used_reference"            : "",
+                "valid_period_dates"        : [
                     "2023-08-03T00:12:12Z",
                     "2024-08-03T12:12:12Z"
                 ],
-                "calibration_values": [
+                "calibration_equation"      : "calibrated irradiance = voltage*calibration_factor",
+                "calibration_coefficients"  : [
                     0.11992,
                     -22.3,
                     0.3
-                ]
+                ],
+                "calibration_coefficient_uncertainties" :[
+                    0.007,
+                    1.3,
+                    0.005
+                ],
+                "temperature_correction_equation"       : "BTC: U/U0= a*T^2+b*T+c",
+                "temperature_correction_coefficients"   : [5.6111e-6, -1.29e-4, -6.0915e-5]
             },
             {
-                "calibration_description": "",
-                "calibration_performed_by": "Dore Hwaptist",
-                "calibration_performed_at": "DWD",
-                "calibration_performed_period": [
+                "uuid"                      : "d3r1234214ez3z23z5z3zr",
+                "description"               : "",
+                "performed_by"              : "Dore Hwaptist",
+                "performed_at"              : "DWD",
+                "performed_repeats"         : 1,
+                "performed_period_dates"    : [
                     "2024-09-03T12:12:12Z",
                     "2024-09-13T12:12:12Z"
                 ],
-                "calibration_record_created": "2026-08-03T12:12:12Z",
-                "calibration_used_method": "Kletter et al.",
-                "calibration_used_reference": "CPC",
-                "calibration_valid_period": [
+                "record_created_date"       : "2026-08-03T12:12:12Z",
+                "used_method"               : "Kletter et al.",
+                "used_reference"            : "CPC",
+                "valid_period_dates"        : [
                     "2024-10-03T00:12:12Z",
                     "2026-10-03T12:12:12Z"
                 ],
-                "calibration_values": [
+                "calibration_coefficients"  : [
                     0.11972,
                     -22.0,
                     0.27
+                ],
+                "calibration_coefficient_uncertainties" :[
+                    0.007,
+                    1.3,
+                    0.005
                 ]
             }
         ]
@@ -465,6 +484,7 @@
         ],
         "calibration": [
             {
+                "uuid": "efefffgwgfg",
                 "calibration_link": "http://mycalibration.info"
             }
         ]
@@ -566,21 +586,23 @@
         ],
         "calibration": [
             {
-                "calibration_description": "",
-                "calibration_performed_by": "Bonnie Nengeldrenn",
-                "calibration_performed_at": "TROPOS",
-                "calibration_performed_period": [
+                "uuid": "d3r1234214tz4z3z23z5z3zrfeegeee",
+                "description": "",
+                "performed_by": "Bonnie Nengeldrenn",
+                "performed_at": "TROPOS",
+                "performed_repeats" : 1,
+                "performed_period_dates": [
                     "2023-07-03T12:12:12Z",
                     "2023-07-13T12:12:12Z"
                 ],
-                "calibration_record_created": "2024-08-03T12:12:12Z",
-                "calibration_used_method": "Nengeldren et al.",
-                "calibration_used_reference": "ColiDrom",
-                "calibration_valid_period": [
+                "record_created_date": "2024-08-03T12:12:12Z",
+                "used_method": "Nengeldren et al.",
+                "used_reference": "ColiDrom",
+                "valid_period_dates": [
                     "2023-08-03T00:12:12Z",
                     "2024-08-03T12:12:12Z"
                 ],
-                "calibration_values": [
+                "calibration_coefficients": [
                     2.11992,
                     22.3,
                     0.3
@@ -9246,32 +9268,12 @@
     },
     "kloi-dwd": {
         "calibration": [],
-        "history": [
-            {
-                "startdate": "2026-09-01T16:40:00Z",
-                "stopdate": "2026-09-03T16:40:00Z",
-                "created": "2026-09-21T15:44:50Z",
-                "uuid": "616a718c-b5d3-11f1-ac46-cc2f71a772c7",
-                "campaign": "",
-                "platform": [],
-                "location": {
-                    "is_mobile": false,
-                    "name": "Baengnyeong",
-                    "lat": 37.961249,
-                    "lon": 124.653607
-                },
-                "pylarda": {
-                    "camp": "",
-                    "system": "",
-                    "connectorfile": []
-                }
-            }
-        ],
+        "history": [],
         "metadata": {
-            "name": "Kloi dwd",
+            "name": "kloi-dwd",
             "description": "",
             "is_platform": false,
-            "created": "2026-09-14T10:57:21Z",
+            "created": "2026-09-25T13:45:04Z",
             "class": [
                 "radiation",
                 "sfc"
@@ -9287,8 +9289,8 @@
                 "purchased": "w",
                 "pid": "cwqf",
                 "serial": {
-                    "le#1#": "123",
-                    "edd#2#": "3334"
+                    "le#2026092515450411#": "123",
+                    "edd#2026092515450413#": "3334"
                 }
             },
             "owner": {
@@ -9301,32 +9303,92 @@
     },
     "kloi-dwd22": {
         "calibration": [],
-        "history": [
-            {
-                "startdate": "2026-09-01T16:40:00Z",
-                "stopdate": "2026-09-03T16:40:00Z",
-                "created": "2026-09-21T15:31:29Z",
-                "uuid": "8466aff4-b5d1-11f1-909d-cc2f71a772c7",
-                "campaign": "",
-                "platform": [],
-                "location": {
-                    "is_mobile": false,
-                    "name": "Baengnyeong",
-                    "lat": 37.961249,
-                    "lon": 124.653607
-                },
-                "pylarda": {
-                    "camp": "",
-                    "system": "",
-                    "connectorfile": []
-                }
-            }
-        ],
+        "history": [],
         "metadata": {
             "name": "kloi-dwd22",
             "description": "",
             "is_platform": false,
-            "created": "2026-09-14T14:08:54Z",
+            "created": "2026-09-25T14:52:31Z",
+            "class": [
+                "radiation",
+                "sfcwwww"
+            ],
+            "device_manufacturer": {
+                "name": "qefqef",
+                "address": "aad",
+                "contact": "wfwf"
+            },
+            "device_model": {
+                "name": "d",
+                "description": "d",
+                "purchased": "w",
+                "pid": "cqe",
+                "serial": {
+                    "aaa#2026092516523111#": "123",
+                    "a#2026092516523113#": "wd",
+                    "scaca#2026092516523115#": "dwqwqcq",
+                    "f#2026092516523117#": "f"
+                }
+            },
+            "owner": {
+                "name": "wqdwq",
+                "address": "wqcqc",
+                "contact": "wqf",
+                "inv": {
+                    "d#2026092516523122#": "h",
+                    "hre#2026092516523124#": "gr"
+                }
+            }
+        }
+    },
+    "kloi-dwd22______": {
+        "calibration": [],
+        "history": [],
+        "metadata": {
+            "name": "kloi-dwd22______",
+            "description": "",
+            "is_platform": false,
+            "created": "2026-09-25T14:06:49Z",
+            "class": [
+                "radiation",
+                "sfcww"
+            ],
+            "device_manufacturer": {
+                "name": "qefqef",
+                "address": "aad",
+                "contact": "wfwf"
+            },
+            "device_model": {
+                "name": "d",
+                "description": "d",
+                "purchased": "w",
+                "pid": "cqe",
+                "serial": {
+                    "aaa#2026092516064911#": "123",
+                    "a#2026092516064913#": "wd",
+                    "scaca#2026092516064915#": "dwqwqcq",
+                    "f#2026092516064917#": "f"
+                }
+            },
+            "owner": {
+                "name": "wqdwq",
+                "address": "wqcqc",
+                "contact": "wqf",
+                "inv": {
+                    "d#2026092516064922#": "h",
+                    "hre#2026092516064924#": "gr"
+                }
+            }
+        }
+    },
+    "kloi-dwd22___": {
+        "calibration": [],
+        "history": [],
+        "metadata": {
+            "name": "kloi-dwd22___",
+            "description": "",
+            "is_platform": false,
+            "created": "2026-09-25T14:08:58Z",
             "class": [
                 "radiation",
                 "sfc"
@@ -9342,10 +9404,10 @@
                 "purchased": "w",
                 "pid": "cqe",
                 "serial": {
-                    "aaa#2026092116265112#": "123",
-                    "a#2026092116265114#": "wd",
-                    "scaca#2026092116265116#": "dwqwqcq",
-                    "f#2026092116265118#": "f"
+                    "aaa#2026092516085811#": "123",
+                    "a#2026092516085813#": "wd",
+                    "scaca#2026092516085815#": "dwqwqcq",
+                    "f#2026092516085817#": "f"
                 }
             },
             "owner": {
@@ -9353,8 +9415,141 @@
                 "address": "wqcqc",
                 "contact": "wqf",
                 "inv": {
-                    "d#2026092116265123#": "h",
-                    "hre#2026092116265125#": "gr"
+                    "d#2026092516085822#": "h",
+                    "hre#2026092516085824#": "gr"
+                }
+            }
+        }
+    },
+    "kloi-dwd22______kp": {
+        "calibration": [],
+        "history": [],
+        "metadata": {
+            "name": "kloi-dwd22______kp",
+            "description": "",
+            "is_platform": false,
+            "created": "2026-09-25T14:02:35Z",
+            "class": [
+                "radiation",
+                "ddd"
+            ],
+            "device_manufacturer": {
+                "name": "qefqef",
+                "address": "a",
+                "contact": "wfwf"
+            },
+            "device_model": {
+                "name": "d",
+                "description": "d",
+                "purchased": "w",
+                "pid": "cqe",
+                "serial": {
+                    "aaa#2026092516023511#": "123",
+                    "a#2026092516023513#": "wd",
+                    "scaca#2026092516023515#": "dwqwqcq",
+                    "f#2026092516023517#": "f"
+                }
+            },
+            "owner": {
+                "name": "wqdwq",
+                "address": "wqcqc",
+                "contact": "wqf",
+                "inv": {
+                    "d#2026092516023522#": "h",
+                    "hre#2026092516023524#": "gr"
+                }
+            }
+        }
+    },
+    "aaaa": {
+        "calibration": [],
+        "history": [
+            {
+                "startdate": "2026-09-09T17:02:00Z",
+                "stopdate": "2026-09-30T17:02:00Z",
+                "created": "2026-09-25T15:03:14Z",
+                "uuid": "3bb9e8e2-b8f2-11f1-bda4-cc2f71a772c7",
+                "campaign": "",
+                "platform": [],
+                "location": {
+                    "is_mobile": false,
+                    "name": "Al Dhaid",
+                    "country": "United Arab Emirates",
+                    "lat": 25.235397,
+                    "lon": 55.977975
+                },
+                "pylarda": {
+                    "camp": "",
+                    "system": "",
+                    "connectorfile": []
+                }
+            }
+        ],
+        "metadata": {
+            "name": "aaaa",
+            "description": "",
+            "is_platform": false,
+            "created": "2026-09-25T15:01:28Z",
+            "class": [
+                "radiation",
+                "pydyyyy"
+            ],
+            "device_manufacturer": {
+                "name": "x",
+                "address": "x",
+                "contact": "x"
+            },
+            "device_model": {
+                "name": "x",
+                "description": "x",
+                "purchased": "x",
+                "pid": "x",
+                "serial": {
+                    "x#2026092518092812#": "x"
+                }
+            },
+            "owner": {
+                "name": "x",
+                "address": "x",
+                "contact": "x",
+                "inv": {
+                    "x#2026092518092817#": "x"
+                }
+            }
+        }
+    },
+    "aaaa2": {
+        "calibration": [],
+        "history": [],
+        "metadata": {
+            "name": "aaaa2",
+            "description": "",
+            "is_platform": false,
+            "created": "2026-09-25T15:48:18Z",
+            "class": [
+                "radiation",
+                "pydyyy"
+            ],
+            "device_manufacturer": {
+                "name": "x",
+                "address": "x",
+                "contact": "x"
+            },
+            "device_model": {
+                "name": "x",
+                "description": "x",
+                "purchased": "x",
+                "pid": "x",
+                "serial": {
+                    "x#2026092517481812#": "x"
+                }
+            },
+            "owner": {
+                "name": "x",
+                "address": "x",
+                "contact": "x",
+                "inv": {
+                    "x#2026092517481817#": "x"
                 }
             }
         }

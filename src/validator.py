@@ -7,6 +7,9 @@ import datetime
 
 import pandas as pd
 
+import dv_logger
+logger = dv_logger.setup_logger(__name__)
+
 
 
 device_record_arielle = {
@@ -294,7 +297,7 @@ def add_calibration(device, calibration_record):
         try:
             calibration_schema = json.load(file)
         except json.JSONDecodeError as e:
-            print("Invalid JSON syntax:", e)
+            looger.warning("Invalid JSON syntax:", e)
         
         
         
@@ -315,15 +318,15 @@ def add_calibration(device, calibration_record):
     errors = list(validator.iter_errors(calibration_record))
     
     if not errors:
-        print("✓ Validation Successful: The JSON instance is valid.")
-        print(calibration_record)
+        logger.info("✓ Validation Successful: The JSON instance is valid.")
+        logger.debug("Calib record: " + str(calibration_record))
         
         
         json_file= "../config/device_tracker.json"
         with open(json_file, "r+") as file:
             device_tracker = json.load(file)
             
-            print("Update json_file: " + json_file )
+            logging.info("Update json_file: " + json_file )
             
             if device in device_tracker.keys():
                 if "calibration" in device_tracker[device].keys():
@@ -333,20 +336,20 @@ def add_calibration(device, calibration_record):
                     json.dump(device_tracker, file, indent=4)
                     
                 else:
-                    print("no key2")
+                    logger.warning("no key2")
             else:
-                print("-- no device in json file detected: " + device + ", no validation")
+                logger.warning("-- no device in json file detected: " + device + ", no validation")
 
         
     else:
-        print("✗ Validation Failed: The JSON instance is invalid.")
-        print(calibration_record)
+        logger.warning("✗ Validation Failed: The JSON instance is invalid.")
+        logger.warning(calibration_record)
 
         for error in errors:
             # error.message usually contains the specific reason
-            print(f"  - Error: {error.message}")
-            print(f"    Path: {list(error.path)}")
-            print(f"    Validator: {error.validator}")
+            logger.warning(f"  - Error: {error.message}")
+            logger.warning(f"    Path: {list(error.path)}")
+            logger.warning(f"    Validator: {error.validator}")
             
             
             
@@ -360,7 +363,7 @@ def add_history(device, history_record):
         try:
             history_schema = json.load(file)
         except json.JSONDecodeError as e:
-            print("Invalid JSON syntax:", e)
+            logger.warning("Invalid JSON syntax:", e)
         
         
         
@@ -381,15 +384,15 @@ def add_history(device, history_record):
     errors = list(validator.iter_errors(history_record))
     
     if not errors:
-        print("✓ Validation Successful: The JSON instance is valid.")
-        print(history_record)
+        logger.info("✓ Validation Successful: The JSON instance is valid.")
+        logger.debug(history_record)
         
         
         json_file= "../config/device_tracker.json"
         with open(json_file, "r+") as file:
             device_tracker = json.load(file)
             
-            print("Update json_file: " + json_file )
+            logger.info("Update json_file: " + json_file )
             
             if device in device_tracker.keys():
                 if "history" in device_tracker[device].keys():
@@ -402,9 +405,9 @@ def add_history(device, history_record):
                     
                     
                 else:
-                    print("no key2")
+                    logger.warning("no key2")
             else:
-                print("-- no device in json file detected: " + device + ", no validation")
+                logger.warning("-- no device in json file detected: " + device + ", no validation")
                 # device_tracker.update({"MS21-A987": { "name" : "xyz", "history":[]}})
                 # print(device_tracker)
                 # file.seek(0)
@@ -416,14 +419,14 @@ def add_history(device, history_record):
             #sorted_nested_dict = dict(sorted(data["MS21-A123"]["history"], key=lambda x: (x[1]['created'])))
         
     else:
-        print("✗ Validation Failed: The JSON instance is invalid.")
-        print(history_record)
+        logger.warning("✗ Validation Failed: The JSON instance is invalid.")
+        logger.warning(history_record)
 
         for error in errors:
             # error.message usually contains the specific reason
-            print(f"  - Error: {error.message}")
-            print(f"    Path: {list(error.path)}")
-            print(f"    Validator: {error.validator}")
+            logger.warning(f"  - Error: {error.message}")
+            logger.warning(f"    Path: {list(error.path)}")
+            logger.warning(f"    Validator: {error.validator}")
             
             
             
@@ -448,33 +451,33 @@ def add_device(device_record):
    
     
     if errors:
-        print("✗ Validation Failed: The JSON instance is invalid.")
-        print(device_record)
+        logger.warning("✗ Validation Failed: The JSON instance is invalid.")
+        logger.warning(device_record)
 
         for error in errors:
             # error.message usually contains the specific reason
-            print(f"  - Error: {error.message}")
-            print(f"    Path: {list(error.path)}")
-            print(f"    Validator: {error.validator}")
+            logger.warning(f"  - Error: {error.message}")
+            logger.warning(f"    Path: {list(error.path)}")
+            logger.warning(f"    Validator: {error.validator}")
             
     else :
-        print("✓ Validation Successful: The JSON instance is valid.")
-        print(device_record)
+        logger.info("✓ Validation Successful: The JSON instance is valid.")
+        logger.debug(device_record)
         
         # add instance record to json
         json_file= "../config/device_tracker.json"
         with open(json_file, "r+") as file:
             device_tracker = json.load(file)
             
-            print("Try to update json_file: " + json_file )
+            logger.info("Try to update json_file: " + json_file )
             
             if not device_record["metadata"]["name"] in device_tracker.keys():
-                print("Add device record")
+                logger.info("Add device record")
                 device_tracker[device_record["metadata"]["name"]] = device_record
                 file.seek(0)
                 json.dump(device_tracker, file, indent=4)
             else:
-                print("Device " + device_record["metadata"]["name"] + " already exists at json_file, skip record")
+                logging.warning("Device " + device_record["metadata"]["name"] + " already exists at json_file, skip record")
 
 
 

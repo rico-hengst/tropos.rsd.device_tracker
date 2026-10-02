@@ -6,8 +6,14 @@ import secrets
 # Echoing password and masked with hashtag(#)
 import maskpass  # importing maskpass library
 
-import logging
-logging.basicConfig(level=logging.INFO)
+#import logging
+#logging.basicConfig(level=logging.INFO)
+import dv_logger
+logger = dv_logger.setup_logger(__name__)
+
+# Initialize the logger specific to this module
+#logger = dv_logger.setup_logger("fhelper")
+
 
 import selector
 
@@ -18,7 +24,7 @@ if os.getenv("USER_CREDENTIALS_FILE"):
     USER_CREDENTIALS = BASE_DIR + "/" + os.getenv("USER_CREDENTIALS_FILE")
 
 if not os.path.isfile(USER_CREDENTIALS):
-    logging.error("File not exists: " + USER_CREDENTIALS)
+    logger.error("File not exists: " + USER_CREDENTIALS)
     
 # Function to generate salt
 def generate_salt(length=64):
@@ -39,6 +45,7 @@ def verify_password(password, stored_hash):
         # Parse the stored hash format: "sha256:hash:salt"
         parts = stored_hash.split(':')
         if len(parts) != 3 or parts[0] != 'sha256':
+            logger.warning("Password did not match!")
             return False
         
         stored_hash_value = parts[1]
@@ -47,10 +54,11 @@ def verify_password(password, stored_hash):
         # Hash the provided password with the stored salt
         salted_password = password + salt
         computed_hash = hashlib.sha256(salted_password.encode('utf-8')).hexdigest()
+        logger.info("Password matched")
         
         return computed_hash == stored_hash_value
     except Exception:
-        logging.warning("Password or login doesnt match!")
+        logger.warning("Password or login doesnt match!")
         return False
 
 # Function to load users from JSON file
@@ -61,7 +69,7 @@ def load_users():
             data = json.load(file)
             return data.get('users', {})
     except FileNotFoundError:
-        logging.warning("file not found " + USER_CREDENTIALS)
+        logger.warning("file not found " + USER_CREDENTIALS)
         return {}
     except json.JSONDecodeError:
         return {}
@@ -71,8 +79,6 @@ def find_user(username):
     """Find user by username"""
     users = load_users()
     # Return user if exists, None otherwise
-    logging.warning(username)
-    logging.warning(users)
     return users.get(username)
 
 # Function to check if username exists
@@ -88,7 +94,9 @@ def add_user(username, password):
     
     # Check if username already exists
     if username in users:
-        return False, "Username already exists"
+        message = "Username already exists"
+        logger.warning(message)
+        return False, message
     
     # Generate salt and hash password
     salt = generate_salt()
@@ -104,9 +112,13 @@ def add_user(username, password):
     try:
         with open(USER_CREDENTIALS, 'w') as file:
             json.dump({"users": users}, file, indent=2)
-        return True, "User added successfully"
+        message = "User added successfully"
+        logger.debug(message)
+        return True, message
     except Exception as e:
-        return False, f"Error adding user: {str(e)}"
+        message = "Error adding user: " + str(e)
+        logger.warning(message)
+        return False, message
 
 # Initialize with some test users (optional - for first run)
 def initialize_users():
@@ -130,13 +142,13 @@ def initialize_users():
         
         with open(USER_CREDENTIALS, 'w') as file:
             json.dump(users_data, file, indent=2)
-        logging.info("Users initialized with secure password hashing")
+        logger.info("Users initialized with secure password hashing")
 
 
 # admin tool to register user or reset password
 def register_user_or_set_password(username):
     if not os.path.exists(USER_CREDENTIALS):
-        print("No data about users!")
+        logger.warning("Register: No data about users!")
     else:
         user            = find_user(username)
         
@@ -153,23 +165,23 @@ def register_user_or_set_password(username):
                 data = json.load(file)
                 users = data.get('users', [])
         except FileNotFoundError:
-            print("file not found")
+            logger.error("user crendetials file not found")
             exit()
         except json.JSONDecodeError:
-            print("decoding error")
+            logger.error("user crendetials file decoding error")
             exit()
         
         # update dictionary
         success = 0
         if username in users:
             success = 1
-            print("Reset password")
+            logger.info("Reset password")
             users[username]["salt"] = salt
             users[username]["password_hash"] = password_hash
         
                 
         if success == 0:
-            print("Register user")
+            logger.info("Register user")
             users[username] = {
                 "password_hash" : password_hash,
                 "salt"          : salt
@@ -180,17 +192,18 @@ def register_user_or_set_password(username):
         # write to file
         with open(USER_CREDENTIALS, 'w') as file:
             json.dump(data, file, indent=2)
-        print("User database updated: " + username)
+        logger.info("User database updated: " + username)
         
 
 # get roles from user
 def get_roles(username):
     user = find_user(username)
     
+    
     if not user:
         return None
     else:
-        
+        logger.debug("get roles of user: " + username)
         devices = selector.get_lookup_content("devices")
         return ({ 
             "username"          : username,
@@ -211,6 +224,7 @@ def get_signed_user(username):
 #### returns: {'key1': 'value1', 'date_a': ['2012-01-02']}
 ############
 def purify_dict_v2(my_dict):
+    logger.debug("purify dict")
     my_dict2={}
     for my_key in my_dict:
         i=-1
@@ -219,9 +233,9 @@ def purify_dict_v2(my_dict):
         if type(my_dict[my_key]) == list:
             for list_element in my_dict[my_key]:
                 if(list_element.isspace() or list_element=="" ):
-                    logging.info("Remove empty list element at key: " + my_key)
+                    logger.info("Remove empty list element at key: " + my_key)
                 else:
-                    logging.info("Add/append value to key as list: " + my_key )
+                    logger.info("Add/append value to key as list: " + my_key )
                     if my_key in my_dict2:
                         my_dict2[my_key].append(list_element)
                     else:
@@ -229,9 +243,9 @@ def purify_dict_v2(my_dict):
         else:
             if my_dict[my_key] != "":
                 my_dict2[my_key] = my_dict[my_key]
-                logging.info("Add string at key: " + my_key)
+                logger.info("Add string at key: " + my_key)
             else:
-                logging.info("Remove empty string at key: " + my_key)
+                logger.info("Remove empty string at key: " + my_key)
 
 
     return my_dict2

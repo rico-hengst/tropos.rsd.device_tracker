@@ -1,14 +1,11 @@
 import logging
-import os
 from logging.handlers import TimedRotatingFileHandler
-from datetime import datetime
 
 def setup_logger(name: str = "lucky_logger") -> logging.Logger:
     """
     Configures and returns a logger instance with:
-    - Standard Output (STDOUT) handler
-    - Daily Rotating File handler (lucky.log)
-    - Logs older than 7 days are automatically deleted
+    - STDOUT Handler (Format: Datetime, Level, Message)
+    - File Handler (lucky.log) (Format: Datetime, Level, Message, Module, Line)
     """
     
     # 1. Create the logger
@@ -18,38 +15,38 @@ def setup_logger(name: str = "lucky_logger") -> logging.Logger:
     if logger.handlers:
         return logger
 
-    # 2. Set the global log level (Configure here only once)
-    logger.setLevel(logging.DEBUG)  # Capture DEBUG and above
+    # 2. Set the global log level
+    logger.setLevel(logging.DEBUG)
 
-    # 3. Define the log format
-    # Format: datetime, loglevel, message, module name, line number
-    formatter = logging.Formatter(
+    # 3. FORMATTER FOR FILE (Detailed: Datetime, Level, Message, Module, Line)
+    file_formatter = logging.Formatter(
         fmt="%(asctime)s | %(levelname)-8s | %(message)s | %(name)s | Line:%(lineno)d",
         datefmt="%Y-%m-%d %H:%M:%S"
     )
-    
+
+    # 4. FORMATTER FOR STDOUT (Simple: Datetime, Level, Message)
     stdout_formatter = logging.Formatter(
-        fmt="%(asctime)s | %(levelname)-8s | %(message)s",
+        fmt="%(asctime)s | %(levelname)-8s | %(message)s | %(name)s | Line:%(lineno)d",
         datefmt="%Y-%m-%d %H:%M:%S"
     )
 
-    # 4. Create STDOUT Handler
+    # 5. Create STDOUT Handler
     stdout_handler = logging.StreamHandler()
-    stdout_handler.setLevel(logging.INFO)  # Usually, you only want INFO+ on console
-    stdout_handler.setFormatter(formatter)
+    stdout_handler.setLevel(logging.INFO)  # Show INFO and above on console
+    stdout_handler.setFormatter(stdout_formatter)  # Apply the simple formatter
     logger.addHandler(stdout_handler)
 
-    # 5. Create Rotating File Handler
-    # backupCount=7 ensures logs older than 7 days are deleted
+    # 6. Create File Handler (Rotates daily, keeps 7 days)
     file_handler = TimedRotatingFileHandler(
         filename="lucky.log",
-        when="midnight",       # Rotate every day at midnight
-        interval=1,            # Every 1 day
-        backupCount=7,         # Keep logs for 7 days
-        encoding="utf-8"       # Ensure proper character encoding
+        when="midnight",
+        interval=1,
+        backupCount=7,
+        encoding="utf-8"
     )
     file_handler.setLevel(logging.DEBUG)  # Save everything to file
-    file_handler.setFormatter(formatter)
+    file_handler.setFormatter(file_formatter)  # Apply the detailed formatter
     logger.addHandler(file_handler)
+
 
     return logger

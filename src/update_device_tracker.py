@@ -10,8 +10,10 @@ import numpy as np
 
 
 import pandas as pd
-import logging
-logging.basicConfig(level=logging.INFO)
+
+
+import dv_logger
+logger = dv_logger.setup_logger(__name__)
 
 
 import selector
@@ -20,7 +22,7 @@ import selector
 def json_file():
     json_file= "../config/device_tracker_imported.json"
     if not os.path.isfile(json_file):
-        logging.error("JSON not exists: " + json_file)
+        logger.error("JSON not exists: " + json_file)
         json_file = None
         
     return json_file
@@ -28,7 +30,7 @@ def json_file():
 
 # push the user input into the expected format
 def prepare_add_device(myrequests):
-    logging.info("Start of device record prep")
+    logger.info("Start of device record prep")
     
 
     devive_is_platform = True if "metadata.is_platform" in myrequests else False
@@ -102,92 +104,94 @@ def prepare_add_device(myrequests):
         
     }
     
-    logging.info("Device record created/edited!")
     
+    # load devices
     devices = selector.get_lookup_content("devices")
     
     
     # update some parts if edit mode
-    if "requested_mode" not in myrequests:
-        logging.info("No requested mode, so do not touch device content from web form")
-    else:
+    if "requested_mode" not in myrequests or myrequests["requested_mode"] == "add":
+        logger.info("Start to add a new device")
         
-        if myrequests["requested_mode"] == "add":
-            logging.info("Requested mode is add, so do not touch device content from web form")
+        # substitute space by - and transform to lower all keynames
+        tmp_device_keyname = re.sub(r"\s+", '-', my_dict_new["metadata"]["name"].lower() )
+        
+        # reject if device already exists
+        if tmp_device_keyname in devices:
+            message = "Request mode add, but you want to add a device name that already exists: " + tmp_device_keyname
+            logger.warning(message)
             
+            return { 
+                "message"           : {
+                    "type": "warning",
+                    "message": message
+                } 
+            }
+        else:
+            return {
+                "returned_record"   : my_dict_new,
+            }
+        
+    
+        
+    elif "requested_mode" in myrequests and myrequests["requested_mode"] == "edit":
+        logger.info("Start to update a device")
+        
+    
             
-            # substitute space by - and transform to lowwer all keynames
-            tmp_device_keyname = re.sub(r"\s+", '-', my_dict_new["metadata"]["name"].lower() )
-            if tmp_device_keyname in devices:
-                message = "Request mode add, but you want to add a device name that already exists: " + tmp_device_keyname
-                logging.warning(message)
-                return { 
-                    "returned_record"   : 0,
-                    "message"           : {
-                        "type": "warning",
-                        "message": message
-                    } 
-                }
+        
+        
+        logger.info("Requested mode is edit, so calibration/history record will be collected")
+        
+        if "device_keyname" not in myrequests:
+            message = "Edit mode device, but no device_keyname in get parameters"
+            logger.warning(message)
+            return { 
+                "message"           : {
+                    "type": "warning",
+                    "message": message
+                } 
+            }
+        else:
+            device_keyname = myrequests["device_keyname"]
+            
+            if device_keyname in devices:                
                 
-        elif myrequests["requested_mode"] == "edit":
-            
-            # load device
-            
-            logging.info("Requested mode is edit, so calibration/history record will be collected")
-            
-            if "device_keyname" not in myrequests:
-                message = "Edit mode device, but no device_keyname in get parameters"
-                logging.warning(message)
-                return { 
-                    "returned_record"   : 0,
-                    "message"           : {
-                        "type": "warning",
-                        "message": message
-                    } 
+                # update timestamp
+                my_dict_new["metadata"]["created"] = devices[device_keyname]["metadata"]["created"]
+                
+                # update calibration and history
+                if "calibration" in devices[device_keyname]:
+                    my_dict_new["calibration"] = devices[device_keyname]["calibration"]
+                    logger.debug("Update device, get existing calibration records")
+                if "history" in devices[device_keyname]:
+                    my_dict_new["history"] = devices[device_keyname]["history"]
+                    logger.debug("Update device, get existing history records")
+                    
+                return {
+                     "returned_record"   : my_dict_new,
                 }
             else:
-            
-                device_keyname = myrequests["device_keyname"]
-                
-                
-                
-                if device_keyname in devices:                
+                message = "Device unknown: " + device_name
+                logger.warning(message)
+                return { 
+                    "message"           : {
+                        "type": "warning",
+                        "message": message
+                    } 
+                }
                     
-                    # update timestamp
-                    my_dict_new["metadata"]["created"] = devices[device_keyname]["metadata"]["created"]
-                    
-                    # update calibration and history
-                    if "calibration" in devices[device_keyname]:
-                        my_dict_new["calibration"] = devices[device_keyname]["calibration"]
-                        logging.info("Call calibration records")
-                    if "history" in devices[device_keyname]:
-                        my_dict_new["history"] = devices[device_keyname]["history"]
-                        logging.info("Call history records")
-                else:
-                    message = "Device unknown: " + device_name
-                    logging.warning(message)
-                    return { 
-                        "returned_record"   : 0,
-                        "message"           : {
-                            "type": "warning",
-                            "message": message
-                        } 
-                    }
-                    
-    logging.info("End of device record prep")
-    
-    return my_dict_new
-    
+    logger.info("End of device record prep")
+        
     
 # push the user input into the expected format
 def prepare_add_history(myrequests):
     
     # check if request_mode is edit/add
     if "requested_mode" in myrequests and myrequests["requested_mode"] != "add" and myrequests["requested_mode"] != "edit":
-        logging.warning("Form request_mode add/edit expected!")
+        logger.warning("Form request_mode add/edit expected!")
         
         return { 
-            "returned_record"   : 1,
             "message"           : {
                 "type": "warning",
                 "message": "Form request_mode add/edit expected!"
@@ -210,7 +214,7 @@ def prepare_add_history(myrequests):
         
   
     for key_name in myrequests:
-        logging.info(key_name)
+        logger.info(key_name)
         
         # transform datetime objects
         if key_name == "history.startdate":
@@ -244,13 +248,13 @@ def prepare_add_history(myrequests):
         # update location
         # is static
         if not my_location["is_mobile"]:
-            logging.info("is a non-mobile location")
+            logger.info("is a non-mobile location")
             if key_name == "history.location.name":
                 locations = selector.get_lookup_content("locations")
                 
                 # take al location info from database
                 if not bool(my_location_is_add_static_location):
-                    logging.warning("is false")
+                    logger.warning("is false, take location from database")
                     
                     if myrequests[key_name] in locations:
                         my_location["name"] = myrequests[key_name]
@@ -262,7 +266,7 @@ def prepare_add_history(myrequests):
                             my_location["elevation"] = float( locations[ myrequests[key_name] ]["elevation"] )
                 # add all info from web form
                 elif bool(my_location_is_add_static_location):
-                    logging.warning("is true")
+                    logger.warning("is true, take location from web form")
                     
                     my_location["name"]     = myrequests[key_name]
                     my_location["country"]  = myrequests["history.location.country" ]
@@ -273,7 +277,8 @@ def prepare_add_history(myrequests):
                     
         # is mobile
         else:
-            logging.info("is a mobile location")
+            logger.info("is a mobile location")
+            logger.debug("add name, track_url, track_desc from web form")
             if key_name == "history.location.name":
                 my_location["name"] = myrequests[key_name]
             elif key_name == "history.location.track_url":
@@ -284,13 +289,12 @@ def prepare_add_history(myrequests):
                 
     # check if start => stop
     if myrequests["history.startdate"] > myrequests["history.stopdate"]:
-        logging.warning("Start > Stop, exit")
+        logger.warning("provided dates: Start > Stop, exit")
         
         return { 
-            "returned_record"   : 1,
             "message"           : {
                 "type": "warning",
-                "message": "Start > Stop, exit"
+                "message": "provided dates: Start > Stop, exit"
             } 
         }
         
@@ -303,11 +307,11 @@ def prepare_add_history(myrequests):
         for history in devices[myrequests["device"]]["history"]:
             if myrequests["history.stopdate"] > history["startdate"] and myrequests["history.startdate"] < history["stopdate"]:
                 if "requested_mode" in myrequests and myrequests["requested_mode"] == "edit" and myrequests["history.uuid"] == history["uuid"]:
-                    logging.info("Edit mode, overlapping history record between provided and the identical uuid record")
+                    logger.debug("Edit mode, overlapping history record between provided and the identical uuid record")
                 
                 else:
-                    message = "On or multiple history record perios did intersect with start/stoptime of your record" + str(history) + " versus " + myrequests["history.startdate"] + " " + myrequests["history.stopdate"]
-                    logging.warning(message)
+                    message = "On or multiple history record periods did intersect with start/stoptime of your record" + str(history) + " versus " + myrequests["history.startdate"] + " " + myrequests["history.stopdate"]
+                    logger.warning(message)
                     return { 
                         "message"           : {
                             "type": "warning",
@@ -342,65 +346,158 @@ def prepare_add_history(myrequests):
 
 
 
-def add_calibration(device, calibration_record):
+# push the user input into the expected format
+def prepare_add_calibration(myrequests):
+    # check if request_mode is edit/add
+    if "requested_mode" in myrequests and myrequests["requested_mode"] != "add" and myrequests["requested_mode"] != "edit":
+        logger.warning("Form request_mode add/edit expected!")
+        
+        return { 
+            "message"           : {
+                "type": "warning",
+                "message": "Form request_mode add/edit expected!"
+            } 
+        }
+        
+    my_calibration_new = {
+        	"calibration_coefficient_uncertainties" : [float(x) for x in myrequests["calibration.calibration_coefficient_uncertainties"].split(",")] if "calibration.calibration_coefficient_uncertainties" in myrequests else [],
+            "calibration_coefficients"              : [float(x) for x in myrequests["calibration.calibration_coefficients"].split(",")] if "calibration.calibration_coefficients" in myrequests else [],
+            "calibration_equation"                  : myrequests["calibration.calibration_equation"] if "calibration.calibration_equation" in myrequests else "",
+            "certificate_id"                        : myrequests["calibration.certificate_id"] if "calibration.certificate_id" in myrequests else "",
+            "certificate_issuance_date"             : datetime.datetime.strptime(myrequests["calibration.certificate_issuance_date"], '%Y-%m-%d %H:%M').strftime("%Y-%m-%dT%H:%M:%SZ") if "calibration.certificate_issuance_date" in myrequests else "",
+            "description"                           : myrequests["calibration.description"] if "calibration.description" in myrequests else "",
+            "performed_at"                          : myrequests["calibration.performed_at"] if "calibration.performed_at" in myrequests else "",
+            "performed_by"                          : myrequests["calibration.performed_by"] if "calibration.performed_by" in myrequests else "",
+            "performed_period_dates"                : [datetime.datetime.strptime(x, '%Y-%m-%d %H:%M').strftime("%Y-%m-%dT%H:%M:%SZ") for x in myrequests["calibration.performed_period_dates"]] if "calibration.performed_period_dates" in myrequests else [],
+            "record_created_date"                   : datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "temperature_correction_coefficients"   : [float(x) for x in myrequests["calibration.temperature_correction_coefficients"].split(",")] if "calibration.temperature_correction_coefficients" in myrequests else [],
+            "temperature_correction_equation"       : myrequests["calibration.temperature_correction_equation"] if "calibration.temperature_correction_equation" in myrequests else "",
+            "used_method"                           : myrequests["calibration.used_method"] if "calibration.used_method" in myrequests else "",
+            "used_reference"                        : myrequests["calibration.used_reference"] if "calibration.used_reference" in myrequests else "",
+            "uuid"                                  : myrequests["calibration.uuid"] if "calibration.uuid" in myrequests else str(uuid.uuid1()),
+            "valid_period_dates"                    : [datetime.datetime.strptime(x, '%Y-%m-%d %H:%M').strftime("%Y-%m-%dT%H:%M:%SZ") for x in myrequests["calibration.valid_period_dates"]] if "calibration.valid_period_dates" in myrequests else [],
+    }
+    
+    # do not store, cause integer is expected
+    if "calibration.performed_repeats" in myrequests:
+        my_calibration_new["performed_repeats"] = int(myrequests["calibration.performed_repeats"])
+        logger.info("performed_repeats were set")
+    # record_created_date: use date from edited record
+    if "calibration.uuid" in myrequests and "requested_mode" in myrequests and myrequests["requested_mode"] != "edit":
+        uuid_calibrations=selector.select_calibration( {"uuid" : myrequests["calibration.uuid"] } ).replace([np.nan], [None], regex=False).to_dict()
+        my_calibration_new["record_created_date"] = uuid_calibrations[myrequests["device_keyname"]]["calibration"][0]["record_created_date"]
+
+    
+    # validation
+    schema_file = "../config/schema_calibration.json"
+
+        
     # load schema
-    with open("../config/schema_calibration.json", "r+") as file:
+    with open(schema_file, "r+") as file:
         try:
             calibration_schema = json.load(file)
         except json.JSONDecodeError as e:
-            print("Invalid JSON syntax:", e)
+            logger.error("Invalid JSON syntax:", e)
         
         
-        
-    
     # old valiadation without format checker
     validate(
-        instance=calibration_record,
+        instance=my_calibration_new,
         schema=calibration_schema,
     )
-
-
-
 
     validator = Draft7Validator(
             calibration_schema,
             format_checker=FormatChecker()
     )
-    errors = list(validator.iter_errors(calibration_record))
+    errors = list(validator.iter_errors(my_calibration_new))
     
-    if not errors:
-        print("✓ Validation Successful: The JSON instance is valid.")
-        print(calibration_record)
+    
         
-        
-        json_file= "../config/device_tracker.json"
-        with open(json_file, "r+") as file:
-            device_tracker = json.load(file)
-            
-            print("Update json_file: " + json_file )
-            
-            if device in device_tracker.keys():
-                if "calibration" in device_tracker[device].keys():
-                    device_tracker[device]["calibration"].append(calibration_record)
-                   # print(device_tracker)
-                    file.seek(0)
-                    json.dump(device_tracker, file, indent=4)
-                    
-                else:
-                    print("no key2")
-            else:
-                print("-- no device in json file detected: " + device + ", no validation")
-
-        
-    else:
-        print("✗ Validation Failed: The JSON instance is invalid.")
-        print(calibration_record)
+    if errors:
+        mesaage = "✗ Validation Failed: The JSON instance is invalid."
+        logger.error(message)
 
         for error in errors:
             # error.message usually contains the specific reason
-            print(f"  - Error: {error.message}")
-            print(f"    Path: {list(error.path)}")
-            print(f"    Validator: {error.validator}")
+            logger.error(f"  - Error: {error.message}")
+            logger.error(f"    Path: {list(error.path)}")
+            logger.error(f"    Validator: {error.validator}")
+            
+        return {"message": {"type":"warning","message":message}}
+    else:
+        logger.info("Validation ok")
+            
+    
+    return {
+        "returned_record"   : my_calibration_new,
+        "message" : {"type":"warning","message":"Returned json ok"}
+    }
+
+
+def add_calibration(myrequests):
+    
+    logger.info("Start: Add history record")
+    
+    if "device_keyname" not in myrequests:
+        logger.warning("device keyname is missing")
+    
+
+    
+    calibration_record_ready = prepare_add_calibration(myrequests)
+    my_rr = {}
+    
+    if not "returned_record" in calibration_record_ready:
+        return my_rr
+        
+    logger.debug(calibration_record_ready["returned_record"])
+    
+    
+    # add to device tracker
+    my_json_file = json_file()
+
+    # 1. load file content to variable
+    device_tracker = None
+    with open(my_json_file, "r+") as file:
+        device_tracker = json.load(file)
+    file.close()
+        
+    # 2 open file to write the updated content to the file
+    with open(my_json_file, "w+") as file:
+            
+        logger.info("Update json_file: " + my_json_file )
+        if myrequests["device_keyname"] in device_tracker.keys():
+            # looking for calibrations in edit mode
+            if "requested_mode" in myrequests and myrequests["requested_mode"] == "edit":
+                ii = -1
+                for c in device_tracker[myrequests["device_keyname"]]["calibration"]:
+                    ii+=1
+                    if device_tracker[myrequests["device_keyname"]]["calibration"][ii]["uuid"] == myrequests["calibration.uuid"]:
+                        logger.info("Edit mode: edit calibration")
+                        device_tracker[myrequests["device_keyname"]]["calibration"][ii] = calibration_record_ready["returned_record"]
+                        break
+            else:
+                device_tracker[myrequests["device_keyname"]]["calibration"].append(calibration_record_ready["returned_record"])
+                logger.info("Add mode: append calibration")
+                
+        file.truncate()
+        json.dump(device_tracker, file, indent=4)
+                    
+        message = "Updated calibration at device: " + myrequests["device_keyname"]
+        logger.info(message)
+        return {"message": {"type":"info","message":message}}
+    file.close()
+    
+    
+    
+    if "message" in calibration_record_ready:
+        my_rr["message"]= calibration_record_ready["message"]
+        return my_rr
+
+
+    
+        
+    
             
             
             
@@ -410,9 +507,9 @@ def add_calibration(device, calibration_record):
 
 def add_history(myrequests):
     
-    logging.info("Start: Add history record")
-    history_record_ready = prepare_add_history(myrequests)
+    logger.info("Start: Add history record")
     
+    history_record_ready = prepare_add_history(myrequests)
     
     device=myrequests["device"]
     
@@ -430,7 +527,7 @@ def add_history(myrequests):
         try:
             history_schema = json.load(file)
         except json.JSONDecodeError as e:
-            print("Invalid JSON syntax:", e)
+            logger.warning("Invalid JSON syntax:", e)
         
         
         
@@ -441,9 +538,6 @@ def add_history(myrequests):
         schema=history_schema,
     )
 
-
-
-
     validator = Draft7Validator(
             history_schema,
             format_checker=FormatChecker()
@@ -451,13 +545,10 @@ def add_history(myrequests):
     errors = list(validator.iter_errors(history_record_ready["return_ok"]))
     
     if not errors:
-        logging.info("✓ Validation Successful: The JSON instance is valid.")
-        logging.debug(history_record_ready["return_ok"])
-        
+        logger.info("✓ Validation Successful: The JSON instance is valid.")
+        logger.debug(history_record_ready["return_ok"])
         
         my_json_file = json_file()
-        
-        
         
         # 1. load file content to variable
         device_tracker = None
@@ -468,7 +559,7 @@ def add_history(myrequests):
         # 2 open file to write the updated content to the file
         with open(my_json_file, "w+") as file:
             
-            logging.info("Update json_file: " + my_json_file )
+            logger.info("Update json_file: " + my_json_file )
             
             if device in device_tracker.keys():
                 if "history" in device_tracker[device].keys():
@@ -476,10 +567,10 @@ def add_history(myrequests):
                         for index in range(len(device_tracker[device]["history"])):
                             if device_tracker[device]["history"][index]["uuid"] == history_record_ready["return_ok"]["uuid"]:
                                 device_tracker[device]["history"][index] = history_record_ready["return_ok"]
-                                logging.info("Edit history record: " + str(history_record_ready))
+                                logger.info("Edit history record: " + str(history_record_ready))
                                 break
                     else:
-                        logging.info("Add history record: " + str(history_record_ready))
+                        logger.info("Add history record: " + str(history_record_ready))
                         device_tracker[device]["history"].append(history_record_ready["return_ok"])
 
                    # print(device_tracker)
@@ -488,34 +579,33 @@ def add_history(myrequests):
                     json.dump(device_tracker, file, indent=4)
                     
                     message = "Updated history at device: " + device
-                    logging.info(message)
+                    logger.info(message)
                     return {"message": {"type":"info","message":message}}
                     
                 else:
                     message = "No history key at device detected: " + device
-                    logging.warning(message)
+                    logger.warning(message)
                     return {"message": {"type":"warning","message":message}}
             else:
                 message = "-- no device in json file detected: " + str(device) + ", no validation"
-                logging.warning(message)
+                logger.warning(message)
                 return {"message": {"type":"warning","message":message}}
 
         
     else:
         message = "✗ Validation Failed: The JSON instance is invalid." + str(history_record_ready["return_ok"])
-        logging.warning(message)
-        logging.debug(history_record_ready["return_ok"])
+        logger.warning(message)
+        logger.debug(history_record_ready["return_ok"])
 
         for error in errors:
             # error.message usually contains the specific reason
-            print(f"  - Error: {error.message}")
-            print(f"    Path: {list(error.path)}")
-            print(f"    Validator: {error.validator}")
+            logger.warning(f"  - Error: {error.message}")
+            logger.warning(f"    Path: {list(error.path)}")
+            logger.warning(f"    Validator: {error.validator}")
             
         return {"message": {"type":"warning","message":message}}
             
-            
-    logging.info("End: Add history record")
+    logger.info("End: Add history record")
             
             
             
@@ -525,10 +615,13 @@ def add_history(myrequests):
 def add_device(myrequests):
     
     
-    logging.info("Start: Add device record")
+    logger.info("Start: Add device record")
     device_record_ready = prepare_add_device(myrequests)
     
-    if not "return_ok" in device_record_ready:
+    logger.warning(device_record_ready)
+    
+    if not "returned_record" in device_record_ready:
+        logger.warning("returned_record was missing")
         return device_record_ready
     
 
@@ -538,29 +631,33 @@ def add_device(myrequests):
         
     
     
-    validate(instance=device_record_ready, schema=device_schema)
+    validate(instance=device_record_ready["returned_record"], schema=device_schema)
     
     validator = Draft7Validator(
             device_schema,
             format_checker=FormatChecker()
     )
-    errors = list(validator.iter_errors(device_record_ready))
+    errors = list(validator.iter_errors(device_record_ready["returned_record"]))
     
    
     
     if errors:
-        logging.info("✗ Validation Failed: The JSON instance is invalid.")
-        logging.debug(device_record_ready)
+        logger.info("✗ Validation Failed: The JSON instance is invalid.")
+        logger.debug(device_record_ready["returned_record"])
 
         for error in errors:
             # error.message usually contains the specific reason
-            logging.debug(f"  - Error: {error.message}")
-            logging.debug(f"    Path: {list(error.path)}")
-            logging.debug(f"    Validator: {error.validator}")
+            logger.debug(f"  - Error: {error.message}")
+            logger.debug(f"    Path: {list(error.path)}")
+            logger.debug(f"    Validator: {error.validator}")
+        
+        return {
+            "message" :{"type":"info","message":"Validation Failed"}
+        }
             
     else :
-        logging.info("✓ Validation Successful: The JSON instance is valid.")
-        logging.debug(device_record_ready)
+        logger.info("✓ Validation Successful: The JSON instance is valid.")
+        logger.debug(device_record_ready["returned_record"])
         
         # add instance record to json
         my_json_file = json_file()
@@ -575,65 +672,25 @@ def add_device(myrequests):
         with open(my_json_file, "w+") as file:
             
             # substitute space by - and transform to lowwer all keynames
-            device_keyname = re.sub(r"\s+", '-', device_record_ready["metadata"]["name"].lower() )
+            device_keyname = re.sub(r"\s+", '-', device_record_ready["returned_record"]["metadata"]["name"].lower() )
         
             # add or update
-            device_tracker[ device_keyname  ] = dict( sorted(device_record_ready.items()) )
+            device_tracker[ device_keyname  ] = dict( sorted(device_record_ready["returned_record"].items()) )
 
             
-            logging.warning("Try to update json_file: " + my_json_file )
-            logging.info("Add device record")
+            logger.warning("Try to update json_file: " + my_json_file )
+            logger.info("Add device record")
             # delete content
             file.truncate()
             #file.seek(0)
             json.dump(device_tracker, file, indent=4)
+            
+            return {
+                "message":{"message": "ok"}
+            }
 
 
-    logging.info("End: Add device record")
+    logger.info("End: Add device record")
 
 
-
-
-
-#add_history("MS-21_SN445566A",history_11)
-#add_history("MS-21_SN445566A",history_12)
-#add_calibration("MS-21_SN445566A",{"calibration_link":"http://mycalibration.info"})
-
-# add_history("MS-80_SNABCD22",history_AA)
-# add_history("MS-80_SNABCD22",history_AB)
-# add_history("MS-80_SNABCD22",history_AC)
-# add_history("MS-80_SNABCD22",history_AD)
-# add_history("MS-80_SNABCD22",history_AE)
-# add_calibration("MS-80_SNABCD22",
-# {
-    # "calibration_description" : "",
-    # "calibration_performed_by" : "Ak Hein",
-    # "calibration_performed_at" :"DWD",
-    # "calibration_performed_period" : ["2023-07-03T12:12:12Z","2023-07-13T12:12:12Z"],
-    # "calibration_record_created" : "2024-08-03T12:12:12Z",
-    # "calibration_used_method" : "Kletter et al.",
-    # "calibration_used_reference" : "CPC",
-    # "calibration_valid_period": ["2023-08-03T00:12:12Z", "2024-08-03T12:12:12Z"],
-    # "calibration_values": [0.11992, -22.3, 0.3]
-# })
-# add_calibration("MS-80_SNABCD22",
-# {
-    # "calibration_description" : "",
-    # "calibration_performed_by" : "Dore Hwaptist",
-    # "calibration_performed_at" :"DWD",
-    # "calibration_performed_period" : ["2024-09-03T12:12:12Z","2024-09-13T12:12:12Z"],
-    # "calibration_record_created" : "2026-08-03T12:12:12Z",
-    # "calibration_used_method" : "Kletter et al.",
-    # "calibration_used_reference" : "CPC",
-    # "calibration_valid_period": ["2024-10-03T00:12:12Z", "2026-10-03T12:12:12Z"],
-    # "calibration_values": [0.11972, -22.0, 0.27]
-# })
-
-
-
-
-# add_history("arielle",history_arielle11)
-# add_history("arielle",history_arielle12)
-# add_history("arielle",history_arielle13)
-# add_history("arielle",history_arielle14)
 

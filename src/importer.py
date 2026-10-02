@@ -6,8 +6,9 @@ import uuid
 import datetime
 import requests
 import re
-import logging
-logging.basicConfig(level=logging.INFO)
+
+import dv_logger
+logger = dv_logger.setup_logger(__name__)
 
 
 import pandas as pd
@@ -27,14 +28,14 @@ def main():
         try:
             device_schema = json.load(file)
         except json.JSONDecodeError as e:
-            logging.error("Invalid JSON syntax at schema device:", e)
+            logger.error("Invalid JSON syntax at schema device:", e)
     
     # load schema
     with open("../config/schema_history.json", "r+") as file:
         try:
             history_schema = json.load(file)
         except json.JSONDecodeError as e:
-            logging.error("Invalid JSON syntax at schema history:", e)
+            logger.error("Invalid JSON syntax at schema history:", e)
             
             #scheinbar schema nach einfügen pylarda nicht korrekt
     
@@ -44,7 +45,7 @@ def main():
         
         if "history" in device_dict:
 
-            logging.info("New Device: " + device)
+            logger.info("New Device: " + device)
             
             new_history = get_device_history(history_schema, device_dict["history"])
             new_device_dict = get_device_record(device_schema, device_dict)
@@ -52,7 +53,7 @@ def main():
             new_device_dict["history"] = new_history
             
             
-            logging.debug(str(new_device_dict))
+            logger.debug(str(new_device_dict))
             
             imported_devices[device] = new_device_dict
             
@@ -61,21 +62,21 @@ def main():
     with open(json_file, "r+") as file:
         device_tracker = json.load(file)
         
-        logging.info("Try to update json file: " + json_file)
+        logger.info("Try to update json file: " + json_file)
         
         
         for device, imported_device_record in imported_devices.items():
         
             if not device in device_tracker.keys():
                 
-                logging.info("Add device reord: " + device)
+                logger.info("Add device reord: " + device)
                 device_tracker[device] = imported_device_record
                 file.seek(0)
                 json.dump(device_tracker, file, indent=4)
             else:
-                logging.warning("Skip device record: " + device + ", record already exists")
+                logger.warning("Skip device record: " + device + ", record already exists")
                 if device == "arielle":
-                    logging.warning(imported_devices[device]["history"])
+                    logger.warning(imported_devices[device]["history"])
 
     return Jresponse
     
@@ -89,11 +90,11 @@ def get_device_history(history_schema, history):
     
     # loop all "old" history items and import to the new schema and add ne instance
     for key, history_record in history.items():
-        logging.debug(history_record)
+        logger.debug(history_record)
         
         # extract location
         if not history_record["location"]:
-            logging.error("No location provided: " + str(history_record) + "no location")
+            logger.error("No location provided: " + str(history_record) + "no location")
             exit()
         else:
             
@@ -141,10 +142,10 @@ def get_device_history(history_schema, history):
                 # Optional: Koordinaten in float umwandeln
                 lat, lon = map(float, [x.strip() for x in koordinaten_str.split(',')])
                 
-                logging.info("Location pattern correct: " + city + " " + country)
+                logger.info("Location pattern correct: " + city + " " + country)
                 
             else:
-                logging.warning("Location pattern not correct:  " + str(history_record))
+                logger.warning("Location pattern not correct:  " + str(history_record))
                 #import sys
                 #sys.exit(1)
                 
@@ -210,9 +211,9 @@ def get_device_history(history_schema, history):
             if country in subst_countries:
                 country_substituted = subst_countries[country]
                 new_history_record["location"]["country"] = country_substituted
-                logging.warning("Country name substituted: " + country + " to " + country_substituted)
+                logger.warning("Country name substituted: " + country + " to " + country_substituted)
             else:
-                logging.warning("Country not valid: " + country)
+                logger.warning("Country not valid: " + country)
             
         
         if len(history_record["pylarda_camp"])>1 or len(history_record["pylarda_system"])>1 or len(history_record["pylarda_connectorfile"])>1:
@@ -240,12 +241,12 @@ def get_device_history(history_schema, history):
         if not errors:
            # print(new_history_record)
             
-            logging.info("✓ Validation History Successful: The JSON instance is valid.")
+            logger.info("✓ Validation History Successful: The JSON instance is valid.")
             new_history.append(new_history_record)
            
             
         else:
-            logging.warning("✗ Validation History Failed: The JSON instance is invalid.")
+            logger.warning("✗ Validation History Failed: The JSON instance is invalid.")
 
             for error in errors:
                 # error.message usually contains the specific reason
@@ -311,16 +312,16 @@ def get_device_record(device_schema, device_dict):
     errors = list(validator.iter_errors(new_device_record))
     
     if not errors:
-        logging.info("✓ Validation Device Successful: The JSON instance is valid.")
-        #logging.debug(new_device_record)
+        logger.info("✓ Validation Device Successful: The JSON instance is valid.")
+        #logger.debug(new_device_record)
         
         return new_device_record
        
         
     else:
-        logging.warning("✗ Validation Device Failed: The JSON instance is invalid.")
-        logging.warning(new_device_record)
-        logging.warning("Validation failed")
+        logger.warning("✗ Validation Device Failed: The JSON instance is invalid.")
+        logger.warning(new_device_record)
+        logger.warning("Validation failed")
 
         for error in errors:
             # error.message usually contains the specific reason

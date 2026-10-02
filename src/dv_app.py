@@ -18,6 +18,15 @@ from jinja2 import Environment
 import hashlib
 import secrets
 
+# import logging
+# logging.basicConfig(level=logging.WARNING)
+import dv_logger
+# Initialize the logger once in the main entry point
+logger = dv_logger.setup_logger("DV-Logger")
+
+print("000")
+print(logger)
+
 
 import fhelper
 import update_device_tracker
@@ -31,7 +40,7 @@ if os.getenv("USER_CREDENTIALS_FILE"):
     USER_CREDENTIALS = BASE_DIR + "/" + os.getenv("USER_CREDENTIALS_FILE")
 
 if not os.path.isfile(USER_CREDENTIALS):
-    logging.error("File not exists: " + USER_CREDENTIALS)
+    logger.error("File not exists: " + USER_CREDENTIALS)
 
 # (A2) FLASK INIT
 app = Flask(__name__,
@@ -72,6 +81,7 @@ app.jinja_env.filters['get_serial_part_of_keyname'] = get_serial_part_of_keyname
 # DT API
 @app.route("/select", methods=["GET"])
 def select():
+    logger.debug("Select page")
     your_requests = request.args.to_dict()
     
     if ("date" in your_requests):
@@ -86,6 +96,7 @@ def select():
 # DT API SVG
 @app.route("/selectvis", methods=["GET"])
 def selectvis():
+    logger.debug("Selectvis page")
     your_requests = request.args.to_dict()
     
     if ("date" in your_requests):
@@ -107,6 +118,7 @@ def selectvis():
 # DT API TAB
 @app.route("/selecttab", methods=["GET"])
 def selecttab():
+    logger.debug("Selecttab page")
     your_requests = request.args.to_dict()
     
     if ("date" in your_requests):
@@ -132,10 +144,13 @@ def selecttab():
 # Add device, authorized admin only
 @app.route("/add/device", methods=["GET"])
 def add_device():
+    logger.debug("Add device page")
     username = None
     userroles = None
     if not 'username' in session:
-        flash('Sorry, this page is admin only restricted, please login first', 'info')
+        message = "Sorry, this page is login restricted, please login first"
+        logger.info(message)
+        flash(message, 'info')
         return redirect(url_for("login"))
     else:
         username = session['username']
@@ -165,7 +180,7 @@ def add_device():
                     your_requests = {}
                     flash("Your class_edit_roles avoids the modification of the current device with the class0: " + class0)
             else:
-                print("no device exists")
+                logger.debug("no device exists")
                 flash("No devices detected: " + your_requests["device"] )
         
         
@@ -175,10 +190,13 @@ def add_device():
 # Handle add device, authorized admin only
 @app.route("/handle/add/device", methods=["GET"])
 def handle_add_device():
+    logger.debug("Handle add device page")
     username = None
     userroles = None
     if not 'username' in session:
-        flash('Sorry, this page is admin only restricted, please login first', 'info')
+        message = "Sorry, this page is login restricted, please login first"
+        logger.debug(message)
+        flash(message, 'info')
         return redirect(url_for("login"))
     else:
         username = session['username']
@@ -194,7 +212,9 @@ def handle_add_device():
             # flash('Sorry, name of instrument already exists: ' + your_requests["metadata.name"], 'info')
             # return render_template("handle_add_device.html",user=user)
         if not (your_requests["metadata.class0"] in user["class_edit_roles"]):
-            flash('Sorry, you are not allowed to add devices with class: ' + your_requests["metadata.class0"], 'info')
+            message = "Sorry, you are not allowed to add devices with class: " + your_requests["metadata.class0"]
+            logger.debug(message)
+            flash(message, 'info')
             return render_template("handle_add_device.html",user=user)
             
         # update the database
@@ -202,7 +222,7 @@ def handle_add_device():
         
         if "message" in xxx:
             if "message" in xxx["message"]:
-                flash(xxx["message"]["message"],xxx["message"]["type"])
+                flash(xxx["message"]["message"])
 
         return render_template("handle_add_device.html", user=user)
             
@@ -210,17 +230,19 @@ def handle_add_device():
 # Add history, authorized only
 @app.route("/add/history", methods=["GET"])
 def add_history():
+    logger.debug("Add history page")
     username = None
     userroles = None
     if not 'username' in session:
-        flash('Sorry, this page is session restricted, please login first', 'info')
+        message = "Sorry, this page is login restricted, please login first"
+        logger.debug(message)
+        flash(message, 'info')
         return redirect(url_for("login"))
     else:
         username = session['username']
         user=fhelper.get_signed_user(username)
         if not user["access"] == "readwrite":
             referrer_url = request.referrer
-            print(request.headers.get("Referer"))
             flash('Sorry, this page is user access readwrite only restricted', 'info')
             return redirect(url_for(referrer))
         else:
@@ -239,19 +261,22 @@ def add_history():
                 
                 if uuid_devices:
                     if (len(uuid_devices)>1):
-                        print("multiple uuids exists")
+                        message = "Multiple uuids exists, based on your request!"
+                        logger.warning(message)
                         exit()
                     uuid_device_key = list(uuid_devices.keys())[0]
                 else:
-                    print("no uuids exists")
-                    flash("No uuid detected: " + your_requests["uuid"] )
+                    message = "Your reuested uuids not exists:" + your_requests["uuid"]
+                    logger.info(message)
+                    flash(message)
                     
             # load schema
             with open("../config/schema_history.json", "r+") as file:
                 try:
                     history_schema = json.load(file)
                 except json.JSONDecodeError as e:
-                    logging.error("Invalid JSON syntax at schema history:", e)
+                    message = "Invalid JSON syntax at schema history:" + e
+                    logger.error(message)
                     
             countries = history_schema["$defs"]["location"]["oneOf"][0]["properties"]["country"]["enum"]
                             
@@ -263,10 +288,13 @@ def add_history():
 # Handle add history
 @app.route("/handle/add/history", methods=["GET"])
 def handle_add_history():
+    logger.debug("Handle add history page")
     username = None
     userroles = None
     if not 'username' in session:
-        flash('Sorry, this page is session restricted, please login first', 'info')
+        message = "Sorry, this page is session restricted, please login first"
+        logger.info(message)
+        flash(message, 'info')
         return redirect(url_for("login"))
     else:
         username = session['username']
@@ -288,17 +316,19 @@ def handle_add_history():
 # Add history, authorized only
 @app.route("/add/calibration", methods=["GET"])
 def add_calibration():
+    logger.debug("Add calibration page")
     username = None
     userroles = None
     if not 'username' in session:
-        flash('Sorry, this page is session restricted, please login first', 'info')
+        message = "Sorry, this page is session restricted, please login first"
+        logger.info(message)
+        flash(message, 'info')
         return redirect(url_for("login"))
     else:
         username = session['username']
         user=fhelper.get_signed_user(username)
         if not user["access"] == "readwrite":
             referrer_url = request.referrer
-            print(request.headers.get("Referer"))
             flash('Sorry, this page is user access readwrite only restricted', 'info')
             return redirect(url_for(referrer))
         else:
@@ -312,24 +342,25 @@ def add_calibration():
             if "uuid" in your_requests:
                 
                 # look for uuid calibration device(s)
-                uuid_calibrations=selector.select_calibrations( {"uuid" : your_requests["uuid"] } ).replace([np.nan], [None], regex=False).to_dict()
-                
+                uuid_calibrations=selector.select_calibration( {"uuid" : your_requests["uuid"] } ).replace([np.nan], [None], regex=False).to_dict()
                 
                 if uuid_calibrations:
-                    if (len(uuid_calibratioms)>1):
-                        print("multiple uuids exists")
+                    if (len(uuid_calibrations)>1):
+                        message = "Your request returned multiple calibration records with uuid: " + your_requests["uuid"]
+                        logger.warning(message)
                         exit()
                     uuid_calibration_key = list(uuid_calibrations.keys())[0]
                 else:
-                    print("no uuids exists")
-                    flash("No uuid detected: " + your_requests["uuid"] )
+                    message = "No calibration uuid detected: " + your_requests["uuid"]
+                    logger.info(message)
+                    flash(message)
                     
             # load schema
             with open("../config/schema_calibration.json", "r+") as file:
                 try:
                     history_schema = json.load(file)
                 except json.JSONDecodeError as e:
-                    logging.error("Invalid JSON syntax at schema calibration:", e)
+                    logger.error("Invalid JSON syntax at schema calibration:", e)
                     
             devices = selector.get_lookup_content("devices")
             return render_template("add_calibration.html",devices=devices, uuid_calibrations=uuid_calibrations, uuid_calibration_key=uuid_calibration_key ,your_requests=your_requests,user=user)
@@ -338,10 +369,13 @@ def add_calibration():
 # Handle add calibration
 @app.route("/handle/add/calibration", methods=["GET"])
 def handle_add_calibration():
+    logger.debug("Handle add calibration page")
     username = None
     userroles = None
     if not 'username' in session:
-        flash('Sorry, this page is session restricted, please login first', 'info')
+        message = "Sorry, this page is session restricted, please login first"
+        logger.info(message)
+        flash(message, 'info')
         return redirect(url_for("login"))
     else:
         username = session['username']
@@ -349,25 +383,45 @@ def handle_add_calibration():
         
         your_requests = request.args.to_dict()
         
-        return render_template("handle_calibration.html")
+        if ("calibration.performed_period_dates" in your_requests):
+            #print(type(request.args.getlist('date')))
+            your_requests["calibration.performed_period_dates"] = request.args.getlist('calibration.performed_period_dates')
+        if ("calibration.valid_period_dates" in your_requests):
+            #print(type(request.args.getlist('date')))
+            your_requests["calibration.valid_period_dates"] = request.args.getlist('calibration.valid_period_dates')
+            
+        # remove empty key value sets
+        your_requests=fhelper.purify_dict_v2(your_requests)
+        
+        
+        xxx=update_device_tracker.add_calibration(your_requests)
+        if "message" in xxx:
+            if "message" in xxx["message"]:
+                flash(xxx["message"]["message"],xxx["message"]["type"])
+        
+        return render_template("handle_add_calibration.html")
 
 
 ###################################### LOGIN STUFF
 # Route for the login page (GET only)
 @app.route('/login', methods=['GET'])
 def login():
+    logger.debug("Login page")
     return render_template('login.html')
 
 # Route for handling login form submission (POST only)
 @app.route('/login', methods=['POST'])
 def handle_login():
+    logger.debug("Handle login page")
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         
         # Validate input
         if not username or not password:
-            error = 'Please provide both username and password'
+            message = 'Please provide both username and password'
+            error = message
+            logger.info(message)
             return render_template('login.html', error=error)
         
         # Find user in JSON file
@@ -375,7 +429,7 @@ def handle_login():
         
         if user and fhelper.verify_password(password, user['password_hash']):
             # Successful authentication
-            print(session)
+            logger.debug(session)
             session['username'] = username
             session['user_id'] = username  # Use username as user_id
             flash('Login successful!', 'info')
@@ -384,7 +438,9 @@ def handle_login():
             return render_template('index.html', user=fhelper.get_signed_user(username))
         else:
             # Failed authentication
-            error = 'Invalid username or password'
+            message = 'Invalid username or password'
+            error = message
+            logger.info(message)
             return render_template('login.html', error=error)
     
     return render_template('login.html')
@@ -392,6 +448,7 @@ def handle_login():
 # Dashboard route (non-protected)
 @app.route("/")
 def index():
+    logger.debug("Index page")
     if 'username' in session:
         username = session['username']
         return render_template('index.html', user=fhelper.get_signed_user(username))
@@ -403,6 +460,7 @@ def index():
 # Logout route
 @app.route('/logout')
 def logout():
+    logger.debug("Logout page")
     session.pop('username', None)
     session.pop('user_id', None)
     flash('You have been logged out', 'info')
@@ -411,6 +469,7 @@ def logout():
 # Registration route (optional)
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    logger.debug("Register page")
     # handle only admin is allowed for that
     if 'username' in session:
         username = session['username']
@@ -426,16 +485,22 @@ def register():
         
         # Validate input
         if not username or not password:
-            error = 'Please provide both username and password'
+            message = 'Please provide both username and password'
+            error = message
+            logger.info(message)
             return render_template('register.html', error=error)
         
         if password != confirm_password:
-            error = 'Passwords do not match'
+            message = 'Passwords do not match'
+            error = message
+            logger.info(message)
             return render_template('register.html', error=error)
         
         # Check if username already exists
         if fhelper.username_exists(username):
-            error = 'Username already exists'
+            message = 'Username already exists'
+            error = message
+            logger.info(message)
             return render_template('register.html', error=error)
         
         # Add new user

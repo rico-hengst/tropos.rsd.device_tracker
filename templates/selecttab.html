@@ -123,30 +123,63 @@ input::placeholder {
                                     {% for calibration in device_dict.calibration %}
                                         <div class="card border-dark">
                                             <div class="card-header">
-                                                Calibration <span class="badge rounded-pill text-bg-info">{{ loop.index}}</span>
+                                                Calibration <span class="badge rounded-pill text-bg-info">{{ calibration.uuid }}</span> 
+                                                {% if device_dict.metadata.class.0 in user.class_edit_roles %}<a href="{{url_for('add_calibration', uuid=calibration.uuid, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>{% endif %}
                                             </div>
                                           <div class="card-body">
-                                            <table class="table table-sm small">
-                                                <tr>
-                                                    <td>valid period</td>
-                                                    <td>
-                                                        {% for my_date in calibration.calibration_valid_period %}
-                                                            {{my_date[0:10]}}
-                                                            {% if not loop.last %} &rarr; {% endif %}
-                                                        {%endfor%}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>values</td>
-                                                    <td>{{ calibration.calibration_values }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>method/reference</td>
-                                                    <td>{{ calibration.calibration_used_method }} / {{ calibration.calibration_used_reference }}</td>
-                                                </tr>
+                                                
+                                                <table class="table table-sm small">
+                                                    {% if calibration.calibration_link %}
+                                                        <tr>
+                                                            <td>calibration link</td>
+                                                            <td>{{ calibration.calibration_link  }}</td>
+                                                        </tr>
+                                                    {% else %}
+                                                        {% if "certificate_issuance_date" in calibration %}
+                                                        <tr>
+                                                            <td>certificate issuance date</td>
+                                                            <td>{{calibration.certificate_issuance_date[0:10]}}</td>
+                                                        </tr>
+                                                        {% endif %}
+                                                        {% if "certificate_id" in calibration and calibration.certificate_id|length>0%}
+                                                        <tr>
+                                                            <td>certificate id</td>
+                                                            <td>{{calibration.certificate_id}}</td>
+                                                        </tr>
+                                                        {% endif %}
+                                                        {% if "valid_period_dates" in calibration and calibration.valid_period_dates|length>0%}
+                                                        <tr>
+                                                            <td>valid period</td>
+                                                            <td>
+                                                                {% for my_date in calibration.valid_period_dates %}
+                                                                    {{my_date[0:10]}}
+                                                                    {% if not loop.last %} &rarr; {% endif %}
+                                                                {% endfor %}
+                                                            </td>
+                                                        </tr>
+                                                        {% endif %}
+                                                        {% if "calibration_coefficients" in calibration and calibration.calibration_coefficients|length>0%}
+                                                        <tr>
+                                                            <td>calibration coefficients</td>
+                                                            <td>{{ calibration.calibration_coefficients|join(",") }}</td>
+                                                        </tr>
+                                                        {% endif %}
+                                                        {% if "calibration_equation" in calibration and calibration.calibration_equation|length>0%}
+                                                        <tr>
+                                                            <td>calibration equation</td>
+                                                            <td>{{ calibration.calibration_equation }}</td>
+                                                        </tr>
+                                                        {% endif %}
+                                                        
+                                                        <tr>
+                                                            <td>method/reference</td>
+                                                            <td>{{ calibration.used_method }} / {{ calibration.used_reference }}</td>
+                                                        </tr>
+                                                        
+                                                    {% endif %}
 
-                                            </table>
-                                          </div>
+                                                </table>
+                                            </div>
                                         </div>
                                     {% endfor %}
                                 </td>

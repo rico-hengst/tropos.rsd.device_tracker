@@ -172,6 +172,43 @@
                     1.3,
                     0.005
                 ]
+            },
+            {
+                "calibration_coefficient_uncertainties": [
+                    0.007,
+                    1.3,
+                    0.005
+                ],
+                "calibration_coefficients": [
+                    0.11992,
+                    -22.3,
+                    0.3
+                ],
+                "calibration_equation": "calibrated irradiance = voltage*calibration_factor",
+                "certificate_id": "S25000039900-EX25",
+                "certificate_issuance_date": "2023-07-03T12:12:00Z",
+                "description": "",
+                "performed_at": "DWD",
+                "performed_by": "Ak Hein",
+                "performed_period_dates": [
+                    "2023-07-03T12:12:00Z",
+                    "2023-07-13T12:12:00Z"
+                ],
+                "record_created_date": "2026-09-30T18:10:10Z",
+                "temperature_correction_coefficients": [
+                    5.6111e-06,
+                    -0.000129,
+                    -6.0915e-05
+                ],
+                "temperature_correction_equation": "BTC: U/U0= a*T^2+b*T+c",
+                "used_method": "thqe4tqh4eqh",
+                "used_reference": "",
+                "uuid": "05108e12-bcf9-11f1-8b15-f4a80d4b6918",
+                "valid_period_dates": [
+                    "2023-08-03T00:12:00Z",
+                    "2024-08-03T12:12:00Z"
+                ],
+                "performed_repeats": 3
             }
         ]
     },
@@ -9555,6 +9592,176 @@
                 "inv": {
                     "x#2026092517481817#": "x"
                 }
+            }
+        }
+    },
+    "bbbbb": {
+        "calibration": [],
+        "history": [],
+        "metadata": {
+            "name": "bbbbb",
+            "description": "",
+            "is_platform": false,
+            "created": "2026-10-02T10:00:01Z",
+            "class": [
+                "radiation",
+                "swd"
+            ],
+            "device_manufacturer": {
+                "name": "ax",
+                "address": "",
+                "contact": ""
+            },
+            "device_model": {
+                "name": "qxq",
+                "description": "q",
+                "purchased": "",
+                "pid": "",
+                "serial": {
+                    "qq#2026100212000110#": "qq"
+                }
+            },
+            "owner": {
+                "name": "qqx",
+                "address": "",
+                "contact": "x",
+                "inv": {
+                    "q#2026100212000115#": "w"
+                }
+            }
+        }
+    },
+    "bbbbbw": {
+        "calibration": [],
+        "history": [],
+        "metadata": {
+            "name": "bbbbbw",
+            "description": "",
+            "is_platform": false,
+            "created": "2026-10-02T10:19:28Z",
+            "class": [
+                "radiation",
+                "swd"
+            ],
+            "device_manufacturer": {
+                "name": "ax",
+                "address": "",
+                "contact": ""
+            },
+            "device_model": {
+                "name": "qxq",
+                "description": "q",
+                "purchased": "",
+                "pid": "",
+                "serial": {}
+            },
+            "owner": {
+                "name": "qqx",
+                "address": "",
+                "contact": "x",
+                "inv": {}
+            }
+        }
+    },
+    "bbbbbww": {
+        "calibration": [
+            {
+                "calibration_coefficient_uncertainties": [],
+                "calibration_coefficients": [],
+                "calibration_equation": "",
+                "certificate_id": "",
+                "certificate_issuance_date": "2026-10-05T15:59:00Z",
+                "description": "",
+                "performed_at": "",
+                "performed_by": "",
+                "performed_period_dates": [
+                    "2026-10-07T15:59:00Z",
+                    "2026-10-06T15:59:00Z"
+                ],
+                "record_created_date": "2026-10-02T13:59:41Z",
+                "temperature_correction_coefficients": [],
+                "temperature_correction_equation": "",
+                "used_method": "",
+                "used_reference": "",
+                "uuid": "83911b5a-be69-11f1-9551-cc2f71a772c7",
+                "valid_period_dates": [
+                    "2026-10-13T15:59:00Z",
+                    "2026-10-20T15:59:00Z"
+                ]
+            },
+            {
+                "calibration_coefficient_uncertainties": [],
+                "calibration_coefficients": [],
+                "calibration_equation": "",
+                "certificate_id": "500WE33",
+                "certificate_issuance_date": "2026-10-05T15:59:00Z",
+                "description": "",
+                "performed_at": "",
+                "performed_by": "",
+                "performed_period_dates": [
+                    "2026-10-07T15:59:00Z",
+                    "2026-10-06T15:59:00Z"
+                ],
+                "record_created_date": "2026-10-02T14:13:18Z",
+                "temperature_correction_coefficients": [],
+                "temperature_correction_equation": "",
+                "used_method": "",
+                "used_reference": "",
+                "uuid": "8d2fa28a-be69-11f1-b651-cc2f71a772c7",
+                "valid_period_dates": [
+                    "2026-10-13T15:59:00Z",
+                    "2026-10-20T15:59:00Z"
+                ]
+            }
+        ],
+        "history": [
+            {
+                "startdate": "2026-10-01T15:58:00Z",
+                "stopdate": "2026-10-08T15:58:00Z",
+                "created": "2026-10-02T13:58:27Z",
+                "uuid": "576b8d6c-be69-11f1-abd0-cc2f71a772c7",
+                "campaign": "",
+                "platform": [],
+                "location": {
+                    "is_mobile": false,
+                    "name": "Al Dhaid",
+                    "country": "United Arab Emirates",
+                    "lat": 25.235397,
+                    "lon": 55.977975
+                },
+                "pylarda": {
+                    "camp": "",
+                    "system": "",
+                    "connectorfile": []
+                }
+            }
+        ],
+        "metadata": {
+            "name": "bbbbbww",
+            "description": "",
+            "is_platform": false,
+            "created": "2026-10-02T10:21:19Z",
+            "class": [
+                "radiation",
+                "swd"
+            ],
+            "device_manufacturer": {
+                "name": "ax",
+                "address": "",
+                "contact": ""
+            },
+            "device_model": {
+                "name": "qxq",
+                "description": "q",
+                "purchased": "",
+                "pid": "",
+                "serial": {}
+            },
+            "owner": {
+                "name": "qqx",
+                "address": "",
+                "contact": "x",
+                "inv": {}
             }
         }
     }

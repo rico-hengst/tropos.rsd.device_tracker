@@ -31,7 +31,7 @@ input::placeholder {
                     {% endif %}
                 </div>
             </div>
-                <form method="get"     enctype = "multipart/form-data" action="{{ url_for('handle_add_history') }}">
+                <form method="get"  id="id_selector_form" action="{{ url_for('handle_add_history') }}">
                     <div class="col-6 borders srounded pt-3 mb-4">
                         {% if uuid_devices %}
                             <h4>Please select ...</h4>
@@ -292,6 +292,7 @@ input::placeholder {
                                 </div>
                                 
                                 <div class="col-12 p-1 text-end">
+                                    <button type="button" class="btn btn-outline-dark" id="clearBtn">Clear</button>
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                 </div>
                                 
@@ -458,112 +459,136 @@ input::placeholder {
     
     
     
-    
-    // Button click, add searchparams, reload webpage
-    function reloadWithMode(requested_mode) {
-      if (!requested_mode || typeof requested_mode !== 'string' || requested_mode.trim() === '') {
-        console.warn('Invalid requested_mode provided');
-        return;
-      }
+    {% if uuid_devices %}
+        // Button click, add searchparams, reload webpage
+        function reloadWithMode(requested_mode) {
+          if (!requested_mode || typeof requested_mode !== 'string' || requested_mode.trim() === '') {
+            console.warn('Invalid requested_mode provided');
+            return;
+          }
 
-      const url = new URL(window.location.href);
-      url.searchParams.set('requested_mode', requested_mode.trim());
-      
-      // set request_mode variable to hidden inut field
-      document.getElementById('id_requested_mode').value = requested_mode.trim();
-
-      
-      window.location.href = url.toString();
-    }
-
-    // Button event listeners
-    document.getElementById('editBtn_requested_mode').addEventListener('click', function() {
-      console.log('Edit button clicked');
-      reloadWithMode('edit');
-    });
-
-    document.getElementById('addBtn_requested_mode').addEventListener('click', function() {
-      console.log('Add button clicked');
-      reloadWithMode('add');
-    });
-    
-    
-    
-    
-    /**
-     * Ensures only one checkbox is checked within a container.
-     * Additionally toggles enabled/disabled state of two other divs.
-     *
-     * @param {string} containerId - ID of the div containing the checkboxes.
-     * @param {string} enableOnFirstId - ID of div to ENABLE when 'firstoption' is checked.
-     * @param {string} disableOnFirstId - ID of div to DISABLE when 'firstoption' is checked.
-     */
-    function setupSingleCheckbox(containerId, enableOnFirstId, disableOnFirstId) {
-      const container = document.getElementById(containerId);
-      if (!container) {
-        console.warn("Container '" + containerId + "' not found.");
-        return;
-      }
-
-      // Select ALL form elements inside the target divs once for performance
-      const targetDiv1 = document.getElementById(enableOnFirstId);
-      const targetDiv2 = document.getElementById(disableOnFirstId);
-      
-      const formElements1 = targetDiv1 ? targetDiv1.querySelectorAll('input, select, textarea, button') : [];
-      const formElements2 = targetDiv2 ? targetDiv2.querySelectorAll('input, select, textarea, button') : [];
-
-      const checkboxes = container.querySelectorAll("input[type='checkbox']");
-
-      // Helper to toggle state
-      function setFieldState(elements, isEnabled) {
-        elements.forEach(el => {
-          el.disabled = !isEnabled;
-        });
-        
-        // Toggle visual class on parent container
-        const parentDiv = elements.length > 0 ? elements[0].closest('.container') : null;
-        if (parentDiv) {
-            parentDiv.classList.toggle('disabled-section', !isEnabled);
-        }
-      }
-
-      // Initial State: Both disabled
-      setFieldState(formElements1, false);
-      setFieldState(formElements2, false);
-
-      checkboxes.forEach(function (checkbox) {
-        checkbox.addEventListener("change", function () {
+          const url = new URL(window.location.href);
+          url.searchParams.set('requested_mode', requested_mode.trim());
           
-          // 1. Enforce Single Selection Logic
-          if (checkbox.checked) {
-            checkboxes.forEach(other => {
-              if (other !== checkbox) other.checked = false;
-            });
-          }
+          // set request_mode variable to hidden inut field
+          document.getElementById('id_requested_mode').value = requested_mode.trim();
 
-          // 2. Determine which option is active
-          const isFirstChecked = document.getElementById("firstoption")?.checked;
-          const isSecondChecked = document.getElementById("secondoption")?.checked;
+          
+          window.location.href = url.toString();
+        }
 
-          // 3. Apply Enable/Disable Logic
-          if (isFirstChecked) {
-            setFieldState(formElements1, true);   // Enable UI
-            setFieldState(formElements2, false);  // Disable UU
-          } else if (isSecondChecked) {
-            setFieldState(formElements1, false);  // Disable UI
-            setFieldState(formElements2, true);   // Enable UU
-          } else {
-            // Neither checked: Reset both to disabled
-            setFieldState(formElements1, false);
-            setFieldState(formElements2, false);
-          }
+        // Button event listeners
+        document.getElementById('editBtn_requested_mode').addEventListener('click', function() {
+          console.log('Edit button clicked');
+          reloadWithMode('edit');
         });
-      });
-    }
 
-    document.addEventListener("DOMContentLoaded", function () {
-      // Pass the IDs: Container, Div-to-enable-on-first, Div-to-disable-on-first
-      setupSingleCheckbox("checkboxgroup_static_location", "choose_existing_static_location", "choose_add_static_location");
+        document.getElementById('addBtn_requested_mode').addEventListener('click', function() {
+          console.log('Add button clicked');
+          reloadWithMode('add');
+        });
+    {% endif %}
+    
+    
+    
+    {% if user.username == "admin"%}
+        /**
+         * Ensures only one checkbox is checked within a container.
+         * Additionally toggles enabled/disabled state of two other divs.
+         *
+         * @param {string} containerId - ID of the div containing the checkboxes.
+         * @param {string} enableOnFirstId - ID of div to ENABLE when 'firstoption' is checked.
+         * @param {string} disableOnFirstId - ID of div to DISABLE when 'firstoption' is checked.
+         */
+        function setupSingleCheckbox(containerId, enableOnFirstId, disableOnFirstId) {
+          const container = document.getElementById(containerId);
+          if (!container) {
+            console.warn("Container '" + containerId + "' not found.");
+            return;
+          }
+
+          // Select ALL form elements inside the target divs once for performance
+          const targetDiv1 = document.getElementById(enableOnFirstId);
+          const targetDiv2 = document.getElementById(disableOnFirstId);
+          
+          const formElements1 = targetDiv1 ? targetDiv1.querySelectorAll('input, select, textarea, button') : [];
+          const formElements2 = targetDiv2 ? targetDiv2.querySelectorAll('input, select, textarea, button') : [];
+
+          const checkboxes = container.querySelectorAll("input[type='checkbox']");
+
+          // Helper to toggle state
+          function setFieldState(elements, isEnabled) {
+            elements.forEach(el => {
+              el.disabled = !isEnabled;
+            });
+            
+            // Toggle visual class on parent container
+            const parentDiv = elements.length > 0 ? elements[0].closest('.container') : null;
+            if (parentDiv) {
+                parentDiv.classList.toggle('disabled-section', !isEnabled);
+            }
+          }
+
+          // Initial State: Both disabled
+          setFieldState(formElements1, false);
+          setFieldState(formElements2, false);
+
+          checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+              
+              // 1. Enforce Single Selection Logic
+              if (checkbox.checked) {
+                checkboxes.forEach(other => {
+                  if (other !== checkbox) other.checked = false;
+                });
+              }
+
+              // 2. Determine which option is active
+              const isFirstChecked = document.getElementById("firstoption")?.checked;
+              const isSecondChecked = document.getElementById("secondoption")?.checked;
+
+              // 3. Apply Enable/Disable Logic
+              if (isFirstChecked) {
+                setFieldState(formElements1, true);   // Enable UI
+                setFieldState(formElements2, false);  // Disable UU
+              } else if (isSecondChecked) {
+                setFieldState(formElements1, false);  // Disable UI
+                setFieldState(formElements2, true);   // Enable UU
+              } else {
+                // Neither checked: Reset both to disabled
+                setFieldState(formElements1, false);
+                setFieldState(formElements2, false);
+              }
+            });
+          });
+        }
+        
+        document.addEventListener("DOMContentLoaded", function () {
+          // Pass the IDs: Container, Div-to-enable-on-first, Div-to-disable-on-first
+          setupSingleCheckbox("checkboxgroup_static_location", "choose_existing_static_location", "choose_add_static_location");
+        });
+    {% endif %}
+    
+    
+    
+    
+    // delete all form content in container "id_selector_form" in one go: click button id="clearBtn"
+    document.getElementById('clearBtn').addEventListener('click', function () {
+      const container = document.getElementById('id_selector_form');
+
+      // Reset all <input> elements
+      container.querySelectorAll('input').forEach(function (input) {
+        if (input.type === 'checkbox' || input.type === 'radio') {
+          input.checked = false;
+        } else {
+          input.value = '';
+        }
+      });
+
+      // Clear <textarea> and <select>
+      container.querySelectorAll('textarea, select').forEach(function (el) {
+        el.value = '';
+      });
     });
 </script>
 {% endblock %}

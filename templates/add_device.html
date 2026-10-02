@@ -18,7 +18,7 @@ input::placeholder {
                 <h2>Add device</h2>
             </div>
             
-            <form method="get"  action="{{ url_for('handle_add_device') }}">
+            <form method="get" id="id_selector_form" action="{{ url_for('handle_add_device') }}">
                 {% if device_keyname %}
                     <div class="col-12 d-flex justify-content-between bordery rounded pt-3 mcb-4">
                         <div>
@@ -249,12 +249,11 @@ input::placeholder {
                             
                         </div>
                         <div class="col-12 p-1 text-end">
+                            <button type="button" class="btn btn-outline-dark" id="clearBtn">Clear</button>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                         
                     </div>
-                    
-                    
 
                 </div>
             </fieldset>
@@ -410,43 +409,44 @@ input::placeholder {
     
     
     
-    
-    // Button click, add searchparams, reload webpae
-    function reloadWithMode(requested_mode) {
-      if (!requested_mode || typeof requested_mode !== 'string' || requested_mode.trim() === '') {
-        console.warn('Invalid requested_mode provided');
-        return;
-      }
+    {% if device_keyname %}
+        // Button click, add searchparams, reload webpae
+        function reloadWithMode(requested_mode) {
+          if (!requested_mode || typeof requested_mode !== 'string' || requested_mode.trim() === '') {
+            console.warn('Invalid requested_mode provided');
+            return;
+          }
 
-      const url = new URL(window.location.href);
-      url.searchParams.set('requested_mode', requested_mode.trim());
-      
-      // set request_mode variable to hidden inut field
-      document.getElementById('id_requested_mode').value = requested_mode.trim();
+          const url = new URL(window.location.href);
+          url.searchParams.set('requested_mode', requested_mode.trim());
+          
+          // set request_mode variable to hidden inut field
+          document.getElementById('id_requested_mode').value = requested_mode.trim();
 
-      
-      window.location.href = url.toString();
-    }
+          
+          window.location.href = url.toString();
+        }
 
-    // Button event listeners
-    document.getElementById('editBtn_requested_mode').addEventListener('click', function() {
-      console.log('Edit button clicked');
-      reloadWithMode('edit');
-    });
+        // Button event listeners
+        document.getElementById('editBtn_requested_mode').addEventListener('click', function() {
+          console.log('Edit button clicked');
+          reloadWithMode('edit');
+        });
 
-    document.getElementById('addBtn_requested_mode').addEventListener('click', function() {
-      console.log('Add button clicked');
-      reloadWithMode('add');
-    });
-    
-    
-    // clear content of a container
-    function clearDiv(id) {
-      const div = document.getElementById(id);
-      if (div) {
-        div.textContent = '';
-      }
-    }
+        document.getElementById('addBtn_requested_mode').addEventListener('click', function() {
+          console.log('Add button clicked');
+          reloadWithMode('add');
+        });
+        
+        
+        // clear content of a container
+        function clearDiv(id) {
+          const div = document.getElementById(id);
+          if (div) {
+            div.textContent = '';
+          }
+        }
+    {% endif %}
 </script>
 {% endblock %}
 

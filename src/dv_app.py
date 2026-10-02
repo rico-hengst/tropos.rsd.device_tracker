@@ -20,13 +20,11 @@ import secrets
 
 # import logging
 # logging.basicConfig(level=logging.WARNING)
-import dv_logger
+import dv_config
 # Initialize the logger once in the main entry point
-logger = dv_logger.setup_logger("DV-Logger")
-
-print("000")
-print(logger)
-
+logger = dv_config.setup_logger("DV-Logger")
+# get ENV variables
+ENV = dv_config.get_env()
 
 import fhelper
 import update_device_tracker
@@ -41,6 +39,8 @@ if os.getenv("USER_CREDENTIALS_FILE"):
 
 if not os.path.isfile(USER_CREDENTIALS):
     logger.error("File not exists: " + USER_CREDENTIALS)
+    
+logger.info(os.getenv("USER_CREDENTIALS_FILE"))
 
 # (A2) FLASK INIT
 app = Flask(__name__,

@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import json 
-
 import datetime
-
 import pandas as pd
 import numpy as np
 import re
 
-import dv_logger
-logger = dv_logger.setup_logger(__name__)
+import dv_config
+# set logger
+logger = dv_config.setup_logger(__name__)
+# get ENV variables
+ENV = dv_config.get_env()
 
 
 # test if nested dict has keys

@@ -6,12 +6,16 @@ import uuid
 import datetime
 import requests
 import re
-
-import dv_logger
-logger = dv_logger.setup_logger(__name__)
-
-
 import pandas as pd
+
+
+import dv_config
+# set logger
+logger = dv_config.setup_logger(__name__)
+# get ENV variables
+ENV = dv_config.get_env()
+
+
 
 def main():
     uri = "http://rsd2.tropos.de/device-tracking/api?device=arielle"

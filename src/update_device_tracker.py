@@ -7,20 +7,21 @@ import datetime
 import os
 import re
 import numpy as np
-
-
 import pandas as pd
 
 
-import dv_logger
-logger = dv_logger.setup_logger(__name__)
-
+import dv_config
+# set logger
+logger = dv_config.setup_logger(__name__)
+# get ENV variables
+ENV = dv_config.get_env()
 
 import selector
 
 
 def json_file():
     json_file= "../config/device_tracker_imported.json"
+    json_file = dv_config.get_env()["device_tracker_file"]
     if not os.path.isfile(json_file):
         logger.error("JSON not exists: " + json_file)
         json_file = None

@@ -6,13 +6,12 @@ import secrets
 # Echoing password and masked with hashtag(#)
 import maskpass  # importing maskpass library
 
-#import logging
-#logging.basicConfig(level=logging.INFO)
-import dv_logger
-logger = dv_logger.setup_logger(__name__)
 
-# Initialize the logger specific to this module
-#logger = dv_logger.setup_logger("fhelper")
+import dv_config
+# set logger
+logger = dv_config.setup_logger(__name__)
+# get ENV variables
+ENV = dv_config.get_env()
 
 
 import selector
@@ -25,7 +24,10 @@ if os.getenv("USER_CREDENTIALS_FILE"):
 
 if not os.path.isfile(USER_CREDENTIALS):
     logger.error("File not exists: " + USER_CREDENTIALS)
-    
+
+
+
+
 # Function to generate salt
 def generate_salt(length=64):
     """Generate a random salt for password hashing"""

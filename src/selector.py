@@ -8,7 +8,7 @@ import re
 
 import dv_config
 # set logger
-logger = dv_config.setup_logger(__name__)
+logger = dv_config.setup_logger()
 # get ENV variables
 ENV = dv_config.get_env()
 
@@ -19,11 +19,13 @@ def keys_exists(element, *keys):
     '''
     Check if *keys (nested) exists in `element` (dict).
     '''
-    logger.debug("check key exists")
+    #logger.debug("Start check nested key exists")
     
     if not isinstance(element, dict):
+        logger.warning('keys_exists() expects dict as first argument.')
         raise AttributeError('keys_exists() expects dict as first argument.')
     if len(keys) == 0:
+        logger.warning('keys_exists() expects at least two arguments, one given.')
         raise AttributeError('keys_exists() expects at least two arguments, one given.')
 
     _element = element
@@ -31,13 +33,15 @@ def keys_exists(element, *keys):
         try:
             _element = _element[key]
         except KeyError:
+            logging.warning("Nested key not exists: " + key)
             return False
+            
+    #logger.debug("All nested keys exists")
     return True
 
 
 def sort_continuous_history():
 
-    
     # read json file
     json_file= "../config/device_tracker.json"
     
@@ -53,11 +57,11 @@ def sort_continuous_history():
     
     for device in data.columns:
 
-        logger.info("## Start check continuous device history: " + device)
+        logger.info("## Start check continuous history at device: " + device)
             
         # sort
         if device not in data.columns:
-            logger.error("  Device " + device + " not in json file!")
+            logger.error("Device " + device + " not in json file!")
             exit()
         
         # sort history and check overlap
@@ -84,7 +88,7 @@ def sort_continuous_history():
         else:
             logger.info("Device " + device + " without history!")
 
-        logger.info("## Stop check continuous device history: " + device)
+        logger.info("## Stop check continuous history at device: " + device)
         
             
     with open('../config/device_tracker_sorted.json', 'w') as f:
@@ -104,34 +108,30 @@ def filter_created(data,my_filter):
     #   * if filter is device regex and device is unknown
     #   * if filter class/subclass is set and no match
     #   * if no history exists
-    logger.info("Start check record headers")
+    logger.info("Start filter created, check record headers")
     if ("device" in my_filter):
         for device_column_name in list(data.columns):
             if re.match(my_filter["device"], device_column_name, flags=re.IGNORECASE):
-                logger.info("Match device pattern: " + device_column_name)
+                logger.debug("Match device pattern: " + device_column_name)
             else:
-                logger.info("Non match device pattern: " + device_column_name, " -- delete device column")
+                logger.debug("Non match device pattern: " + device_column_name, " -- delete device column")
                 data.drop(device_column_name, axis=1, inplace=True)
     # search full array of class
     if("class" in my_filter):
         for device_column_name in list(data.columns):
 
-
             if ( keys_exists(data[device_column_name].to_dict(),"metadata","class") and re.search( my_filter["class"], " ".join( data[device_column_name]["metadata"]["class"] ), flags=re.IGNORECASE) ):
-                logger.info("Match class pattern: " + device_column_name, "matches the class pattern")
+                logger.debug("Match class pattern: " + device_column_name + "matches the class pattern")
             else:
-                logger.info("Non match class pattern: " + device_column_name + " -- delete device column")
+                logger.debug("Non match class pattern: " + device_column_name + " -- delete device column")
                 data.drop(device_column_name, axis=1, inplace=True)
-            
-            
-
                 
     if("class0" in my_filter):
         for device_column_name in list(data.columns):
             if (  keys_exists(data[device_column_name].to_dict(),"metadata","class") and re.match(my_filter["class0"], data[device_column_name]["metadata"]["class"][0], flags=re.IGNORECASE) ):
-                logger.info("Match subclass pattern: " + device_column_name)
+                logger.debug("Match subclass pattern: " + device_column_name)
             else:
-                logger.info("Non match subclass pattern: " + device_column_name, " -- delete device column")
+                logger.debug("Non match subclass pattern: " + device_column_name + " -- delete device column")
                 data.drop(device_column_name, axis=1, inplace=True)
  
     
@@ -140,17 +140,16 @@ def filter_created(data,my_filter):
             data.drop(device_column_name, axis=1, inplace=True)
             logger.info("No history records exists: " + device_column_name + " - delete device column !!!!")
 
-    logger.info("Stop check record headers")
+    logger.debug("Stop filter created, check record headers")
     
     # Create a shallow copy of the record to avoid modifying the original directly
     # Note: We only need to deep-copy the 'fails' list
+    logger.debug("Create data copy from reduced data.")
     new_data = data.copy(deep=True)
     
-    
     for device_column_name in data:
-        logger.info("Start device column ", device_column_name )
+        logger.debug("Start device column " + device_column_name )
         reduced_history = []
-        
         
         for history_record in data[device_column_name]["history"]:
                         
@@ -162,16 +161,16 @@ def filter_created(data,my_filter):
                 number_of_requested_filters += 1
                 if my_filter["created"] >= history_record["created"]:
                     matched_requests.append({"created":history_record["created"]})
-                    logger.info("check created match")
+                    logger.debug("check created match: " + history_record["created"])
                 else:
                     nonmatched_requests.append({"created":history_record["created"]})
-                    logger.info("check created no match")
+                    logger.debug("check created no match: " + history_record["created"])
             
             if("date" in my_filter):
                 number_of_requested_filters += 1
                 
                 if not (isinstance(my_filter["date"], list) ):
-                    logger.error("Error date query must be a list")
+                    logger.error("Error date query must be a list: " + my_filter["date"])
                     exit()
                 if not (len(my_filter["date"]) ==1 or len(my_filter["date"]) == 2):
                     logger.error("Error data query must be a instance of a list of 1 or 2 items: " + str(my_filter["date"]) + str(len(my_filter["date"])))
@@ -184,45 +183,45 @@ def filter_created(data,my_filter):
                 if len(my_filter["date"]) == 1:
                     if (history_record["startdate"] <= my_filter["date"][0] and history_record["stopdate"] >= my_filter["date"][0]):
                         matched_requests.append({"date datetime":history_record["startdate"]+history_record["stopdate"]})
-                        logger.info("check startdtopdate single match")
+                        logger.debug("check startdtopdate single match: ")
                     else:
                         nonmatched_requests.append({"date datetime":history_record["startdate"]+ " " +history_record["stopdate"] + " versus " + str(my_filter["date"])})
-                        logger.info("check startdtopdate single no match, delete")
+                        logger.debug("check startdtopdate single no match, delete")
                 # search explizit timespan
                 elif len(my_filter["date"]) == 2:
                     if (my_filter["date"][0] <= history_record["stopdate"] and my_filter["date"][1] >= history_record["startdate"]):
                         matched_requests.append({"date timespan":history_record["startdate"]+history_record["stopdate"]})
-                        logger.info("check startdtopdate timespan match")
+                        logger.debug("check startdtopdate timespan match")
                     else:
                         nonmatched_requests.append({"date timespan":history_record["startdate"]+ " " +history_record["stopdate"] + " versus " + str(my_filter["date"])})                
-                        logger.info("check startdtopdate timespan no match, delete")
+                        logger.debug("check startdtopdate timespan no match, delete")
 
             
             if("locationname" in my_filter):
                 if ( keys_exists(history_record,"location","name") and re.match(my_filter["locationname"], history_record["location"]["name"], re.IGNORECASE) ):
                     matched_requests.append({"locationname":history_record["location"]["name"]})  
-                    logger.info("check locationname match")
+                    logger.debug("check locationname match: " + history_record["location"]["name"])
                   
                 else:
                     nonmatched_requests.append({"locationname":my_filter["locationname"]})
-                    logger.info("check location no match, delete")
+                    logger.debug("check location no match, delete " + my_filter["locationname"])
 
                     
             if("country" in my_filter):
                 if ( keys_exists(history_record,"location","country") and re.match(my_filter["country"], history_record["location"]["country"], re.IGNORECASE)) :
                     matched_requests.append({"country":history_record["location"]["country"]})
-                    logger.info("check country match")
+                    logger.debug("check country match: " + history_record["location"]["country"])
                 else:
                     nonmatched_requests.append({"country":my_filter["country"]}) 
-                    logger.info("check country no match, delete")
+                    logger.debug("check country no match, delete " + my_filter["country"])
                     
             if("campaign" in my_filter):
                 if ( keys_exists(history_record,"campaign") and re.match(my_filter["campaign"], history_record["campaign"], re.IGNORECASE)):
                     matched_requests.append({"campaign":history_record["campaign"]})
-                    logger.info("check campaign match")
+                    logger.debug("check campaign match: " + history_record["campaign"])
                 else:
                     nonmatched_requests.append({"campaign":""}) 
-                    logger.info("check campaign no match, delete")
+                    logger.debug("check campaign no match, delete")
                     
             if("platform" in my_filter):
                 flag_platform = False
@@ -233,31 +232,31 @@ def filter_created(data,my_filter):
 
                     if flag_platform:
                         matched_requests.append({"platform":my_filter["platform"]})
-                        logger.info("check platform match")
+                        logger.debug("check platform match: " + history_record["platform"])
                     else:
                         nonmatched_requests.append({"platform":my_filter["platform"]})
-                        logger.info("check platform no match, delete")
+                        logger.debug("check platform no match, delete " + my_filter["platform"])
                 else:
                     nonmatched_requests.append({"platform":""})
-                    logger.info("check platform no match, delete")
+                    logger.debug("check platform no match, delete")
             
             if("uuid" in my_filter):
                 if my_filter["uuid"] == history_record["uuid"]:
                     matched_requests.append({"uuid":my_filter["uuid"]})
-                    logger.info("check uuid match")
+                    logger.debug("check uuid match: " + my_filter["uuid"])
                 else:
                     nonmatched_requests.append({"uuid":""})
-                    logger.info("check uuid no match, delete")
+                    logger.debug("check uuid no match, delete")
                     
-            logger.info("... matched history records:    " + str(len(matched_requests)) + " returns, filter: " + str(matched_requests))
-            logger.info("... nonmatched history records: " + str(len(nonmatched_requests)) + " returns, filter: " + str(nonmatched_requests))
+            logger.debug("... matched history records:    " + str(len(matched_requests)) + " returns, filter: " + str(matched_requests))
+            logger.debug("... nonmatched history records: " + str(len(nonmatched_requests)) + " returns, filter: " + str(nonmatched_requests))
             
             # all request per history records returns a result, so nonmated_request should be len()=0: append history record
             if len(nonmatched_requests) == 0:
                 reduced_history.append(history_record)
-                logger.info("-> append current history record")
+                logger.debug("-> append current history record")
             else:
-                logger.info("-> do not append current history record")
+                logger.debug("-> do not append current history record")
                         
         # set history
         # if reduced history exists: substitute history
@@ -269,7 +268,7 @@ def filter_created(data,my_filter):
         else:
             new_data.drop(device_column_name, axis=1, inplace=True)
         
-        logger.info("Stop device ", device_column_name )
+        logger.info("Stop device " + device_column_name )
             
     if not(new_data.empty):
         logger.info("Final filtered data!")
@@ -278,7 +277,7 @@ def filter_created(data,my_filter):
          #   print(new_data[device_column_name]["history"])
         
     else:
-        logger.info("empty data return")
+        logger.info("Final, empty data return")
     
     
     
@@ -311,8 +310,8 @@ def select_history(my_filter):
     logger.info("Stop query from json_file: " + json_file)
     
     #d = dict(sorted(filtered_data.items(), reverse=True, key=lambda item: item[0]))
-
-    logger.info(filtered_data)
+    
+    logger.debug("Filtered data " + str(filtered_data))
     return filtered_data
 
 
@@ -344,10 +343,10 @@ def select_calibration(my_filter):
             if("uuid" in my_filter):
                 if ( keys_exists(calibration_record,"uuid") and my_filter["uuid"] == calibration_record["uuid"]) :
                     matched_requests.append({"uuid":calibration_record["uuid"]})
-                    logger.info("check uuid match")
+                    logger.info("check uuid match: " + calibration_record["uuid"])
                 else:
                     nonmatched_requests.append({"uuid":my_filter["uuid"]})
-                    logger.info("check uuid match, delete")
+                    logger.info("check uuid match, delete " + my_filter["uuid"])
                     
             
              # all request per calibration records returns a result, so nonmated_request should be len()=0: append calibration record
@@ -364,6 +363,7 @@ def select_calibration(my_filter):
             logger.info("calibration record was appended " + device_column_name)
         # if number_of_requested_filters > 0: keep original history, do nothing
         else:
+            logger.info("Drop device, cause no calibration matched: " + device_column_name)
             new_data.drop(device_column_name, axis=1, inplace=True)
   
     # logger.debug(new_data)
@@ -454,7 +454,5 @@ def get_lookup_content(keyword):
         return devices
         
     logger.info("Stop get_lookup_content of " + keyword + ": " + json_file)
-
-
 
 

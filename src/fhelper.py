@@ -6,25 +6,18 @@ import secrets
 # Echoing password and masked with hashtag(#)
 import maskpass  # importing maskpass library
 
-
+import selector
 import dv_config
 # set logger
-logger = dv_config.setup_logger(__name__)
+logger = dv_config.setup_logger()
 # get ENV variables
 ENV = dv_config.get_env()
 
 
-import selector
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-USER_CREDENTIALS = BASE_DIR + "/config/users.json"
-if os.getenv("USER_CREDENTIALS_FILE"):
-    USER_CREDENTIALS = BASE_DIR + "/" + os.getenv("USER_CREDENTIALS_FILE")
-
-if not os.path.isfile(USER_CREDENTIALS):
-    logger.error("File not exists: " + USER_CREDENTIALS)
-
+SRC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+USER_CREDENTIALS = SRC_DIR + "/" + ENV["user_credentials"]
 
 
 

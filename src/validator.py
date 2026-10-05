@@ -8,7 +8,7 @@ import datetime
 import pandas as pd
 
 import dv_logger
-logger = dv_logger.setup_logger(__name__)
+logger = dv_logger.setup_logger()
 
 
 

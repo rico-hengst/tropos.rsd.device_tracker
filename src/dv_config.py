@@ -3,18 +3,18 @@ import json
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
-def setup_logger(name: str = "lucky_logger") -> logging.Logger:
+def setup_logger() -> logging.Logger:
     """
     Configures and returns a logger instance with:
     - STDOUT Handler (Format: Datetime, Level, Message)
-    - File Handler (lucky.log) (Format: Datetime, Level, Message, Module, Line)
+    - File Handler (lucky.log) (Format: Datetime, Level, Message, Module, Function, Line number)
     """
     
     # 0 logfile
     ENV = get_env()
     
     # 1. Create the logger
-    logger = logging.getLogger(name)
+    logger = logging.getLogger()
     
     # Avoid adding handlers if the logger was already configured
     if logger.handlers:
@@ -25,19 +25,19 @@ def setup_logger(name: str = "lucky_logger") -> logging.Logger:
 
     # 3. FORMATTER FOR FILE (Detailed: Datetime, Level, Message, Module, Line)
     file_formatter = logging.Formatter(
-        fmt="%(asctime)s | %(levelname)-8s | %(message)s | %(name)s | Line:%(lineno)d",
+        fmt="%(asctime)s | %(levelname)-8s | %(message)s | %(module)s | %(funcName)s:%(lineno)d",
         datefmt="%Y-%m-%d %H:%M:%S"
     )
 
     # 4. FORMATTER FOR STDOUT (Simple: Datetime, Level, Message)
     stdout_formatter = logging.Formatter(
-        fmt="%(asctime)s | %(levelname)-8s | %(message)s | %(name)s | Line:%(lineno)d",
+        fmt="%(asctime)s | %(levelname)-8s | %(message)s | %(module)s | %(funcName)s:%(lineno)d",
         datefmt="%Y-%m-%d %H:%M:%S"
     )
 
     # 5. Create STDOUT Handler
     stdout_handler = logging.StreamHandler()
-    stdout_handler.setLevel(logging.INFO)  # Show INFO and above on console
+    stdout_handler.setLevel(logging.DEBUG)  # Show INFO and above on console
     stdout_handler.setFormatter(stdout_formatter)  # Apply the simple formatter
     logger.addHandler(stdout_handler)
 
@@ -60,6 +60,7 @@ def setup_logger(name: str = "lucky_logger") -> logging.Logger:
 def get_env():
     if os.getenv("DV_ENV"):
         # read
+        print("TRY to read config file, provided as ENV variable 'DV_ENV'")
         try:
             with open(os.getenv("DV_ENV"), 'r') as file:
                 ENV = json.load(file)
@@ -79,12 +80,12 @@ def get_env():
                 
             return ENV
         except FileNotFoundError:
-            print("file not found " + os.getenv("DV_ENV"))
+            print("Config file provided via ENV variable 'DV_ENV' not found " + os.getenv("DV_ENV"))
             exit()
         except json.JSONDecodeError:
             exit()
     else:
-        print("no DV_ENV")
+        print("ERROR: no ENV variable 'DV_ENV' provided!")
         exit()
     
     

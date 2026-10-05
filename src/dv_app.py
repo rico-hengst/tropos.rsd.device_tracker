@@ -22,7 +22,7 @@ import secrets
 # logging.basicConfig(level=logging.WARNING)
 import dv_config
 # Initialize the logger once in the main entry point
-logger = dv_config.setup_logger("DV-Logger")
+logger = dv_config.setup_logger()
 # get ENV variables
 ENV = dv_config.get_env()
 
@@ -33,14 +33,7 @@ import selector
 
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-USER_CREDENTIALS = BASE_DIR + "/config/users.json"
-if os.getenv("USER_CREDENTIALS_FILE"):
-    USER_CREDENTIALS = BASE_DIR + "/" + os.getenv("USER_CREDENTIALS_FILE")
 
-if not os.path.isfile(USER_CREDENTIALS):
-    logger.error("File not exists: " + USER_CREDENTIALS)
-    
-logger.info(os.getenv("USER_CREDENTIALS_FILE"))
 
 # (A2) FLASK INIT
 app = Flask(__name__,
@@ -49,8 +42,6 @@ app = Flask(__name__,
 app.secret_key = secrets.token_hex(32)  # Secure random secret key
 
 # create string_datetime_filter
-env = Environment()
-
 def format_string_datetime(value):
     # "2022-06-30T13:54:01Z" -> "2022-06-30 13:54"
     return value[:10] + " " + value[11:16]

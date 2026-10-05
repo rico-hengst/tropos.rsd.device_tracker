@@ -12,7 +12,7 @@ import pandas as pd
 
 import dv_config
 # set logger
-logger = dv_config.setup_logger(__name__)
+logger = dv_config.setup_logger()
 # get ENV variables
 ENV = dv_config.get_env()
 

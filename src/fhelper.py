@@ -17,7 +17,7 @@ ENV = dv_config.get_env()
 
 
 SRC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
-USER_CREDENTIALS = SRC_DIR + "/" + ENV["user_credentials"]
+USER_CREDENTIALS = SRC_DIR + "/" + ENV["user_credentials_file"]
 
 
 

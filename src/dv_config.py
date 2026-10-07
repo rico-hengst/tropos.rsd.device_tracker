@@ -3,6 +3,16 @@ import json
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
+# helper to get loglevel from ENV
+def _resolve_level(default=logging.INFO):
+    raw = os.getenv(default, "").strip().upper()
+    if not raw:
+        return default
+    # Handles both "DEBUG" and "10"
+    level = logging.getLevelName(raw)
+    return level if isinstance(level, int) else default
+
+
 def setup_logger() -> logging.Logger:
     """
     Configures and returns a logger instance with:
@@ -34,10 +44,12 @@ def setup_logger() -> logging.Logger:
         fmt="%(asctime)s | %(levelname)-8s | %(message)s | %(module)s | %(funcName)s:%(lineno)d",
         datefmt="%Y-%m-%d %H:%M:%S"
     )
+    
 
     # 5. Create STDOUT Handler
     stdout_handler = logging.StreamHandler()
-    stdout_handler.setLevel(logging.DEBUG)  # Show INFO and above on console
+    #stdout_handler.setLevel(logging.DEBUG)  # Show INFO and above on console
+    stdout_handler.setLevel(_resolve_level( ENV["loglevel_STDOUT"]) )  # Show INFO and above on console
     stdout_handler.setFormatter(stdout_formatter)  # Apply the simple formatter
     logger.addHandler(stdout_handler)
 
@@ -49,7 +61,7 @@ def setup_logger() -> logging.Logger:
         backupCount=7,
         encoding="utf-8"
     )
-    file_handler.setLevel(logging.DEBUG)  # Save everything to file
+    file_handler.setLevel(ENV["loglevel_LOGFILE"])  # Save everything to file
     file_handler.setFormatter(file_formatter)  # Apply the detailed formatter
     logger.addHandler(file_handler)
 
@@ -65,8 +77,8 @@ def get_env():
             with open(os.getenv("DV_ENV"), 'r') as file:
                 ENV = json.load(file)
                 
-            if "user_credentials" not in ENV or not os.path.isfile(ENV["user_credentials"]):
-                print("user_credentials not exists: " + ENV["user_credentials"] )
+            if "user_credentials_file" not in ENV or not os.path.isfile(ENV["user_credentials_file"]):
+                print("user_credentials_file not exists: " + ENV["user_credentials_file"] )
                 exit()
             if "logfile" not in ENV:
                 print("logfile not exists: " + ENV["logfile"] )

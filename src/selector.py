@@ -33,7 +33,7 @@ def keys_exists(element, *keys):
         try:
             _element = _element[key]
         except KeyError:
-            logging.warning("Nested key not exists: " + key)
+            logger.warning("Nested key not exists: " + key)
             return False
             
     #logger.debug("All nested keys exists")
@@ -43,7 +43,8 @@ def keys_exists(element, *keys):
 def sort_continuous_history():
 
     # read json file
-    json_file= "../config/device_tracker.json"
+    #json_file= "../config/device_tracker.json"
+    json_file = ENV["device_tracker_file"]
     
 
     with open(json_file, "r+") as file:
@@ -132,6 +133,14 @@ def filter_created(data,my_filter):
                 logger.debug("Match subclass pattern: " + device_column_name)
             else:
                 logger.debug("Non match subclass pattern: " + device_column_name + " -- delete device column")
+                data.drop(device_column_name, axis=1, inplace=True)
+                
+    if("pid" in my_filter):
+        for device_column_name in list(data.columns):
+            if (  keys_exists(data[device_column_name].to_dict(),"metadata","device_model","pid") and re.match(my_filter["pid"], data[device_column_name]["metadata"]["device_model"]["pid"], flags=re.IGNORECASE) ):
+                logger.debug("Match id pattern: " + device_column_name)
+            else:
+                logger.debug("Non match pid pattern: " + device_column_name + " -- delete device column")
                 data.drop(device_column_name, axis=1, inplace=True)
  
     
@@ -291,6 +300,8 @@ def select_history(my_filter):
     
     json_file= "../config/device_tracker.json"
     json_file= "../config/device_tracker_imported.json"
+    json_file = ENV["device_tracker_file"]
+
     logger.info("Start query from json_file: " + json_file)
     logger.info(" requested filter: " + str(my_filter))
     
@@ -318,6 +329,8 @@ def select_history(my_filter):
 def select_calibration(my_filter):
     json_file= "../config/device_tracker.json"
     json_file= "../config/device_tracker_imported.json"
+    json_file = ENV["device_tracker_file"]
+
     logger.info("Start query from json_file: " + json_file)
     logger.info(" requested filter: " + str(my_filter))
     
@@ -378,6 +391,8 @@ def select_calibration(my_filter):
 # * class(es) level0 -> scan of all metadata records
 def get_lookup_content(keyword):
     json_file= "../config/device_tracker_imported.json"
+    json_file = ENV["device_tracker_file"]
+
     logger.info("Start get_lookup_content of " + keyword + ": " + json_file)
     
     with open(json_file, "r+") as file:

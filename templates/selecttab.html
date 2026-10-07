@@ -35,6 +35,29 @@
 }
 
 
+/* The circle */
+.circleC {
+    display: inline-flex;          /* lets us center the char */
+    align-items: center;           /* vertical centering   */
+    justify-content: center;       /* horizontal centering */
+    width: 1.4em;                  /* diameter = 1.5em     */
+    height: 1.4em;                 /* keeps it perfectly round */
+    border-radius: 50%;            /* turns the square into a circle */
+    background-color: rgb(221, 160, 221);        /* gray fill            */
+    line-height: 1;                /* avoids extra vertical space */
+    user-select: none;             /* optional: not selectable */
+}
+.circleP {
+    display: inline-flex;          /* lets us center the char */
+    align-items: center;           /* vertical centering   */
+    justify-content: center;       /* horizontal centering */
+    width: 1.4em;                  /* diameter = 1.5em     */
+    height: 1.4em;                 /* keeps it perfectly round */
+    border-radius: 50%;            /* turns the square into a circle */
+    background-color: rgb(20,200,200);        /* gray fill            */
+    user-select: none;             /* optional: not selectable */
+}
+
 
 /* Override Bootstrap's placeholder styles */
 .form-control::placeholder,
@@ -53,7 +76,7 @@ input::placeholder {
     <div class="container">
         <div class="row py-3">
             <div class="col-12 border; ;rounded p-3">
-                <h2>Show requested devices</h2>
+                <h2>Show history of requested devices</h2>
             </div>    
             
             <div class="col-12 border rounded my-2 p-3" style="background-color:rgb(240,240,240)">
@@ -106,6 +129,24 @@ input::placeholder {
                                                 <tr>
                                                     <td>Manufacturer</td>
                                                     <td>{{device_dict.metadata.device_manufacturer.name}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                {% if device_dict.metadata.device_model.name|length > 0 %}
+                                                <tr>
+                                                    <td>Model</td>
+                                                    <td>{{device_dict.metadata.device_model.name}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                {% if device_dict.metadata.device_model.pid|length > 0 %}
+                                                <tr>
+                                                    <td>PID</td>
+                                                    <td>
+                                                    {% if device_dict.metadata.device_model.pid|string_is_url %}
+                                                        <a href="{{ device_dict.metadata.device_model.pid }}"><i class="material-icons">link</i></a>
+                                                    {% else %}
+                                                        {{ device_dict.metadata.device_model.pid }}
+                                                    {% endif %}
+                                                    </td>
                                                 </tr>
                                                 {% endif %}
                                                 {% if device_dict.metadata.owner.name|length > 0 %}
@@ -170,11 +211,12 @@ input::placeholder {
                                                             <td>{{ calibration.calibration_equation }}</td>
                                                         </tr>
                                                         {% endif %}
-                                                        
+                                                        {% if ("used_method" in calibration and calibration.used_method|length>0 ) or ("used_reference" in calibration and calibration.used_method|length>0 ) %}
                                                         <tr>
                                                             <td>method/reference</td>
                                                             <td>{{ calibration.used_method }} / {{ calibration.used_reference }}</td>
                                                         </tr>
+                                                        {% endif %}
                                                         
                                                     {% endif %}
 
@@ -206,10 +248,20 @@ input::placeholder {
                                                     </div>
                                                     <div class="divTableCell"  style="width:37%">{{ history.startdate[0:10]}} &rarr; {{ history.stopdate[0:10]}}</div>
                                                     <div class="divTableCell"  style="width:27%">
+                                                        {% if history.location.is_mobile == false and history.location.country|length==0%} 
+                                                            <abbr title="Potentially ambiguous static location?"><span class="badge text-bg-warning me-2">Warning</span></abbr>
+                                                        {% endif %}
                                                         {{ history.location.name}}  
                                                         <span class="badge rounded-pill text-bg-secondary">{{ history.location.country}}</span>
                                                     </div>
-                                                    <div class="divTableCell"  style="width:29%"><abbr title="campaign">{{ history.campaign}}</abbr> <abbr class="text-primary" title="platform(s) hierarchical">{{ history.platform|join('&rarr;')|safe}}</abbr></div>
+                                                    <div class="divTableCell"  style="width:29%">
+                                                        {% if history.campaign|length>0%}
+                                                            <abbr title="campaign"><span class="circleC small">C</span></abbr>&nbsp;{{ history.campaign}}
+                                                        {% endif %}
+                                                        {% if history.platform|length>0%}
+                                                            <abbr title="platform(s) hierarchical"><span class="circleP small">P</span></abbr>&nbsp;{{ history.platform|join('&rarr;')|safe}}
+                                                        {% endif %}
+                                                    </div>
                                                 </div>
                                             {% endfor %}
                                             </div>

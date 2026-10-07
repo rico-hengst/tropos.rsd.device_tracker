@@ -52,7 +52,6 @@ app.jinja_env.filters['format_string_datetime'] = format_string_datetime
 def get_serial_part_of_keyname(string, separator="#",whichpart=0):
     # "keyname#20220630135404#"
     my_list = string.split(separator)
-    print(string)
     if not len(my_list) == 3:
         return
     if whichpart == 0:
@@ -60,6 +59,13 @@ def get_serial_part_of_keyname(string, separator="#",whichpart=0):
     elif whichpart == 1:
         return my_list[1].replace(separator,"",2)
 app.jinja_env.filters['get_serial_part_of_keyname'] = get_serial_part_of_keyname
+
+# create url filter : returns url if url, else None
+def string_is_url(string):
+    # taken from https://uibakery.io/regex-library/url-regex-python
+    url_pattern = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$"
+    return re.match(url_pattern, string)
+app.jinja_env.filters['string_is_url'] = string_is_url
 
 
 # @app.route("/")

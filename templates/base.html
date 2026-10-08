@@ -45,91 +45,14 @@
                                         API
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="{{ url_for('select', class='polly') }}">JSON</a></li>
-                                        <li><a class="dropdown-item" href="{{ url_for('selectvis', class='sunphotometer') }}">SVG</a></li>
-                                        <li><a class="dropdown-item" href="{{ url_for('selecttab', class='polly') }}">TAB</a></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('select', locationname='melpitz') }}">JSON</a></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('selectvis', locationname='melpitz') }}">SVG</a></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('selecttab', locationname='melpitz') }}">TAB</a></li>
 
                                     </ul>
                                 </li>
                                 
-                                {% if html_status_dict %}
-                                        <li class="nav-item dropdown">
-                                            <a class="nav-link dropdown-toggle me-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Instruments
-                                            </a>
-                                            {% if html_status_dict.allowed_logbooks.devices %}
-                                                <div class="dropdown-menu p-4 rounded-3 border-0 shadow text-small">
-                                                    <div class="row">
-                                                        {% for device_type in html_status_dict.allowed_logbooks.devices %}
-                                                            <div class="col">
-                                                                <b class="nav-link bg-secondary mb-3 fw-bold rounded" href="#" role="button">
-                                                                    <i class="material-icons">workspaces</i> {{ device_type }}
-                                                                </b>
-                                                                <ul class="list-group mb-2">
-                                                                    {% for device in html_status_dict.allowed_logbooks.devices[device_type] %}
-                                                                        <li class="list-group-item"><a  href='show_logbook?logbook_name={{device}}'>{{ device }}</a></li>
-                                                                    {% endfor %}
-                                                                </ul>
-                                                            </div>
-                                                        {% endfor %}
-                                                    </div>
-                                                </div>
-                                            {% endif %}
-                                        </li>
-                                        
-                                        <li class="nav-item dropdown">
-                                            <a class="nav-link dropdown-toggle me-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Sites
-                                            </a>
-                                            {% if html_status_dict.allowed_logbooks.sites %}
-                                                <div class="dropdown-menu p-3 rounded-3 border-0 shadow">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <b class="nav-link bg-secondary mb-3 fw-bold rounded" href="#" role="button">
-                                                                <i class="material-icons">location_on</i> Sites
-                                                            </b>
-                                                            <ul class="list-group">
-                                                                {% for site in html_status_dict.allowed_logbooks.sites %}
-                                                                    <li class="list-group-item" ><a href='show_logbook?logbook_name={{site}}'>{{ site }}</a></li>
-                                                                {% endfor %}
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                        
-                                            {% endif %}
-                                        </li>
-                                        
-                                        <li class="nav-item dropdown">
-                                            <a class="nav-link dropdown-toggle me-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Campaigns
-                                            </a>
-                                            {% if html_status_dict.allowed_logbooks.sites %}
-                                                <div class="dropdown-menu p-3 rounded-3 border-0 shadow">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <b class="nav-link bg-secondary mb-3 fw-bold rounded" href="#" role="button">
-                                                                <i class="material-icons">campaign</i> Campaign
-                                                            </b>
-                                                            <ul class="list-group">
-                                                                {% for campaign in html_status_dict.allowed_logbooks.campaigns %}
-                                                                    <li class="list-group-item" ><a href='show_logbook?logbook_name={{campaign}}'>{{ campaign }}</a></li>
-                                                                {% endfor %}
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            {% endif %}
-                                        </li>
-                                        {% if html_status_dict.user == "admin@tropos.de"%}
-                                            <li class="nav-item dropdown">
-                                                <div class="pt-2">
-                                                    <a class="text-white" href='complete_logbook?logbook_name=single_logbook'>Complete logbook <sup><span class="badge text-bg-light"><abbr title="admin feature">admin</abbr></span></sup></a>
-                                                    <a class="text-white" href='show_reminder_overview'>Alert reminder<sup><span class="badge text-bg-light"><abbr title="admin feature">admin</abbr></span></sup></a>
-                                                </div>
-                                            </li>
-                                        {% endif %}
-                                    {% endif %}
+                                
                             </ul>
                             
                             {% if user %}

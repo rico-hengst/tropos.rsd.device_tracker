@@ -46,11 +46,11 @@ def main():
     
     imported_devices = {}
     
-    for device, device_dict in data.items():
+    for device_keyname, device_dict in data.items():
         
         if "history" in device_dict:
 
-            logger.info("New Device: " + device)
+            logger.info("New Device: " + device_keyname)
             
             new_history = get_device_history(history_schema, device_dict["history"])
             new_device_dict = get_device_record(device_schema, device_dict)
@@ -60,7 +60,7 @@ def main():
             
             logger.debug(str(new_device_dict))
             
-            imported_devices[device] = new_device_dict
+            imported_devices[device_keyname] = new_device_dict
             
     # add instance record to json
     json_file = "../config/device_tracker_imported.json"
@@ -71,18 +71,24 @@ def main():
         logger.info("Try to update json file: " + json_file)
         
         
-        for device, imported_device_record in imported_devices.items():
+        for device_keyname, imported_device_record in imported_devices.items():
+            
+            device_tracker[device_keyname] = imported_device_record
+            file.seek(0)
+            json.dump(device_tracker, file, indent=4)
+            
+            logger.info("Add device reord: " + device_keyname)
         
-            if not device in device_tracker.keys():
+            # if not device in device_tracker.keys():
                 
-                logger.info("Add device reord: " + device)
-                device_tracker[device] = imported_device_record
-                file.seek(0)
-                json.dump(device_tracker, file, indent=4)
-            else:
-                logger.warning("Skip device record: " + device + ", record already exists")
-                if device == "arielle":
-                    logger.warning(imported_devices[device]["history"])
+                # logger.info("Add device reord: " + device)
+                # device_tracker[device] = imported_device_record
+                # file.seek(0)
+                # json.dump(device_tracker, file, indent=4)
+            # else:
+                # logger.warning("Skip device record: " + device + ", record already exists")
+                # if device == "arielle":
+                    # logger.warning(imported_devices[device]["history"])
 
     return Jresponse
     

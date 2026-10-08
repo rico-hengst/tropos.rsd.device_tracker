@@ -28,7 +28,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="centerv" style="margin-bottom: 7ex;">
-    <img src="static/images/logbook_logo2_pink.svg" alt="Logo" height="100">
+    <img src="static/images/logbook_logo2_pink.png" alt="Logo" height="100">
 </div>
 
 

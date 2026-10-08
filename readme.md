@@ -28,10 +28,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="centerv" style="margin-bottom: 7ex;">
-  <a href="https://github.com/othneildrew/Best-README-Template">
     <img src="static/images/logbook_logo2_pink.svg" alt="Logo" height="100">
-  </a>
-
 </div>
 
 

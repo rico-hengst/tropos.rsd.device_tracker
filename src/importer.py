@@ -29,14 +29,14 @@ def main():
     
     
     # load schema
-    with open("../config/schema_device.json", "r+") as file:
+    with open("../config/schema_device.json", "r+", encoding='utf-8') as file:
         try:
             device_schema = json.load(file)
         except json.JSONDecodeError as e:
             logger.error("Invalid JSON syntax at schema device:", e)
     
     # load schema
-    with open("../config/schema_history.json", "r+") as file:
+    with open("../config/schema_history.json", "r+", encoding='utf-8') as file:
         try:
             history_schema = json.load(file)
         except json.JSONDecodeError as e:
@@ -58,14 +58,13 @@ def main():
             new_device_dict["history"] = new_history
             
             
-            logger.debug(str(new_device_dict))
+            logger.debug(device_keyname + " device_dict " + str(new_device_dict))
             
             imported_devices[device_keyname] = new_device_dict
             
     # add instance record to json
-    json_file = "../config/device_tracker_imported.json"
     json_file = ENV["device_tracker_file"]
-    with open(json_file, "r+") as file:
+    with open(json_file, "r+", encoding='utf-8') as file:
         device_tracker = json.load(file)
         
         logger.info("Try to update json file: " + json_file)
@@ -154,14 +153,14 @@ def get_device_history(history_schema, history):
                 # Optional: Koordinaten in float umwandeln
                 lat, lon = map(float, [x.strip() for x in koordinaten_str.split(',')])
                 
-                logger.info("Location pattern correct: " + city + " " + country)
+                logger.debug("Location pattern correct: " + city + " " + country)
                 
             else:
                 logger.warning("Expected comma-separated location pattern not correct:  " + str(history_record))
                 #import sys
                 #sys.exit(1)
                 
-                print("Expected comma-separated location pattern not correct: HIT A KEY")
+                logger.warning("Expected comma-separated location pattern not correct: HIT A KEY")
                 name = input()
 
                 continue
@@ -238,8 +237,8 @@ def get_device_history(history_schema, history):
         
         
         # validation
-        logger.debug(history_record)
-        logger.debug(new_history_record)
+        logger.debug("history record old: " + str(history_record))
+        logger.debug("history record new: " + str(new_history_record))
         
     
         # old valiadation without format checker
@@ -256,8 +255,9 @@ def get_device_history(history_schema, history):
         
         if not errors:
             
-            logger.info("✓ Validation History Successful: The JSON instance is valid.")
+            logger.debug("✓ Validation History Successful: The JSON instance is valid.")
             new_history.append(new_history_record)
+            logger.info("History record appended")
            
             
         else:
@@ -327,7 +327,7 @@ def get_device_record(device_schema, device_dict):
     errors = list(validator.iter_errors(new_device_record))
     
     if not errors:
-        logger.info("✓ Validation Device Successful: The JSON instance is valid.")
+        logger.debug("✓ Validation Device Successful: The JSON instance is valid.")
         #logger.debug(new_device_record)
         
         return new_device_record

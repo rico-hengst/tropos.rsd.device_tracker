@@ -264,6 +264,7 @@ def add_history():
                     uuid_device_key = list(uuid_devices.keys())[0]
                 else:
                     message = "Your reuested uuids not exists:" + your_requests["uuid"]
+                    your_requests.pop("uuid")
                     logger.info(message)
                     flash(message)
                     

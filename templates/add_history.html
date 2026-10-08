@@ -15,7 +15,7 @@ input::placeholder {
     <div class="container">
         <div class="row py-3">
             
-            <div class="col-sm-6 borders srounded pt-3 mb-4">
+            <div class="col-sm-12 borders srounded pt-3 mb-4">
                 {% if uuid_devices %}
                     <input type="hidden" id="history.uuid" name="" value="{{uuid_devices[uuid_device_key]["history"][0]["uuid"]}}" />
                     
@@ -24,24 +24,20 @@ input::placeholder {
                     <h2>Add history</h2>
                 {% endif %}
             </div>
-            <div class="col-sm-6">
-                <div class="d-flex justify-content-end pt-3 mb-3">
-                    {% if uuid_devices %}
-                        <p><span class="badge rounded-pill text-bg-secondary">{{uuid_devices[uuid_device_key]["history"][0]["uuid"]}}</span> @ <span class="badge rounded-pill text-bg-dark">{{uuid_device_key}}</span></p>
-                    {% endif %}
-                </div>
-            </div>
                 <form method="get"  id="id_selector_form" action="{{ url_for('handle_add_history') }}">
-                    <div class="col-6 borders srounded pt-3 mb-4">
+                    <div class="col-12 borders srounded pt-3 mb-4">
                         {% if uuid_devices %}
                             <h4>Please select ...</h4>
                             <input type="hidden" id="id_requested_mode" name="requested_mode" value="{{your_requests["requested_mode"]}}">
-                            <button type="button" name="rrr" class="btn btn-sm {{ 'btn-secondary' if your_requests["requested_mode"] == "edit" else 'btn-outline-secondary'}}" id="editBtn_requested_mode">Edit current history record</button>
+                            <button type="button" name="rrr" class="btn btn-sm {{ 'btn-secondary' if your_requests["requested_mode"] == "edit" else 'btn-outline-secondary'}}" id="editBtn_requested_mode">Edit current history record <span class="badge rounded-pill text-bg-secondary">{{uuid_devices[uuid_device_key]["history"][0]["uuid"]}}</span> of device <span class="badge rounded-pill text-bg-secondary">{{uuid_device_key}}</span></button>
                             <button type="button" name="rrr" class="btn btn-sm {{ 'btn-secondary' if your_requests["requested_mode"] == "add" else 'btn-outline-secondary'}}" id="addBtn_requested_mode">Add new history record, use content as template</button>
                         {% endif %}
                     </div>
                     
-                        <fieldset {% if uuid_devices and "requested_mode" not in your_requests %} disabled{% endif %}>
+                        <fieldset
+                        {% if (uuid_devices and "requested_mode" not in your_requests) or (not uuid_devices and "requested_mode" in your_requests and your_requests["requested_mode"] != "add") %} 
+                            disabled
+                        {% endif %}>
                         <div class="col-12 border  rounded p-3">
                             
                             <div class="row">
@@ -143,15 +139,6 @@ input::placeholder {
 -->
                                                     {% if user.username == "admin"%}
                                                     
-<!--
-                                                        <div class="form-check form-switch pb-3" id="my_switch_add_static_location">
-                                                            <label class="form-check-label small" for="switchCheckDefault">Add new static location</label>
-                                                            <input name="_history.location.is_add_static_location" class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
-                                                        </div>
--->
-                                                        
-                                                        
-                                                        
                                                         <div class="mb-3" id="checkboxgroup_static_location">
                                                             <input type="checkbox" id="firstoption" name="checkbox_use_existing_static_location" class="form-check-input">
                                                             <label for="firstoption" class="form-label">Use existing location</label>
@@ -292,7 +279,7 @@ input::placeholder {
                                 </div>
                                 
                                 <div class="col-12 p-1 text-end">
-                                    <button type="button" class="btn btn-outline-dark" id="clearBtn">Clear</button>
+                                    <button type="button" class="btn btn-outline-dark me-1" id="clearBtn">Clear</button>
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                 </div>
                                 

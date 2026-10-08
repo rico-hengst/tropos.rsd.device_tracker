@@ -15,7 +15,7 @@ input::placeholder {
     <div class="container">
         <div class="row py-3">
             
-            <div class="col-sm-6 borders srounded pt-3 mb-4">
+            <div class="col-sm-12 borders srounded pt-3 mb-4">
                 {% if uuid_calibrations %}
                     <input type="hidden" id="calibration.uuid" name="" value="{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["uuid"]}}" />
                     
@@ -24,35 +24,29 @@ input::placeholder {
                     <h2>Add calibration</h2>
                 {% endif %}
             </div>
-            <div class="col-sm-6">
-                <div class="d-flex justify-content-end pt-3 mb-3">
+
+            <form method="get"  action="{{ url_for('handle_add_calibration') }}" id="id_selector_form">
+                <div class="col-12 borders srounded pt-3 mb-4">
                     {% if uuid_calibrations %}
-                        <p><span class="badge rounded-pill text-bg-secondary">{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["uuid"]}}</span> @ <span class="badge rounded-pill text-bg-dark">{{uuid_calibration_key}}</span></p>
+                        <h4>Please select ...</h4>
+                        <input type="hidden" id="id_requested_mode" name="requested_mode" value="{{your_requests["requested_mode"]}}">
+                        <button type="button" name="rrr" class="btn btn-sm {{ 'btn-secondary' if your_requests["requested_mode"] == "edit" else 'btn-outline-secondary'}}" id="editBtn_requested_mode">Edit current calibration record <span class="badge rounded-pill text-bg-dark">{{uuid_calibration_key}}</span></button>
+                        <button type="button" name="rrr" class="btn btn-sm {{ 'btn-secondary' if your_requests["requested_mode"] == "add" else 'btn-outline-secondary'}}" id="addBtn_requested_mode">Add new calibration record, use content as template</button>
                     {% endif %}
                 </div>
-            </div>
-                <form method="get"     enctype = "multipart/form-data" action="{{ url_for('handle_add_calibration') }}">
-                    <div class="col-6 borders srounded pt-3 mb-4">
-                        {% if uuid_calibrations %}
-                            <h4>Please select ...</h4>
-                            <input type="hidden" id="id_requested_mode" name="requested_mode" value="{{your_requests["requested_mode"]}}">
-                            <button type="button" name="rrr" class="btn btn-sm {{ 'btn-secondary' if your_requests["requested_mode"] == "edit" else 'btn-outline-secondary'}}" id="editBtn_requested_mode">Edit current calibration record</button>
-                            <button type="button" name="rrr" class="btn btn-sm {{ 'btn-secondary' if your_requests["requested_mode"] == "add" else 'btn-outline-secondary'}}" id="addBtn_requested_mode">Add new calibration record, use content as template</button>
-                        {% endif %}
-                    </div>
                     
-                        <fieldset {% if uuid_calibrations and "requested_mode" not in your_requests %} disabled{% endif %}>
-                        <div class="col-12 border  rounded p-3">
+                <fieldset {% if uuid_calibrations and "requested_mode" not in your_requests %} disabled{% endif %}>
+                    <div class="col-12 border  rounded p-3">
                             
-                            <div class="row">
-                                <div class="col-4 p-1">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <b>General info</b>
-                                        </div>
-                                        <div class="card-body">
+                        <div class="row">
+                            <div class="col-4 p-1">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <b>General info</b>
+                                    </div>
+                                    <div class="card-body">
                                             
-                                            {% if your_requests["requested_mode"] == "add" or not your_requests %}
+                                        {% if your_requests["requested_mode"] == "add" or not your_requests %}
                                             <div class="mb-3">
                                                 <label for="my_device" class="form-label">Device</label>
                                                 <select name="device_keyname" class="form-select form-select-sm" id="my_device" aria-label="Small select example" required>
@@ -73,7 +67,7 @@ input::placeholder {
                                                     {% endfor %}
                                                 </select>                                            
                                             </div>
-                                            {% elif your_requests["requested_mode"] == "edit" %}
+                                        {% elif your_requests["requested_mode"] == "edit" %}
                                             <div class="mb-3" >
                                                 <label for="exampleFormControlInput4" class="form-label">Device</label>
                                                 <input name="device_keyname" class="form-control form-control-sm" value="{{uuid_calibration_key}}" type="text" disabled>
@@ -89,152 +83,146 @@ input::placeholder {
                                                 <input type="hidden" name="calibration.uuid" value="{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["uuid"] if uuid_calibrations[uuid_calibration_key] else ""}}">
                                                 <input type="hidden" name="calibration" value="{{uuid_calibration_key}}">
                                             </div>
-                                            {% endif %}
+                                        {% endif %}
                                             
-                                            
-                                            
-                                            <div class="mb-3">
-                                                <label for="datetimepicker1" class="form-label">Start date of calibration</label>
-                                                <input name="calibration.performed_period_dates" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_period_dates"][0]|format_string_datetime }}{% endif %}"
-                                                    id="datetimepicker1" type="text" required>
-                                            </div>
-                                            
-                                            
-                                            <div class="mb-3">
-                                                <label for="datetimepicker2" class="form-label">Stop date of calibration</label>
-                                                <input name="calibration.performed_period_dates" class="form-control form-control-sm" id="datetimepicker2" placeholder="e.g: 2099-12-31 23:59" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_period_dates"][1]|format_string_datetime}}{% endif %}"
-                                                    id="datetimepicker2" type="text" required>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput3" class="form-label">Calibration description</label>
-                                                <input name="calibration.description" class="form-control form-control-sm" id="exampleFormControlInput3" placeholder="e.g: ??" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["description"]}}{% endif %}"
-                                                    type="text">
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput7" class="form-label">Used calibration method</label>
-                                                <input name="calibration.used_method" class="form-control form-control-sm" id="exampleFormControlInput7" placeholder="e.g: ISO9846 continuos sun-and-shade method" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["used_method"]}}{% endif %}"
-                                                    type="text">
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput8" class="form-label">Used calibration reference</label>
-                                                <input name="calibration.used_reference" class="form-control form-control-sm" id="exampleFormControlInput8" placeholder="e.g: ID of reference gas" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["used_reference"]}}{% endif %}"
-                                                    type="text">
-                                            </div>
-                                            
-                                            
-                                            
+                                        <div class="mb-3">
+                                            <label for="datetimepicker1" class="form-label">Start date of calibration</label>
+                                            <input name="calibration.performed_period_dates" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_period_dates"][0]|format_string_datetime }}{% endif %}"
+                                                id="datetimepicker1" type="text" required>
                                         </div>
-                                    </div>
-                                    
-                                </div>
-                                <div class="col-4 p-1">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <b>Calibration carrying out</b>
+                                        
+                                        
+                                        <div class="mb-3">
+                                            <label for="datetimepicker2" class="form-label">Stop date of calibration</label>
+                                            <input name="calibration.performed_period_dates" class="form-control form-control-sm" id="datetimepicker2" placeholder="e.g: 2099-12-31 23:59" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_period_dates"][1]|format_string_datetime}}{% endif %}"
+                                                id="datetimepicker2" type="text" required>
                                         </div>
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput4" class="form-label">Performed by</label>
-                                                <input name="calibration.performed_by" class="form-control form-control-sm" id="exampleFormControlInput4" placeholder="e.g: Name" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_by"]}}{% endif %}"
-                                                    type="text">
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput51" class="form-label">Performed by</label>
-                                                <input name="calibration.performed_at" class="form-control form-control-sm" id="exampleFormControlInput51" placeholder="e.g: Institution" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_at"]}}{% endif %}"
-                                                    type="text">
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput52" class="form-label">Performed repeats</label>
-                                                <input name="calibration.performed_repeats" class="form-control form-control-sm" id="exampleFormControlInput52" placeholder="e.g: 1" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_repeats"]}}{% endif %}"
-                                                    type="number" step="1" min="0" max="10">
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput777" class="form-label">Calibration certificate ID</label>
-                                                <input name="calibration.certificate_id" class="form-control form-control-sm" id="exampleFormControlInput777" placeholder="e.g: S25000039900-EX25" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["certificate_id"]}}{% endif %}"
-                                                    type="text">
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="datetimepicker3" class="form-label">Date certificate issuance</label>
-                                                <input name="calibration.certificate_issuance_date" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["certificate_issuance_date"]|format_string_datetime }}{% endif %}"
-                                                    id="datetimepicker3" type="text" required>
-                                            </div>
-                                            
-                                            
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput3" class="form-label">Calibration description</label>
+                                            <input name="calibration.description" class="form-control form-control-sm" id="exampleFormControlInput3" placeholder="e.g: ??" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["description"]}}{% endif %}"
+                                                type="text">
                                         </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-4 p-1">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <b>Calibration outcome</b>
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput7" class="form-label">Used calibration method</label>
+                                            <input name="calibration.used_method" class="form-control form-control-sm" id="exampleFormControlInput7" placeholder="e.g: ISO9846 continuos sun-and-shade method" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["used_method"]}}{% endif %}"
+                                                type="text">
                                         </div>
-                                        <div class="card-body">
-                                                                                        
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput92" class="form-label">Calibration equation</label>
-                                                <input name="calibration.calibration_equation" class="form-control form-control-sm" id="exampleFormControlInput92" placeholder="e.g: calibrated irradiance = voltage*calibration_factor" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["calibration_equation"]}}{% endif %}"
-                                                    type="text">
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput9" class="form-label">Calibration coefficients (separated by comma)</label>
-                                                <input name="calibration.calibration_coefficients" class="form-control form-control-sm" id="exampleFormControlInput9" placeholder="e.g: 0.003445, 123.1, 0.2" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["calibration_coefficients"]|join(",")}}{% endif %}"
-                                                    type="text">
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput10" class="form-label">Calibration coefficient uncertainties (separated by comma)</label>
-                                                <input name="calibration.calibration_coefficient_uncertainties" class="form-control form-control-sm" id="exampleFormControlInput10" placeholder="e.g: 0.003445, 123.1, 0.2" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["calibration_coefficient_uncertainties"]|join(",")}}{% endif %}"
-                                                    type="text">
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput924" class="form-label">Temperature correction equation</label>
-                                                <input name="calibration.temperature_correction_equation" class="form-control form-control-sm" id="exampleFormControlInput924" placeholder="e.g: BTC: U/U0= a*T^2+b*T+c" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["temperature_correction_equation"]}}{% endif %}"
-                                                    type="text">
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="exampleFormControlInput925" class="form-label">Temperature correction coefficients (separated by comma)</label>
-                                                <input name="calibration.temperature_correction_coefficients" class="form-control form-control-sm" id="exampleFormControlInput925" placeholder="e.g: 0.003445, 123.1, 0.2" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["temperature_correction_coefficients"]|join(",")}}{% endif %}"
-                                                    type="text">
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="datetimepicker4" class="form-label">Start date valid period</label>
-                                                <input name="calibration.valid_period_dates" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["valid_period_dates"][0]|format_string_datetime }}{% endif %}"
-                                                    id="datetimepicker4" type="text" required>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="datetimepicker5" class="form-label">Stop date valid period</label>
-                                                <input name="calibration.valid_period_dates" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["valid_period_dates"][1]|format_string_datetime }}{% endif %}"
-                                                    id="datetimepicker5" type="text" required>
-                                            </div>
-                                            
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput8" class="form-label">Used calibration reference</label>
+                                            <input name="calibration.used_reference" class="form-control form-control-sm" id="exampleFormControlInput8" placeholder="e.g: ID of reference gas" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["used_reference"]}}{% endif %}"
+                                                type="text">
                                         </div>
                                         
                                     </div>
-                                    <div class="d-flex justify-content-end">
-                                        <div class="mb-3 pt-3">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                                    
+                            </div>
+                            <div class="col-4 p-1">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <b>Calibration carrying out</b>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput4" class="form-label">Performed by</label>
+                                            <input name="calibration.performed_by" class="form-control form-control-sm" id="exampleFormControlInput4" placeholder="e.g: Name" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_by"]}}{% endif %}"
+                                                type="text">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput51" class="form-label">Performed by</label>
+                                            <input name="calibration.performed_at" class="form-control form-control-sm" id="exampleFormControlInput51" placeholder="e.g: Institution" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_at"]}}{% endif %}"
+                                                type="text">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput52" class="form-label">Performed repeats</label>
+                                            <input name="calibration.performed_repeats" class="form-control form-control-sm" id="exampleFormControlInput52" placeholder="e.g: 1" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["performed_repeats"]}}{% endif %}"
+                                                type="number" step="1" min="0" max="10">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput777" class="form-label">Calibration certificate ID</label>
+                                            <input name="calibration.certificate_id" class="form-control form-control-sm" id="exampleFormControlInput777" placeholder="e.g: S25000039900-EX25" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["certificate_id"]}}{% endif %}"
+                                                type="text">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="datetimepicker3" class="form-label">Date certificate issuance</label>
+                                            <input name="calibration.certificate_issuance_date" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["certificate_issuance_date"]|format_string_datetime }}{% endif %}"
+                                                id="datetimepicker3" type="text" required>
+                                        </div>
+                                            
+                                            
+                                    </div>
+                                </div>
+                            </div>
+                                
+                            <div class="col-4 p-1">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <b>Calibration outcome</b>
+                                    </div>
+                                    <div class="card-body">
+                                                                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput92" class="form-label">Calibration equation</label>
+                                            <input name="calibration.calibration_equation" class="form-control form-control-sm" id="exampleFormControlInput92" placeholder="e.g: calibrated irradiance = voltage*calibration_factor" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["calibration_equation"]}}{% endif %}"
+                                                type="text">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput9" class="form-label">Calibration coefficients (separated by comma)</label>
+                                            <input name="calibration.calibration_coefficients" class="form-control form-control-sm" id="exampleFormControlInput9" placeholder="e.g: 0.003445, 123.1, 0.2" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["calibration_coefficients"]|join(",")}}{% endif %}"
+                                                type="text">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput10" class="form-label">Calibration coefficient uncertainties (separated by comma)</label>
+                                            <input name="calibration.calibration_coefficient_uncertainties" class="form-control form-control-sm" id="exampleFormControlInput10" placeholder="e.g: 0.003445, 123.1, 0.2" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["calibration_coefficient_uncertainties"]|join(",")}}{% endif %}"
+                                                type="text">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput924" class="form-label">Temperature correction equation</label>
+                                            <input name="calibration.temperature_correction_equation" class="form-control form-control-sm" id="exampleFormControlInput924" placeholder="e.g: BTC: U/U0= a*T^2+b*T+c" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["temperature_correction_equation"]}}{% endif %}"
+                                                type="text">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput925" class="form-label">Temperature correction coefficients (separated by comma)</label>
+                                            <input name="calibration.temperature_correction_coefficients" class="form-control form-control-sm" id="exampleFormControlInput925" placeholder="e.g: 0.003445, 123.1, 0.2" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["temperature_correction_coefficients"]|join(",")}}{% endif %}"
+                                                type="text">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="datetimepicker4" class="form-label">Start date valid period</label>
+                                            <input name="calibration.valid_period_dates" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["valid_period_dates"][0]|format_string_datetime }}{% endif %}"
+                                                id="datetimepicker4" type="text" required>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="datetimepicker5" class="form-label">Stop date valid period</label>
+                                            <input name="calibration.valid_period_dates" class="form-control form-control-sm" placeholder="e.g: 2022-01-28 14:22" value="{% if uuid_calibrations %}{{uuid_calibrations[uuid_calibration_key]["calibration"][0]["valid_period_dates"][1]|format_string_datetime }}{% endif %}"
+                                                id="datetimepicker5" type="text" required>
                                         </div>
                                     </div>
-                                    
-                                    
+                                        
                                 </div>
-                                
+                                <div class="d-flex justify-content-end">
+                                    <div class="mb-3 pt-3">
+                                        <button type="button" class="btn btn-outline-dark me-1" id="clearBtn">Clear</button>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
                             </div>
-                            
+                                
                         </div>
+                            
+                    </div>
                 </fieldset>
             </form>
         </div>
@@ -323,6 +311,25 @@ input::placeholder {
           reloadWithMode('add');
         });
     {% endif %}
+    
+    // delete all form content in container "id_selector_form" in one go: click button id="clearBtn"
+    document.getElementById('clearBtn').addEventListener('click', function () {
+      const container = document.getElementById('id_selector_form');
+
+      // Reset all <input> elements
+      container.querySelectorAll('input').forEach(function (input) {
+        if (input.type === 'checkbox' || input.type === 'radio') {
+          input.checked = false;
+        } else {
+          input.value = '';
+        }
+      });
+
+      // Clear <textarea> and <select>
+      container.querySelectorAll('textarea, select').forEach(function (el) {
+        el.value = '';
+      });
+    });
    
 </script>
 {% endblock %}

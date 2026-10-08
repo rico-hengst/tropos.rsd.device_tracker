@@ -395,7 +395,7 @@ def prepare_add_calibration(myrequests):
 
         
     # load schema
-    with open(schema_file, "r+") as file:
+    with open(schema_file, "r+", encoding='utf-8') as file:
         try:
             calibration_schema = json.load(file)
         except json.JSONDecodeError as e:
@@ -460,12 +460,12 @@ def add_calibration(myrequests):
 
     # 1. load file content to variable
     device_tracker = None
-    with open(my_json_file, "r+") as file:
+    with open(my_json_file, "r+", encoding='utf-8') as file:
         device_tracker = json.load(file)
     file.close()
         
     # 2 open file to write the updated content to the file
-    with open(my_json_file, "w+") as file:
+    with open(my_json_file, "w+", encoding='utf-8') as file:
             
         logger.info("Update json_file: " + my_json_file )
         if myrequests["device_keyname"] in device_tracker.keys():
@@ -525,7 +525,7 @@ def add_history(myrequests):
         return my_rr
     
     # load schema
-    with open("../config/schema_history.json", "r+") as file:
+    with open("../config/schema_history.json", "r+", encoding='utf-8') as file:
         try:
             history_schema = json.load(file)
         except json.JSONDecodeError as e:
@@ -554,12 +554,12 @@ def add_history(myrequests):
         
         # 1. load file content to variable
         device_tracker = None
-        with open(my_json_file, "r+") as file:
+        with open(my_json_file, "r+", encoding='utf-8') as file:
             device_tracker = json.load(file)
         file.close()
         
         # 2 open file to write the updated content to the file
-        with open(my_json_file, "w+") as file:
+        with open(my_json_file, "w+", encoding='utf-8') as file:
             
             logger.info("Update json_file: " + my_json_file )
             
@@ -628,7 +628,7 @@ def add_device(myrequests):
     
 
     # load schema
-    with open("../config/schema_device.json", "r+") as file:
+    with open("../config/schema_device.json", "r+", encoding='utf-8') as file:
         device_schema = json.load(file)
         
     
@@ -666,12 +666,12 @@ def add_device(myrequests):
         
         # 1. load file content to variable
         device_tracker = None
-        with open(my_json_file, "r+") as file:
+        with open(my_json_file, "r+", encoding='utf-8') as file:
             device_tracker = json.load(file)
         file.close()
         
         # 2 open file to write the updated content to the file
-        with open(my_json_file, "w+") as file:
+        with open(my_json_file, "w+", encoding='utf-8') as file:
             
             # substitute space by - and transform to lowwer all keynames
             device_keyname = re.sub(r"\s+", '-', device_record_ready["returned_record"]["metadata"]["name"].lower() )

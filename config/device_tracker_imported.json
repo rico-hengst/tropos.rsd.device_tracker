@@ -9880,5 +9880,331 @@
                 "inv": {}
             }
         }
+    },
+    "ms-21_sn445566a": {
+        "calibration": [
+            {
+                "uuid": "efefffgwgfg",
+                "calibration_link": "http://mycalibration.info"
+            }
+        ],
+        "history": [
+            {
+                "startdate": "2025-09-25T12:12:00Z",
+                "stopdate": "2025-12-21T00:12:00Z",
+                "created": "2026-09-11T08:40:31Z",
+                "uuid": "ba12b22a-9488-11f1-9bcc-cc2f71a772c7",
+                "campaign": "",
+                "platform": [
+                    "TAROB\u00f6selager"
+                ],
+                "location": {
+                    "is_mobile": true,
+                    "name": "Melpitzewgwrgwgw",
+                    "track_url": "",
+                    "track_desc": ""
+                },
+                "pylarda": {
+                    "camp": "",
+                    "system": "",
+                    "connectorfile": []
+                }
+            },
+            {
+                "startdate": "2025-01-24T12:12:12Z",
+                "stopdate": "2025-05-01T00:12:12Z",
+                "created": "2026-08-10T06:57:18Z",
+                "uuid": "ba12b40a-9488-11f1-9bcc-cc2f71a772c7",
+                "campaign": "C3SAR",
+                "location": {
+                    "name": "Falkenberg",
+                    "country": "Germany",
+                    "lat": 52.167,
+                    "lon": 14.117,
+                    "is_mobile": false
+                }
+            },
+            {
+                "startdate": "2026-09-03T13:20:00Z",
+                "stopdate": "2026-09-17T13:20:00Z",
+                "created": "2026-09-09T12:20:12Z",
+                "uuid": "ce3b3696-ac48-11f1-9aa2-f4a80d4b6918",
+                "campaign": "",
+                "platform": [
+                    "qefeqw",
+                    "qwerfe"
+                ],
+                "location": {
+                    "is_mobile": false,
+                    "name": "Antikythera",
+                    "lat": 35.86,
+                    "lon": 23.31
+                },
+                "pylarda": {
+                    "camp": "",
+                    "system": "",
+                    "connectorfile": [
+                        [
+                            "2"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            ","
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "4"
+                        ],
+                        [
+                            "\u00fc"
+                        ],
+                        [
+                            "\u00fc"
+                        ],
+                        [
+                            "t"
+                        ],
+                        [
+                            "r"
+                        ],
+                        [
+                            "e"
+                        ],
+                        [
+                            "z"
+                        ]
+                    ]
+                }
+            },
+            {
+                "startdate": "2026-09-03T13:20:00Z",
+                "stopdate": "2026-09-17T13:20:00Z",
+                "created": "2026-09-09T12:26:25Z",
+                "uuid": "acde3754-ac49-11f1-a4d9-f4a80d4b6918",
+                "campaign": "",
+                "platform": [
+                    "qefeqw",
+                    "qwerfe"
+                ],
+                "location": {
+                    "is_mobile": false,
+                    "name": "Antikythera",
+                    "lat": 35.86,
+                    "lon": 23.31
+                },
+                "pylarda": {
+                    "camp": "",
+                    "system": "",
+                    "connectorfile": [
+                        [
+                            "2"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            ","
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "4"
+                        ],
+                        [
+                            "\u00fc"
+                        ],
+                        [
+                            "\u00fc"
+                        ],
+                        [
+                            "t"
+                        ],
+                        [
+                            "r"
+                        ],
+                        [
+                            "e"
+                        ],
+                        [
+                            "z"
+                        ]
+                    ]
+                }
+            },
+            {
+                "startdate": "2026-09-03T13:20:00Z",
+                "stopdate": "2026-09-17T13:20:00Z",
+                "created": "2026-09-09T12:36:27Z",
+                "uuid": "139c103c-ac4b-11f1-b3e6-f4a80d4b6918",
+                "campaign": "",
+                "platform": [
+                    "qefeqw",
+                    "qwerfe"
+                ],
+                "location": {
+                    "is_mobile": false,
+                    "name": "Antikythera",
+                    "lat": 35.86,
+                    "lon": 23.31
+                },
+                "pylarda": {
+                    "camp": "",
+                    "system": "",
+                    "connectorfile": [
+                        [
+                            "2"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            ","
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "4"
+                        ],
+                        [
+                            "\u00fc"
+                        ],
+                        [
+                            "\u00fc"
+                        ],
+                        [
+                            "t"
+                        ],
+                        [
+                            "r"
+                        ],
+                        [
+                            "e"
+                        ],
+                        [
+                            "z"
+                        ]
+                    ]
+                }
+            },
+            {
+                "startdate": "2026-09-03T13:20:00Z",
+                "stopdate": "2026-09-17T13:20:00Z",
+                "created": "2026-09-09T12:40:46Z",
+                "uuid": "ae18d9b0-ac4b-11f1-9229-f4a80d4b6918",
+                "campaign": "",
+                "platform": [
+                    "qefeqw",
+                    "qwerfe"
+                ],
+                "location": {
+                    "is_mobile": false,
+                    "name": "Antikythera",
+                    "lat": 35.86,
+                    "lon": 23.31
+                },
+                "pylarda": {
+                    "camp": "",
+                    "system": "",
+                    "connectorfile": [
+                        [
+                            "2"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            ","
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "3"
+                        ],
+                        [
+                            "4"
+                        ],
+                        [
+                            "\u00fc"
+                        ],
+                        [
+                            "\u00fc"
+                        ],
+                        [
+                            "t"
+                        ],
+                        [
+                            "r"
+                        ],
+                        [
+                            "e"
+                        ],
+                        [
+                            "z"
+                        ]
+                    ]
+                }
+            }
+        ],
+        "metadata": {
+            "name": "ms-21_sn445566a",
+            "description": "",
+            "is_platform": false,
+            "created": "2026-08-10T06:55:35Z",
+            "class": [
+                "radiation",
+                "pygeometer"
+            ],
+            "device_manufacturer": {
+                "name": "EKO",
+                "address": "EKO Instruments Europe B.V. Lulofsstraat 55, Unit 28 2521 AL, Den Haag Netherlands",
+                "contact": ""
+            },
+            "device_model": {
+                "name": "MS-21",
+                "description": "Research-grade, accurate, and robust, the MS-21 measures longwave downwelling radiation and longwave net radiation in a wide spectral band and delivers superior stability independent of the sensors\u2019 operating temperature.",
+                "purchased": "2022-01-01T12:00:00Z",
+                "pid": "",
+                "serial": {
+                    "ManufactSN#2026100816384512#": "2345IIO88"
+                }
+            },
+            "owner": {
+                "name": "TROPOS",
+                "address": "",
+                "contact": "x@tropos.de",
+                "inv": {
+                    "TINV#2026100816384517#": "2026001",
+                    "TINV2#2026100816384519#": "20889H"
+                }
+            }
+        }
     }
 }

@@ -115,7 +115,8 @@ def prepare_add_device(myrequests):
         logger.info("Start to add a new device")
         
         # substitute space by - and transform to lower all keynames
-        tmp_device_keyname = re.sub(r"\s+", '-', my_dict_new["metadata"]["name"].lower() )
+        #tmp_device_keyname = re.sub(r"\s+", '-', my_dict_new["metadata"]["name"].lower() )
+        tmp_device_keyname = re.sub(r"\s+", '-', my_dict_new["metadata"]["name"] )
         
         # reject if device already exists
         if tmp_device_keyname in devices:

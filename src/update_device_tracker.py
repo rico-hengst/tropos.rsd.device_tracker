@@ -311,7 +311,7 @@ def prepare_add_history(myrequests):
                     logger.debug("Edit mode, overlapping history record between provided and the identical uuid record")
                 
                 else:
-                    message = "On or multiple history record periods did intersect with start/stoptime of your record" + str(history) + " versus " + myrequests["history.startdate"] + " " + myrequests["history.stopdate"]
+                    message = "On or multiple history record of the device '" + myrequests["device"] + "' periods did intersect with start/stoptime of a history record" + str(history) + " versus your request " + myrequests["history.startdate"] + " " + myrequests["history.stopdate"]
                     logger.warning(message)
                     return { 
                         "message"           : {

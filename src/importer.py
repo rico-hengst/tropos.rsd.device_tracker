@@ -15,7 +15,8 @@ logger = dv_config.setup_logger()
 # get ENV variables
 ENV = dv_config.get_env()
 
-
+# call script
+# export DV_ENV=../config/dv.config;python importer.py 
 
 def main():
     uri = "http://rsd2.tropos.de/device-tracking/api?device=arielle"
@@ -62,7 +63,8 @@ def main():
             imported_devices[device] = new_device_dict
             
     # add instance record to json
-    json_file= "../config/device_tracker_imported.json"
+    json_file = "../config/device_tracker_imported.json"
+    json_file = ENV["device_tracker_file"]
     with open(json_file, "r+") as file:
         device_tracker = json.load(file)
         
@@ -149,11 +151,11 @@ def get_device_history(history_schema, history):
                 logger.info("Location pattern correct: " + city + " " + country)
                 
             else:
-                logger.warning("Location pattern not correct:  " + str(history_record))
+                logger.warning("Expected comma-separated location pattern not correct:  " + str(history_record))
                 #import sys
                 #sys.exit(1)
                 
-                print("Enter your name:")
+                print("Expected comma-separated location pattern not correct: HIT A KEY")
                 name = input()
 
                 continue
@@ -206,6 +208,7 @@ def get_device_history(history_schema, history):
         if country in enum_countries:
             new_history_record["location"]["country"] = country
         else:
+            # substitute contry name
             subst_countries = {
                 "Cape Verde":"Cabo Verde",
                 "Czech":"Czech Republic",
@@ -215,7 +218,7 @@ def get_device_history(history_schema, history):
             if country in subst_countries:
                 country_substituted = subst_countries[country]
                 new_history_record["location"]["country"] = country_substituted
-                logger.warning("Country name substituted: " + country + " to " + country_substituted)
+                logger.info("Country name substituted: " + country + " to " + country_substituted)
             else:
                 logger.warning("Country not valid: " + country)
             
@@ -229,6 +232,9 @@ def get_device_history(history_schema, history):
         
         
         # validation
+        logger.debug(history_record)
+        logger.debug(new_history_record)
+        
     
         # old valiadation without format checker
         validate(
@@ -243,7 +249,6 @@ def get_device_history(history_schema, history):
         errors = list(validator.iter_errors(new_history_record))
         
         if not errors:
-           # print(new_history_record)
             
             logger.info("✓ Validation History Successful: The JSON instance is valid.")
             new_history.append(new_history_record)
@@ -254,12 +259,12 @@ def get_device_history(history_schema, history):
 
             for error in errors:
                 # error.message usually contains the specific reason
-                print(f"  - Error: {error.message}")
-                print(f"    Path: {list(error.path)}")
-                print(f"    Validator: {error.validator}")
+                logger.warning(f"  - Error: {error.message}")
+                logger.warning(f"    Path: {list(error.path)}")
+                logger.warning(f"    Validator: {error.validator}")
                 
             else:
-                print("not ok")
+
                 exit()
         
         
@@ -329,12 +334,11 @@ def get_device_record(device_schema, device_dict):
 
         for error in errors:
             # error.message usually contains the specific reason
-            print(f"  - Error: {error.message}")
-            print(f"    Path: {list(error.path)}")
-            print(f"    Validator: {error.validator}")
+            logger.warning(f"  - Error: {error.message}")
+            logger.warning(f"    Path: {list(error.path)}")
+            logger.warning(f"    Validator: {error.validator}")
             
         else:
-            print("not ok")
             exit()
             
 

@@ -91,7 +91,7 @@ input::placeholder {
                 
                 <div class="d-flex flex-row-reverse p-3 pe-1">
                     <div class="input-group" style="width:300px">
-                        <input class="form-control form-control-sm" type="text" id="searchText"placeholder="Search and filter table content ..">
+                        <input class="form-control form-control-sm" type="text" id="searchText" placeholder="Search and filter table content ..">
                     </div>
                 </div>
                 
@@ -108,7 +108,7 @@ input::placeholder {
                                             <div class="bd-highlight">{{ "Platform" if device_dict["metadata"]["is_platform"] else "Device" }}</div>
                                             <div class="bd-highlight">
                                                 {% if "class" in device_dict.metadata and device_dict.metadata.class[0] in user.class_edit_roles %}
-                                                    <a href="{{url_for('add_device', device=devicename, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>
+                                                    <a class="me-1" href="{{url_for('add_device', device=devicename, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>
                                                 {% endif %}
                                                 <span class="badge text-bg-secondary fs-6nnn">{{devicename}}</span>
                                             </div>
@@ -155,7 +155,7 @@ input::placeholder {
                                                     <td>{{device_dict.metadata.owner.name}}</td>
                                                 </tr>
                                                 {% endif %}
-                                            </table
+                                            </table>
                                         </div>
                                     </div>
                                 </td>
@@ -163,9 +163,16 @@ input::placeholder {
                                 <td>
                                     {% for calibration in device_dict.calibration %}
                                         <div class="card border-dark">
-                                            <div class="card-header">
-                                                Calibration <span class="badge rounded-pill text-bg-info">{{ calibration.uuid }}</span> 
-                                                {% if device_dict.metadata.class.0 in user.class_edit_roles %}<a href="{{url_for('add_calibration', uuid=calibration.uuid, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>{% endif %}
+                                            <div class="card-header d-flex justify-content-between mb-3">
+                                                <div>Calibration</div>
+                                                <div>
+                                                    {% if device_dict.metadata.class.0 in user.class_edit_roles %}
+                                                        <a class="me-1" href="{{url_for('add_calibration', uuid=calibration.uuid, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>
+                                                    {% endif %}
+                                                    <span class="small" onmouseover="this.style.background='rgba(255,72,165,0.7)'" onmouseout="this.style.background=''" title="Calibration uuid" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="{{ calibration.uuid }}"><em>uuid</em></span>
+                                                </div>
+                                                 
+                                                
                                             </div>
                                           <div class="card-body">
                                                 
@@ -240,6 +247,7 @@ input::placeholder {
                                                         {% if device_dict.metadata.class[0] in user.class_edit_roles %}
                                                             <a href="{{url_for('add_history', uuid=history.uuid, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>
                                                         {%endif%}
+                                                        <span class="small" onmouseover="this.style.background='rgba(255,72,165,0.7)'" onmouseout="this.style.background=''" title="History uuid" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="{{ history.uuid }}"><em>uuid</em></span>
                                                     </div>
                                                     <div class="divTableCell"  style="width:6%">
                                                         {% if history.location.is_mobile is defined %} 

@@ -76,9 +76,9 @@ app.jinja_env.filters['string_is_url'] = string_is_url
 # http://127.0.0.1:3000/select?date=2024-12-31T14:49:36Z,2024-12-31T14:49:36Z,
 
 # DT API
-@app.route("/select", methods=["GET"])
-def select():
-    logger.debug("Select page")
+@app.route("/api-json", methods=["GET"])
+def apijson():
+    logger.debug("API json page")
     your_requests = request.args.to_dict()
     
     if ("date" in your_requests):
@@ -91,9 +91,9 @@ def select():
     return jsonify(devices)
 
 # DT API SVG
-@app.route("/selectvis", methods=["GET"])
-def selectvis():
-    logger.debug("Selectvis page")
+@app.route("/api-vis", methods=["GET"])
+def apivis():
+    logger.debug("API vis page")
     your_requests = request.args.to_dict()
     
     if ("date" in your_requests):
@@ -109,13 +109,13 @@ def selectvis():
     if 'username' in session:
         username = session['username']
     
-    return render_template("selectvis.html",devices=devices,classes0=classes0, your_requests=your_requests, user=fhelper.get_signed_user(username))
+    return render_template("api-vis.html",devices=devices,classes0=classes0, your_requests=your_requests, user=fhelper.get_signed_user(username))
 
 
 # DT API TAB
-@app.route("/selecttab", methods=["GET"])
-def selecttab():
-    logger.debug("Selecttab page")
+@app.route("/api-tab", methods=["GET"])
+def apitab():
+    logger.debug("API tab page")
     your_requests = request.args.to_dict()
     
     if ("date" in your_requests):
@@ -134,7 +134,7 @@ def selecttab():
         username = session['username']
         
 
-    return render_template("selecttab.html",devices=devices,classes0=classes0,your_requests=your_requests, user=fhelper.get_signed_user(username))
+    return render_template("api-tab.html",devices=devices,classes0=classes0,your_requests=your_requests, user=fhelper.get_signed_user(username))
     
 
 
@@ -489,7 +489,7 @@ def register():
             return render_template('register.html', error=error)
         
         if password != confirm_password:
-            message = 'Passwords do not match'
+            message = 'Passwords and confirmed password do not match!'
             error = message
             logger.info(message)
             return render_template('register.html', error=error)
@@ -506,7 +506,7 @@ def register():
         
         if success:
             flash('Registration successful! Please login.', 'success')
-            return redirect(url_for('login'))
+            return render_template("index.html")
         else:
             error = message
             return render_template('register.html', error=error)

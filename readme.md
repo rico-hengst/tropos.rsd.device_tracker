@@ -90,12 +90,17 @@ Assumption:
 
 
 ### Usage: Import
+Import device tracker data from old TROPOS device tracker.
 
-tbd
+```export APP_CONFIG_PATH=../config/dv.config; python importer.py```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### Usage: user administration
 
+* register new user accounts
+    * via web: user "admin", see navbar +1 button
+    * via cmd: ```export APP_CONFIG_PATH=../config/dv.config; python -c "import fhelper; fhelper.add_user('testuser','my_password')"```
 
 
 ### Authors
@@ -107,7 +112,7 @@ tbd
 
 
 ### Copyright and license [![GNU V3][license.shield]][license-url]
-This application is free software, licensed under GNU v3.0. 
+This application is free software, licensed under GNU v3.0.
 
 ## Details
 
@@ -117,19 +122,36 @@ The device tracker data are stored in json format.
 An API is provided to access the data, see later on.
 
 * Each record of the data has a key with the unique keyname of the device.
-
 ```json
 {
-  "device_keyname": {
-    "calibration": [],
-    "history": [],
-    "metadata": {  }
-  }
+    "device_keyname":
+      {
+        "calibration": [],
+        "history": [],
+        "metadata": {  }
+      }
 }
 ```
 
 * The device record consists of three parts.
     * The metadata part contains several common info to the device. The structure of the metadata part is defined at [config/schema_device.json](config/schema_device.json).
+      * keep in mind to put one or multiple serial number(s) of the device to the sub-dict
+```
+metadata.device_model.serial:
+  {
+          "MyUniqueLabel":"1239943DH991",
+          "SerialID":"PL213441",
+       ...
+  }
+```
+      * keep in mind to put one or multiple owner related id's ore inventory numbers to the sub-dict
+```
+metadata.owner.inv:
+        {
+             "MyUniqueLabel":"888131",
+             ...
+        }
+      ```
     * The history part contains a list of location information where the instrument took the measurements. The structure of the history record is defined at [config/schema_history.json](config/schema_history.json).
     * The calibration part contains a list of already realized calibrations of the device. The structure of the calibration record is defined at [config/schema_calibration.json](config/schema_calibration.json).
 * Example
@@ -249,7 +271,7 @@ An API is provided to access the data, see later on.
                 ...
             }
         ]
-    }, 
+    },
     "Device_2" : {
         ...
     }
@@ -269,7 +291,7 @@ An API is provided to access the data, see later on.
 [Bootstrap.com]: https://img.shields.io/badge/-Bootstrap_5-7952B3?style=flat&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?logo=jQuery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[JQuery-url]: https://jquery.com
 [python.org]: https://img.shields.io/badge/python-%3E=3.11-blue?logo=python
 [python-url]: https://www.python.org/
 [flask.python]: https://img.shields.io/badge/Python-flask-blue

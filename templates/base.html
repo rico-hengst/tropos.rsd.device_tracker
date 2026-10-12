@@ -45,9 +45,11 @@
                                         API
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="{{ url_for('select', locationname='melpitz') }}">JSON</a></li>
-                                        <li><a class="dropdown-item" href="{{ url_for('selectvis', locationname='melpitz') }}">SVG</a></li>
-                                        <li><a class="dropdown-item" href="{{ url_for('selecttab', locationname='melpitz') }}">TAB</a></li>
+                                        <li class="text-tiny ps-3">Example locationname</li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('apijson', locationname='melpitz') }}">JSON</a></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('apivis', locationname='melpitz') }}">SVG</a></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('apitab', locationname='melpitz') }}">TAB</a></li>
 
                                     </ul>
                                 </li>

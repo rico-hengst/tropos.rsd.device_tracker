@@ -10,7 +10,7 @@ import dv_config
 # set logger
 logger = dv_config.setup_logger()
 # get ENV variables
-ENV = dv_config.get_env()
+APP_CONFIG_PATH_CONTENT = dv_config.get_APP_CONFIG_PATH()
 
 
 # test if nested dict has keys
@@ -44,7 +44,7 @@ def sort_continuous_history():
 
     # read json file
     #json_file= "../config/device_tracker.json"
-    json_file = ENV["device_tracker_file"]
+    json_file = APP_CONFIG_PATH_CONTENT["device_tracker_file"]
     
 
     with open(json_file, "r+") as file:
@@ -300,7 +300,7 @@ def select_history(my_filter):
     
     json_file= "../config/device_tracker.json"
     json_file= "../config/device_tracker_imported.json"
-    json_file = ENV["device_tracker_file"]
+    json_file = APP_CONFIG_PATH_CONTENT["device_tracker_file"]
 
     logger.info("Start query from json_file: " + json_file)
     logger.info(" requested filter: " + str(my_filter))
@@ -329,7 +329,7 @@ def select_history(my_filter):
 def select_calibration(my_filter):
     json_file= "../config/device_tracker.json"
     json_file= "../config/device_tracker_imported.json"
-    json_file = ENV["device_tracker_file"]
+    json_file = APP_CONFIG_PATH_CONTENT["device_tracker_file"]
 
     logger.info("Start query from json_file: " + json_file)
     logger.info(" requested filter: " + str(my_filter))
@@ -391,7 +391,7 @@ def select_calibration(my_filter):
 # * class(es) level0 -> scan of all metadata records
 def get_lookup_content(keyword):
     json_file= "../config/device_tracker_imported.json"
-    json_file = ENV["device_tracker_file"]
+    json_file = APP_CONFIG_PATH_CONTENT["device_tracker_file"]
 
     logger.info("Start get_lookup_content of " + keyword + ": " + json_file)
     

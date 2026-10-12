@@ -72,7 +72,9 @@ Assumption:
 * default config file: config/dv.config
 * you can use the file as it is or create another one somewhere else
     * make sure that the content and structure is based on the default config
-* when starting the application, the config file will be exported as tmp ENV variable (DV_ENV)
+* when starting the application, the ENV variable "APP_CONFIG_PATH" should be exported
+    * that ENV variable contains the name of the config file that will be used
+    * the config file contains preference about the logging and the name path name of the device tracker data file, etc.
 
 
 ### Usage: Start the application
@@ -80,7 +82,7 @@ Assumption:
 * local test server
 
     ```sh
-    export DV_ENV=../config/dv.config; flask --debug --app dv_app.py run --host 0.0.0.0 --port 5555
+    export APP_CONFIG_PATH=../config/dv.config; flask --debug --app dv_app.py run --host 0.0.0.0 --port 5555
     ```
 * via unicorn
 
@@ -111,7 +113,7 @@ This application is free software, licensed under GNU v3.0.
 
 ### Data structure
 
-The data are stored in json format.
+The device tracker data are stored in json format.
 An API is provided to access the data, see later on.
 
 * Each record of the data has a key with the unique keyname of the device.

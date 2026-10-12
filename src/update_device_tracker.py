@@ -14,14 +14,14 @@ import dv_config
 # set logger
 logger = dv_config.setup_logger()
 # get ENV variables
-ENV = dv_config.get_env()
+APP_CONFIG_PATH_CONTENT = dv_config.get_APP_CONFIG_PATH()
 
 import selector
 
 
 def json_file():
     json_file= "../config/device_tracker_imported.json"
-    json_file = dv_config.get_env()["device_tracker_file"]
+    json_file = APP_CONFIG_PATH_CONTENT["device_tracker_file"]
     if not os.path.isfile(json_file):
         logger.error("JSON not exists: " + json_file)
         json_file = None

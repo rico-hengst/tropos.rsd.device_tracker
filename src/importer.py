@@ -13,7 +13,7 @@ import dv_config
 # set logger
 logger = dv_config.setup_logger()
 # get ENV variables
-ENV = dv_config.get_env()
+APP_CONFIG_PATH_CONTENT = dv_config.get_APP_CONFIG_PATH()
 
 # call script
 # export DV_ENV=../config/dv.config;python importer.py 
@@ -63,7 +63,7 @@ def main():
             imported_devices[device_keyname] = new_device_dict
             
     # add instance record to json
-    json_file = ENV["device_tracker_file"]
+    json_file = APP_CONFIG_PATH_CONTENT["device_tracker_file"]
     with open(json_file, "r+", encoding='utf-8') as file:
         device_tracker = json.load(file)
         

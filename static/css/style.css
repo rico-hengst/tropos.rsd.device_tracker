@@ -298,6 +298,7 @@ https://codepen.io/codingyaar/pen/OJGRMYw
 Responsive Bootstrap 5 Mega Menu #2
 */
 
+/*
 .dropdown-menu a {
   text-decoration: none;
   color: #000000;
@@ -334,6 +335,7 @@ Responsive Bootstrap 5 Mega Menu #2
     display: flex;
   }
 }
+*/
 
 .navbar-nav .nav-link {
   color: #fff;

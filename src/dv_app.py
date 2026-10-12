@@ -24,7 +24,7 @@ import dv_config
 # Initialize the logger once in the main entry point
 logger = dv_config.setup_logger()
 # get ENV variables
-ENV = dv_config.get_env()
+APP_CONFIG_PATH_CONTENT = dv_config.get_APP_CONFIG_PATH()
 
 import fhelper
 import update_device_tracker

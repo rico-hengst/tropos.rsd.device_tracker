@@ -34,7 +34,7 @@ def prepare_add_device(myrequests):
     logger.info("Start of device record prep")
     
 
-    devive_is_platform = True if "metadata.is_platform" in myrequests else False
+    device_is_platform = True if "metadata.is_platform" in myrequests else False
 
     
     # detect serial keys
@@ -75,7 +75,7 @@ def prepare_add_device(myrequests):
         "metadata": {
             "name":             myrequests["metadata.name"],
             "description":      myrequests["metadata.description"] if "metadata.description" in myrequests else "",
-            "is_platform":      devive_is_platform,
+            "is_platform":      device_is_platform,
             "created":          datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "class": [
                 myrequests["metadata.class0"],
@@ -174,7 +174,7 @@ def prepare_add_device(myrequests):
                      "returned_record"   : my_dict_new,
                 }
             else:
-                message = "Device unknown: " + device_name
+                message = "Device unknown: " + device_keyname
                 logger.warning(message)
                 return { 
                     "message"           : {
@@ -462,7 +462,6 @@ def add_calibration(myrequests):
     device_tracker = None
     with open(my_json_file, "r+", encoding='utf-8') as file:
         device_tracker = json.load(file)
-    file.close()
         
     # 2 open file to write the updated content to the file
     with open(my_json_file, "w+", encoding='utf-8') as file:
@@ -487,21 +486,10 @@ def add_calibration(myrequests):
                     
         message = "Updated calibration at device: " + myrequests["device_keyname"]
         logger.info(message)
-        return {"message": {"type":"info","message":message}}
-    file.close()
-    
-    
-    
-    if "message" in calibration_record_ready:
-        my_rr["message"]= calibration_record_ready["message"]
-        return my_rr
-
-
-    
         
+        return {"message": {"type":"info","message":message}}
     
-            
-            
+
             
 
 
@@ -556,7 +544,6 @@ def add_history(myrequests):
         device_tracker = None
         with open(my_json_file, "r+", encoding='utf-8') as file:
             device_tracker = json.load(file)
-        file.close()
         
         # 2 open file to write the updated content to the file
         with open(my_json_file, "w+", encoding='utf-8') as file:
@@ -668,7 +655,6 @@ def add_device(myrequests):
         device_tracker = None
         with open(my_json_file, "r+", encoding='utf-8') as file:
             device_tracker = json.load(file)
-        file.close()
         
         # 2 open file to write the updated content to the file
         with open(my_json_file, "w+", encoding='utf-8') as file:

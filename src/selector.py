@@ -60,10 +60,6 @@ def sort_continuous_history():
 
         logger.info("## Start check continuous history at device: " + device)
             
-        # sort
-        if device not in data.columns:
-            logger.error("Device " + device + " not in json file!")
-            exit()
         
         # sort history and check overlap
         # 1. loop of history

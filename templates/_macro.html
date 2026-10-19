@@ -8,3 +8,192 @@
 {% endmacro %}
 
 
+{% macro get_modal_location(history, myindex, devicename) %} 
+<span class="" 
+    onmouseover="this.style.background='rgba(255,72,165,0.7)'" onmouseout="this.style.background=''"
+    data-bs-toggle="modal" data-bs-target="#uuidMODAL_{{history.uuid}}">
+    <i class="material-icons">visibility</i>
+</span>
+
+<!-- Modal -->
+<div class="modal fade" id="uuidMODAL_{{history.uuid}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between">
+                <div class="display-6 modal-title fs-5">
+                    History ({{myindex}})
+                </div>
+                {% if history.location.is_mobile == false and history.location.country|length==0%} 
+                    <div><abbr title="Potentially ambiguous static location?"><span class="badge text-bg-warning me-2">Warning</span></abbr></div>
+                {% endif %}
+                <div>
+                    <span class="fw-normal badge text-bg-secondary">{{devicename}}</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <table class="table table-sm table-striped table-hover">
+                    <tbody>
+                        <tr>
+                            <td class="text-secondary">uuid</td>
+                            <td style="text-align: right;">{{history.uuid}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-secondary">location is mobile</td>
+                            <td style="text-align: right;">{{history.location.is_mobile}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-secondary">location name</td>
+                            <td style="text-align: right;">{{history.location.name}}</td>
+                        </tr>
+                        {% if "lat" in history.location  %}
+                            <tr>
+                                <td class="text-secondary">location lat, lon{% if "elevation" in history.location %}, elevation{% endif %}</td>
+                                <td style="text-align: right;">{{history.location.lat}}, {{history.location.lon}}{% if "elevation" in history.location %}, {{history.location.elevation}}{% endif %}</td>
+                            </tr>
+                        {% endif %}
+                        {% if history.location.description|length>0 %}
+                             <tr>
+                                <td class="text-secondary">location description</td>
+                                <td style="text-align: right;">{{ history.location.description }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if history.location.is_mobile == true %}
+                            <tr>
+                                <td class="text-secondary">track desc</td>
+                                <td style="text-align: right;">{{history.location.track_desc}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary">track url</td>
+                                <td style="text-align: right;">
+                                    {% if history.location.track_url|string_is_url %}
+                                        <a href="{{ history.location.track_url }}"><i class="material-icons">link</i></a>
+                                    {% else %}
+                                        {{history.location.track_url}}
+                                    {% endif %}
+                                    
+                                </td>
+                            </tr>
+                        {% endif %}
+                        {% if "campaign" in history and history.campaign|length>0 %}
+                            <tr>
+                                <td class="text-secondary">campaign</td>
+                                <td style="text-align: right;"><abbr title="campaign"><span class="circleC small">C</span></abbr>&nbsp;{{history.campaign}}</td>
+                            </tr>
+                        {% endif %}
+                        {% if "platform" in history and history.platform|length>0 %}
+                            <tr>
+                                <td class="text-secondary">platform</td>
+                                <td style="text-align: right;"><abbr title="platform(s) hierarchical"><span class="circleP small">P</span></abbr>&nbsp;{{ history.platform|join(' &rarr; ')|safe }}</td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td class="text-secondary"></td>
+                            <td style="text-align: right;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro get_modal_calibration(calibration, myindex, devicename) %} 
+<span class="" 
+    onmouseover="this.style.background='rgba(255,72,165,0.7)'" onmouseout="this.style.background=''"
+    data-bs-toggle="modal" data-bs-target="#uuidMODAL_{{calibration.uuid}}">
+    <i class="material-icons">visibility</i>
+</span>
+
+<div class="modal fade" id="uuidMODAL_{{calibration.uuid}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between">
+                <div class="display-6 modal-title fs-5">
+                    Calibration ({{myindex}})
+                </div>
+                <div>
+                    <span class="fw-normal badge text-bg-secondary">{{devicename}}</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="modal-body">
+                 <table class="table table-sm table-striped table-hover">
+                    <tbody>
+                        <tr>
+                            <td class="text-secondary">uuid</td>
+                            <td style="text-align: right;">{{calibration.uuid}}</td>
+                        </tr>
+                        {% if calibration.calibration_link %}
+                            <tr>
+                                <td class="text-secondary">calibration link</td>
+                                <td style="text-align: right;">{{ calibration.calibration_link  }}</td>
+                            </tr>
+                        {% else %}
+                            {% if "certificate_issuance_date" in calibration %}
+                            <tr>
+                                <td class="text-secondary">certificate issuance date</td>
+                                <td style="text-align: right;">{{calibration.certificate_issuance_date[0:10]}}</td>
+                            </tr>
+                            {% endif %}
+                            {% if "certificate_id" in calibration and calibration.certificate_id|length>0%}
+                            <tr>
+                                <td class="text-secondary">certificate id</td>
+                                <td style="text-align: right;">{{calibration.certificate_id}}</td>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <td class="text-secondary">performed at</td>
+                                <td style="text-align: right;">{{calibration.performed_at}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary">performed by</td>
+                                <td style="text-align: right;">{{calibration.performed_by}}</td>
+                            </tr>
+                            {% if "valid_period_dates" in calibration and calibration.valid_period_dates|length>0%}
+                            <tr>
+                                <td class="text-secondary">valid period</td>
+                                <td style="text-align: right;">
+                                    {% for my_date in calibration.valid_period_dates %}
+                                        {{my_date[0:10]}}
+                                        {% if not loop.last %} &rarr; {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% if "calibration_coefficients" in calibration and calibration.calibration_coefficients|length>0%}
+                            <tr>
+                                <td class="text-secondary">calibration coefficients</td>
+                                <td style="text-align: right;">{{ calibration.calibration_coefficients|join(",") }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if "calibration_coefficient_uncertainties" in calibration and calibration.calibration_coefficient_uncertainties|length>0%}
+                            <tr>
+                                <td class="text-secondary">calibration coefficient uncertainties</td>
+                                <td style="text-align: right;">{{ calibration.calibration_coefficient_uncertainties|join(",") }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if "calibration_equation" in calibration and calibration.calibration_equation|length>0%}
+                            <tr>
+                                <td class="text-secondary">calibration equation</td>
+                                <td style="text-align: right;">{{ calibration.calibration_equation }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if ("used_method" in calibration and calibration.used_method|length>0 ) or ("used_reference" in calibration and calibration.used_method|length>0 ) %}
+                            <tr>
+                                <td class="text-secondary">method/reference</td>
+                                <td style="text-align: right;">{{ calibration.used_method }} / {{ calibration.used_reference }}</td>
+                            </tr>
+                            {% endif %}
+                            
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endmacro %}

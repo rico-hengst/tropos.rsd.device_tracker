@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 {% from "_macro.html" import get_icon_is_mobile with context %}
+{% from "_macro.html" import get_modal_location with context %}
+{% from "_macro.html" import get_modal_calibration with context %}
+
 
 <style>
 /* DivTable.com */
@@ -18,7 +21,7 @@
 .divTableCell, .divTableHead {
 	border: 1px solid rgba(0,0,0,0.1);
 	display: table-cell;
-	padding: 3px 10px;
+	padding: 6px 4px;
 }
 .divTableHeading {
 	background-color: #EEE;
@@ -67,6 +70,7 @@ input::placeholder {
   font-family: "Liberation Mono", monospace !important;
   font-size: 0.9em;
   color: blue !important;
+/*  color: rgb(255,72,165) !important; */
   opacity: 0.4 !important;
 }
 
@@ -96,8 +100,14 @@ input::placeholder {
                 </div>
                 
                 
-                <table class="table table-sm table-striped small" id="device_tracker_table_id">
-
+                <table class="table table-strciped table-hover small" id="device_tracker_table_id">
+                     <thead class="table-secondary">
+                         <tr>
+                             <th class="pt-3 pb-4 text-center fw-medium fs-6">Device</th>
+                             <th class="py-3 pb-4 text-center fw-medium fs-6">Calibration</th>
+                             <th class="py-3 pb-4 text-center fw-medium fs-6">History</th>
+                         </tr>
+                    </thead>
                     <tbody>
                         {% for devicename, device_dict in devices.items() | sort(attribute='0')%}
                         {% set length_history = device_dict.history|length %}
@@ -110,13 +120,13 @@ input::placeholder {
                                                 {% if "class" in device_dict.metadata and device_dict.metadata.class[0] in user.class_edit_roles %}
                                                     <a class="me-1" href="{{url_for('add_device', device=devicename, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>
                                                 {% endif %}
-                                                <span class="badge text-bg-secondary fs-6nnn">{{devicename}}</span>
+                                                <span class="fw-normal badge text-bg-secondary fs-6nnn">{{devicename}}</span>
                                             </div>
                                         </div>
                                         <div class="card-body">
                                             <table class="table table-sm small">
                                                 <tr>
-                                                    <td>Class</td>
+                                                    <td class="text-secondary">Class</td>
                                                     <td>
                                                     {% for class in device_dict.metadata.class %} {{ class }} 
                                                         {% if not loop.last %} 
@@ -127,19 +137,19 @@ input::placeholder {
                                                 </tr>
                                                 {% if device_dict.metadata.device_manufacturer.name|length > 0 %}
                                                 <tr>
-                                                    <td>Manufacturer</td>
+                                                    <td class="text-secondary">Manufacturer</td>
                                                     <td>{{device_dict.metadata.device_manufacturer.name}}</td>
                                                 </tr>
                                                 {% endif %}
                                                 {% if device_dict.metadata.device_model.name|length > 0 %}
                                                 <tr>
-                                                    <td>Model</td>
+                                                    <td class="text-secondary">Model</td>
                                                     <td>{{device_dict.metadata.device_model.name}}</td>
                                                 </tr>
                                                 {% endif %}
                                                 {% if device_dict.metadata.device_model.pid|length > 0 %}
                                                 <tr>
-                                                    <td>PID</td>
+                                                    <td class="text-secondary">PID</td>
                                                     <td>
                                                     {% if device_dict.metadata.device_model.pid|string_is_url %}
                                                         <a href="{{ device_dict.metadata.device_model.pid }}"><i class="material-icons">link</i></a>
@@ -151,7 +161,7 @@ input::placeholder {
                                                 {% endif %}
                                                 {% if device_dict.metadata.owner.name|length > 0 %}
                                                 <tr>
-                                                    <td>Owner</td>
+                                                    <td class="text-secondary">Owner</td>
                                                     <td>{{device_dict.metadata.owner.name}}</td>
                                                 </tr>
                                                 {% endif %}
@@ -161,81 +171,53 @@ input::placeholder {
                                 </td>
 
                                 <td>
-                                    {% for calibration in device_dict.calibration %}
+                                    {% if device_dict.calibration|length>0 %}
                                         <div class="card border-dark">
-                                            <div class="card-header d-flex justify-content-between mb-3">
-                                                <div>Calibration</div>
-                                                <div>
-                                                    {% if device_dict.metadata.class.0 in user.class_edit_roles %}
-                                                        <a class="me-1" href="{{url_for('add_calibration', uuid=calibration.uuid, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>
-                                                    {% endif %}
-                                                    <span class="small" onmouseover="this.style.background='rgba(255,72,165,0.7)'" onmouseout="this.style.background=''" title="Calibration uuid" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="{{ calibration.uuid }}"><em>uuid</em></span>
-                                                </div>
-                                                 
-                                                
+                                            <div class="card-header">
+                                                Calibration records
                                             </div>
-                                          <div class="card-body">
-                                                
-                                                <table class="table table-sm small">
-                                                    {% if calibration.calibration_link %}
-                                                        <tr>
-                                                            <td>calibration link</td>
-                                                            <td>{{ calibration.calibration_link  }}</td>
-                                                        </tr>
-                                                    {% else %}
-                                                        {% if "certificate_issuance_date" in calibration %}
-                                                        <tr>
-                                                            <td>certificate issuance date</td>
-                                                            <td>{{calibration.certificate_issuance_date[0:10]}}</td>
-                                                        </tr>
-                                                        {% endif %}
-                                                        {% if "certificate_id" in calibration and calibration.certificate_id|length>0%}
-                                                        <tr>
-                                                            <td>certificate id</td>
-                                                            <td>{{calibration.certificate_id}}</td>
-                                                        </tr>
-                                                        {% endif %}
-                                                        {% if "valid_period_dates" in calibration and calibration.valid_period_dates|length>0%}
-                                                        <tr>
-                                                            <td>valid period</td>
-                                                            <td>
-                                                                {% for my_date in calibration.valid_period_dates %}
-                                                                    {{my_date[0:10]}}
-                                                                    {% if not loop.last %} &rarr; {% endif %}
-                                                                {% endfor %}
-                                                            </td>
-                                                        </tr>
-                                                        {% endif %}
-                                                        {% if "calibration_coefficients" in calibration and calibration.calibration_coefficients|length>0%}
-                                                        <tr>
-                                                            <td>calibration coefficients</td>
-                                                            <td>{{ calibration.calibration_coefficients|join(",") }}</td>
-                                                        </tr>
-                                                        {% endif %}
-                                                        {% if "calibration_equation" in calibration and calibration.calibration_equation|length>0%}
-                                                        <tr>
-                                                            <td>calibration equation</td>
-                                                            <td>{{ calibration.calibration_equation }}</td>
-                                                        </tr>
-                                                        {% endif %}
-                                                        {% if ("used_method" in calibration and calibration.used_method|length>0 ) or ("used_reference" in calibration and calibration.used_method|length>0 ) %}
-                                                        <tr>
-                                                            <td>method/reference</td>
-                                                            <td>{{ calibration.used_method }} / {{ calibration.used_reference }}</td>
-                                                        </tr>
-                                                        {% endif %}
-                                                        
-                                                    {% endif %}
-
-                                                </table>
+                                            <div class="card-body">
+                                                <div class="divTable small">
+                                                    <div class="divTableBody">
+                                                        {% for calibration in device_dict.calibration %}
+                                                            <div class="divTableRow">
+                                                                <div class="divTableCell"  style="width:2%">
+                                                                    {% if device_dict.metadata.class[0] in user.class_edit_roles %}
+                                                                        <a href="{{url_for('add_calibration', uuid=calibration.uuid, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>
+                                                                    {%endif%}
+                                                                </div>
+                                                                <div class="divTableCell"  style="width:2%">
+                                                                    {{ get_modal_calibration(calibration, loop.index, devicename) }}
+                                                                </div>
+                                                                {% if calibration.calibration_link %}
+                                                                    <div class="divTableCell"  style="width:30%">
+                                                                        {{ calibration.calibration_link  }}
+                                                                    </div>
+                                                                {% else %}
+                                                                    <div class="divTableCell"  style="width:20%">
+                                                                        {% if "certificate_issuance_date" in calibration %}
+                                                                            {{calibration.certificate_issuance_date[0:10]}}
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="divTableCell"  style="width:20%">
+                                                                        {% if "performed_at" in calibration %}
+                                                                            {{calibration.performed_at}}
+                                                                        {% endif %}
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            
                                             </div>
                                         </div>
-                                    {% endfor %}
+                                    {% endif %}
                                 </td>
                                 <td>
                                     <div class="card border-dark">
                                         <div class="card-header">
-                                            History
+                                            History records
                                         </div>
                                         <div class="card-body">
                                     
@@ -243,31 +225,33 @@ input::placeholder {
                                             <div class="divTableBody">
                                             {% for history in device_dict.history| sort(attribute='startdate') %}
                                                 <div class="divTableRow">
-                                                    <div class="divTableCell"  style="width:8%">
+                                                    <div class="divTableCell"  style="width:2%">
                                                         {% if device_dict.metadata.class[0] in user.class_edit_roles %}
                                                             <a href="{{url_for('add_history', uuid=history.uuid, requested_mode='edit')}}"><i class="material-icons">mode_edit</i></a>
                                                         {%endif%}
-                                                        <span class="small" onmouseover="this.style.background='rgba(255,72,165,0.7)'" onmouseout="this.style.background=''" title="History uuid" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="{{ history.uuid }}"><em>uuid</em></span>
                                                     </div>
-                                                    <div class="divTableCell"  style="width:6%">
+                                                    <div class="divTableCell"  style="width:2%">
+                                                        {{ get_modal_location(history, loop.index, devicename) }}
+                                                    </div>
+                                                    <div class="divTableCell"  style="width:2%">
                                                         {% if history.location.is_mobile is defined %} 
                                                             {{ get_icon_is_mobile(history.location.is_mobile) }} 
                                                         {% endif %}
                                                     </div>
-                                                    <div class="divTableCell"  style="width:37%">{{ history.startdate[0:10]}} &rarr; {{ history.stopdate[0:10]}}</div>
-                                                    <div class="divTableCell"  style="width:27%">
+                                                    <div class="divTableCell ps-2"  style="width:30%">{{ history.startdate[0:10]}} &rarr; {{ history.stopdate[0:10]}}</div>
+                                                    <div class="divTableCell"  style="width:30%">
+                                                        {{ history.location.name}}  
                                                         {% if history.location.is_mobile == false and history.location.country|length==0%} 
                                                             <abbr title="Potentially ambiguous static location?"><span class="badge text-bg-warning me-2">Warning</span></abbr>
                                                         {% endif %}
-                                                        {{ history.location.name}}  
-                                                        <span class="badge rounded-pill text-bg-secondary">{{ history.location.country}}</span>
+                                                        <span class="badge rounded-pill text-bg-secondary fw-normal">{{ history.location.country}}</span>
                                                     </div>
-                                                    <div class="divTableCell"  style="width:29%">
+                                                    <div class="divTableCell"  style="width:30%">
                                                         {% if history.campaign|length>0%}
                                                             <abbr title="campaign"><span class="circleC small">C</span></abbr>&nbsp;{{ history.campaign}}
                                                         {% endif %}
                                                         {% if history.platform|length>0%}
-                                                            <abbr title="platform(s) hierarchical"><span class="circleP small">P</span></abbr>&nbsp;{{ history.platform|join('&rarr;')|safe}}
+                                                            <abbr title="platform(s) hierarchical"><span class="circleP small">P</span></abbr>&nbsp;{{ history.platform|join(' &rarr; ')|safe }}
                                                         {% endif %}
                                                     </div>
                                                 </div>
@@ -282,8 +266,6 @@ input::placeholder {
                         {% endfor %}
                     </tbody>
                 </table>
-
-                
             </div>
         </div>
         
@@ -291,5 +273,5 @@ input::placeholder {
 {% endblock %}
 
 {% block javascript %} 
-{%  include '_selectform.javascript'  %}
+{% include '_selectform.javascript' %}
 {% endblock %}

@@ -105,7 +105,7 @@ Import device tracker data from old TROPOS device tracker.
 
 ### Authors
 
-* AK
+* AK [![ORCID iD](https://img.shields.io/badge/-ORCID-A6CE39?logo=orcid&logoColor=white)](https://orcid.org/0009-0006-0981-5865)
 * RH [![ORCID iD](https://img.shields.io/badge/-ORCID-A6CE39?logo=orcid&logoColor=white)](https://orcid.org/0000-0001-8994-5868)
 
 
